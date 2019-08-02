@@ -1,5 +1,5 @@
 //  103001
-//	main.cpp
+//    main.cpp
 //  Created by David del Val on 02/08/2019
 //
 //
@@ -31,22 +31,22 @@ using namespace std;
 
 void ECHO(string _s){cout<<endl;(void)_s;}
 template<typename T, typename ...Args> void ECHO(string _s, T x, Args... args){
-    unsigned _i; string _s2="";
-    for(_i=0;_i<_s.length();++_i){if(_s[_i]==',')break;if(_s[_i]!=' ')_s2+=_s[_i];}
-    if(_i==_s.length()){--_i;}cout<<"  ("<<_s2<<"):"<<x;
-    ECHO(_s.substr(_i+1, _s.length()-_i-1), args...);
+	unsigned _i; string _s2="";
+	for(_i=0;_i<_s.length();++_i){if(_s[_i]==',')break;if(_s[_i]!=' ')_s2+=_s[_i];}
+	if(_i==_s.length()){--_i;}cout<<"  ("<<_s2<<"):"<<x;
+	ECHO(_s.substr(_i+1, _s.length()-_i-1), args...);
 }
 
 
 template<typename T0, typename T1>
 inline ostream& operator << (ostream& os, pair<T0, T1>& p){
-    return os << "(" << p.first << ", " << p.second <<")";
+	return os << "(" << p.first << ", " << p.second <<")";
 }
 
 template <typename T>
 inline ostream& operator << (ostream& os, vector<T>& v){
-    for(unsigned i = 0; i < v.size(); ++i){cout << v[i] << "_";}cout<<endl;
-    return os;
+	for(unsigned i = 0; i < v.size(); ++i){cout << v[i] << "_";}cout<<endl;
+	return os;
 }
 
 template<typename T> inline T _min(T x1, T x2, T x3){return min(x1, min(x2, x3));}
@@ -111,11 +111,24 @@ struct ring{
 	}
 };
 vector<ring> rings;
+double d(double x1,double y1,double x2, double y2){
+	return sqrt(pow(x1-x2,2)+pow(y1-y2,2));
+}
 bool intersect(int i,int j){
-	return sqrt(pow(rings[i].x-rings[j].x, 2)+pow(rings[i].y-rings[j].y,2))<=rings[i].r+rings[j].r;
+	double r,R;
+	double dd;
+	R=max(rings[i].r,rings[j].r);
+	r=min(rings[i].r,rings[j].r);
+	dd=d(rings[i].x,rings[i].y,rings[j].x,rings[j].y);
+	if(dd<=R){
+		return (dd+r)>=R;
+	}
+	else{
+		return dd<=R+r;
+	}
 }
 int main(){
-    ios::sync_with_stdio(false);
+	ios::sync_with_stdio(false);
 	
 	while(true){
 		int n;
@@ -133,17 +146,17 @@ int main(){
 				}
 			}
 		}
-		int m=INT_MIN;
+		int m=0;
 		REP(i,n){
 			m=max(m,size(i));
 		}
-		cout<<"The largest component contains "<<m<<" ring"<<(m>1? "s":"")<<"\n";
+		cout<<"The largest component contains "<<m<<" ring"<<(m!=1? "s.":".")<<"\n";
 		
 		
 		
 		
 	}
 	
-    return 0;
+	return 0;
 }
 
