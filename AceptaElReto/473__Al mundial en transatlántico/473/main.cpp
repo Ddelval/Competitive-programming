@@ -1,3 +1,4 @@
+// AceptaElReto 473:  Al mundial en transatlántico
 #include <algorithm>
 #include <iostream>
 #include <vector>

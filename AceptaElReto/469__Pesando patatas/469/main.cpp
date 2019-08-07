@@ -1,3 +1,4 @@
+// AceptaElReto 469:  Pesando patatas
 #include <algorithm>
 #include <iostream>
 #include <vector>

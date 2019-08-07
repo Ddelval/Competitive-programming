@@ -1,3 +1,4 @@
+// AceptaElReto 320:  Palmeras en la nieve
 #include <algorithm>
 #include <iostream>
 #include <vector>

@@ -1,3 +1,4 @@
+// AceptaElReto 327:  El acertijo del mercader
 #include <algorithm>
 #include <iostream>
 #include <vector>

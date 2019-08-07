@@ -1,3 +1,4 @@
+// AceptaElReto 347:  Haciendo pajaritas de papel
 //
 //  main.cpp
 //  347

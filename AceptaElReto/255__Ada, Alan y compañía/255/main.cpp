@@ -1,3 +1,4 @@
+// AceptaElReto 255:  Ada, Alan y compañía
 #include <algorithm>
 #include <iostream>
 #include <vector>

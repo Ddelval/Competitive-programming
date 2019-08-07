@@ -1,3 +1,4 @@
+// AceptaElReto 409:  Seleccionando castellers
 #include <algorithm>
 #include <iostream>
 #include <vector>

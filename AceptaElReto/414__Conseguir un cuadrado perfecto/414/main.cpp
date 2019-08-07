@@ -1,3 +1,4 @@
+// AceptaElReto 414:  Conseguir un cuadrado perfecto
 #include <algorithm>
 #include <iostream>
 #include <vector>

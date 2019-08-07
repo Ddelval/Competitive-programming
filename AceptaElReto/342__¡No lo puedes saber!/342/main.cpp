@@ -1,3 +1,4 @@
+// AceptaElReto 342:  ¡No lo puedes saber!
 #include <algorithm>
 #include <iostream>
 #include <vector>

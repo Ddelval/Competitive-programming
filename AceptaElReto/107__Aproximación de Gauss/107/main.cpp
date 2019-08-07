@@ -1,3 +1,4 @@
+// AceptaElReto 107:  Aproximación de Gauss
 //
 //  main.cpp
 //  107

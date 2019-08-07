@@ -1,3 +1,4 @@
+// AceptaElReto 393:  El entretenimiento de las máquinas
 #include <algorithm>
 #include <iostream>
 #include <vector>

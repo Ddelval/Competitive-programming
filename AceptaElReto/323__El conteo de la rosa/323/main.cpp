@@ -1,3 +1,4 @@
+// AceptaElReto 323:  El conteo de la rosa
 #include <algorithm>
 #include <iostream>
 #include <vector>

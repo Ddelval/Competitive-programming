@@ -1,3 +1,4 @@
+// AceptaElReto 408:  La maldición de la lotería
 #include <algorithm>
 #include <iostream>
 #include <vector>

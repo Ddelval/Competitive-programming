@@ -1,3 +1,4 @@
+// AceptaElReto 410:  Dígitos saltarines
 #include <algorithm>
 #include <iostream>
 #include <vector>

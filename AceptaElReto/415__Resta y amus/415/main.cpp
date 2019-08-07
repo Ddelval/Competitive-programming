@@ -1,3 +1,4 @@
+// AceptaElReto 415:  Resta y amus
 #include <algorithm>
 #include <iostream>
 #include <vector>

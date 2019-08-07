@@ -1,3 +1,4 @@
+// AceptaElReto 328:  La comida de los pollitos
 #include <algorithm>
 #include <iostream>
 #include <vector>

@@ -1,3 +1,4 @@
+// AceptaElReto 126:  Divisores del factorial
 //
 //  main.cpp
 //  126

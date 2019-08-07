@@ -1,3 +1,4 @@
+// AceptaElReto 496:  La estación de esquí
 #include <iostream>
 #include <algorithm>
 #include <queue>

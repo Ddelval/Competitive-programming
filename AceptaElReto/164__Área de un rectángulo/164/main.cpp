@@ -1,3 +1,4 @@
+// AceptaElReto 164:  Área de un rectángulo
 //
 //  main.cpp
 //  164

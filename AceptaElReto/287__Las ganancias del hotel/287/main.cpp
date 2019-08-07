@@ -1,3 +1,4 @@
+// AceptaElReto 287:  Las ganancias del hotel
 #include <iostream>
 #include <algorithm>
 #include <queue>

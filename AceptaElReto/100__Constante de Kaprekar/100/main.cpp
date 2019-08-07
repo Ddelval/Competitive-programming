@@ -1,3 +1,4 @@
+// AceptaElReto 100:  Constante de Kaprekar
 //
 //  main.cpp
 //  100

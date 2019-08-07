@@ -1,3 +1,4 @@
+// AceptaElReto 455:  Participantes en una estadística
 #include <algorithm>
 #include <iostream>
 #include <vector>

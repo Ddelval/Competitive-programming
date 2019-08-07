@@ -1,3 +1,4 @@
+// AceptaElReto 413:  Claras y oscuras
 #include <algorithm>
 #include <iostream>
 #include <vector>

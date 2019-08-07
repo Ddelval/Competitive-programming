@@ -1,3 +1,4 @@
+// AceptaElReto 325:  Helados de cucurucho
 #include <algorithm>
 #include <iostream>
 #include <vector>

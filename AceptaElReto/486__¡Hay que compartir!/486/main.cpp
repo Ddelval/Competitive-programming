@@ -1,3 +1,4 @@
+// AceptaElReto 486:  ¡Hay que compartir!
 #include <algorithm>
 #include <iostream>
 #include <vector>

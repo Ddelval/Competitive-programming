@@ -1,3 +1,4 @@
+// AceptaElReto 134:  Escalera de color
 //
 //  main.cpp
 //  134

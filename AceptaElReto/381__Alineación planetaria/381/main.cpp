@@ -1,3 +1,4 @@
+// AceptaElReto 381:  Alineación planetaria
 #include <algorithm>
 #include <iostream>
 #include <vector>

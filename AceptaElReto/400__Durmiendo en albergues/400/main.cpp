@@ -1,3 +1,4 @@
+// AceptaElReto 400:  Durmiendo en albergues
 #include <algorithm>
 #include <iostream>
 #include <vector>

@@ -1,3 +1,4 @@
+// AceptaElReto 120:  Constante mágica
 //
 //  main.cpp
 //  120

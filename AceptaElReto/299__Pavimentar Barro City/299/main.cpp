@@ -1,3 +1,4 @@
+// AceptaElReto 299:  Pavimentar Barro City
 #include <algorithm>
 #include <iostream>
 #include <vector>

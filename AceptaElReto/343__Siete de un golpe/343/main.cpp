@@ -1,3 +1,4 @@
+// AceptaElReto 343:  Siete de un golpe
 #include <algorithm>
 #include <iostream>
 #include <vector>

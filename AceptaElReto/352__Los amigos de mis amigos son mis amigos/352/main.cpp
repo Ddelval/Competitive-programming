@@ -1,3 +1,4 @@
+// AceptaElReto 352:  Los amigos de mis amigos son mis amigos
 #include <algorithm>
 #include <iostream>
 #include <vector>

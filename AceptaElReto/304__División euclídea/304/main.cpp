@@ -1,3 +1,4 @@
+// AceptaElReto 304:  División euclídea
 #include <iostream>
 #include <algorithm>
 #include <queue>

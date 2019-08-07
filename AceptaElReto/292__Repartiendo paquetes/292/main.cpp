@@ -1,3 +1,4 @@
+// AceptaElReto 292:  Repartiendo paquetes
 #include <algorithm>
 #include <iostream>
 #include <vector>

@@ -1,3 +1,4 @@
+// AceptaElReto 227:  Eligiendo caramelos
 #include <iostream>
 #include <vector>
 using namespace std;

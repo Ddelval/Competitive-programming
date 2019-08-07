@@ -1,3 +1,4 @@
+// AceptaElReto 482:  Los calcetines de Ian Malcolm
 #include <algorithm>
 #include <iostream>
 #include <vector>

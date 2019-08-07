@@ -1,3 +1,4 @@
+// AceptaElReto 288:  Petroleros hundidos
 #include <algorithm>
 #include <iostream>
 #include <vector>

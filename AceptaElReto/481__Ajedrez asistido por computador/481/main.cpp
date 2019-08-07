@@ -1,3 +1,4 @@
+// AceptaElReto 481:  Ajedrez asistido por computador
 #include <algorithm>
 #include <iostream>
 #include <vector>

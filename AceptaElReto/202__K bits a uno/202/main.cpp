@@ -1,3 +1,4 @@
+// AceptaElReto 202:  K bits a uno
 //
 //  main.cpp
 //  202

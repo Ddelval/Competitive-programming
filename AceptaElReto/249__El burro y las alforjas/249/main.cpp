@@ -1,3 +1,4 @@
+// AceptaElReto 249:  El burro y las alforjas
 #include <iostream>
 #include <algorithm>
 #include <queue>

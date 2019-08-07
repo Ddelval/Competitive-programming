@@ -1,3 +1,4 @@
+// AceptaElReto 399:  Las perlas de la condesa
 #include <algorithm>
 #include <iostream>
 #include <vector>

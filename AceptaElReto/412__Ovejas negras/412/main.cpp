@@ -1,3 +1,4 @@
+// AceptaElReto 412:  Ovejas negras
 #include <algorithm>
 #include <iostream>
 #include <vector>

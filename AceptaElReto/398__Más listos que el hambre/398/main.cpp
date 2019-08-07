@@ -1,3 +1,4 @@
+// AceptaElReto 398:  Más listos que el hambre
 #include <iostream>
 #include <algorithm>
 #include <map>

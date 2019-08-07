@@ -1,3 +1,4 @@
+// AceptaElReto 407:  Rebotando en el parchís
 #include <algorithm>
 #include <iostream>
 #include <vector>

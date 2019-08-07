@@ -1,3 +1,4 @@
+// AceptaElReto 101:  Cuadrados diabólicos y esotéricos
 
 #include <iostream>
 #include <queue>

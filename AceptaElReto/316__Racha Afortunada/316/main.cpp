@@ -1,3 +1,4 @@
+// AceptaElReto 316:  Racha afortunada
 #include <algorithm>
 #include <iostream>
 #include <vector>

@@ -1,3 +1,4 @@
+// AceptaElReto 494:  Asalto a la reprografía
 #include <iostream>
 #include <algorithm>
 #include <queue>

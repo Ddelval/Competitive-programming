@@ -1,3 +1,4 @@
+// AceptaElReto 250:  El desgaste de los bombines
 #include <algorithm>
 #include <iostream>
 #include <vector>

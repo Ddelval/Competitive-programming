@@ -1,3 +1,4 @@
+// AceptaElReto 344:  Conectando cables
 #include <algorithm>
 #include <iostream>
 #include <vector>

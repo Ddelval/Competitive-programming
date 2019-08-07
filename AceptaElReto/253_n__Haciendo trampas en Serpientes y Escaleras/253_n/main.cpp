@@ -1,3 +1,4 @@
+// AceptaElReto 253:  Haciendo trampas en Serpientes y Escaleras
 //#include <algorithm>
 //#include <iostream>
 //#include <vector>

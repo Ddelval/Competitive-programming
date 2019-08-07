@@ -1,3 +1,4 @@
+// AceptaElReto 378:  La justicia de la lotería
 #include <iostream>
 #include <algorithm>
 #include <queue>

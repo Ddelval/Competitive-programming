@@ -1,3 +1,4 @@
+// AceptaElReto 454:  Entrenamiento imperial
 #include <algorithm>
 #include <iostream>
 #include <vector>

@@ -1,3 +1,4 @@
+// AceptaElReto 341:  Reina del súper
 #include <algorithm>
 #include <iostream>
 #include <vector>

@@ -1,3 +1,4 @@
+// AceptaElReto 467:  Polisílaba es polisílaba
 #include <algorithm>
 #include <iostream>
 #include <vector>

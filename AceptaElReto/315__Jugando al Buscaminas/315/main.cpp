@@ -1,3 +1,4 @@
+// AceptaElReto 315:  Jugando al Buscaminas
 #include <algorithm>
 #include <iostream>
 #include <vector>

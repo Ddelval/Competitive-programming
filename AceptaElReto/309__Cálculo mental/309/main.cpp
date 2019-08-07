@@ -1,3 +1,4 @@
+// AceptaElReto 309:  Cálculo mental
 #include <iostream>
 #include <algorithm>
 #include <queue>

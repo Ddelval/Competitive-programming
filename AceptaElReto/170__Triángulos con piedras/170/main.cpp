@@ -1,3 +1,4 @@
+// AceptaElReto 170:  Triángulos con piedras
 //
 //  main.cpp
 //  170

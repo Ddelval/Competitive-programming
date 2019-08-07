@@ -1,3 +1,4 @@
+// AceptaElReto 146:  Números afortunados
 //
 //  main.cpp
 //  146

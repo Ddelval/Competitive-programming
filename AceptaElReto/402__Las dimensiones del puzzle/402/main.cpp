@@ -1,3 +1,4 @@
+// AceptaElReto 402:  Las dimensiones del puzzle
 #include <algorithm>
 #include <iostream>
 #include <vector>

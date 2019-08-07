@@ -1,3 +1,4 @@
+// AceptaElReto 384:  El juego de la linterna
 //
 //  main.cpp
 //  384

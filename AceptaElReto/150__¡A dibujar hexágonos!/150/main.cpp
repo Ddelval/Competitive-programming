@@ -1,3 +1,4 @@
+// AceptaElReto 150:  ¡A dibujar hexágonos!
 //
 //  main.cpp
 //  150

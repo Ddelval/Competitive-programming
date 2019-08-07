@@ -1,3 +1,4 @@
+// AceptaElReto 106:  Códigos de barras
 //
 //  main.cpp
 //  106

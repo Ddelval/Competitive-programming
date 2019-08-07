@@ -1,3 +1,4 @@
+// AceptaElReto 471:  Buscando el pinchazo
 #include <algorithm>
 #include <iostream>
 #include <vector>

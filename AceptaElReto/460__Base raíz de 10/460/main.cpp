@@ -1,3 +1,4 @@
+// AceptaElReto 460:  Base raíz de 10
 #include <algorithm>
 #include <iostream>
 #include <vector>

@@ -1,3 +1,4 @@
+// AceptaElReto 248:  Los premios de las tragaperras
 #include <algorithm>
 #include <iostream>
 #include <vector>

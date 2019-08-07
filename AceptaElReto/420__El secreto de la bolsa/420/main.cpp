@@ -1,3 +1,4 @@
+// AceptaElReto 420:  El secreto de la bolsa
 #include <algorithm>
 #include <iostream>
 #include <vector>

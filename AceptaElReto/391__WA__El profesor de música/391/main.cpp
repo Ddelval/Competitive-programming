@@ -1,3 +1,4 @@
+// AceptaElReto 391:  El profesor de música
 /******
  Situation of this code:
  It sort of works. It is able to find a short path but it will only consider the closest node to the schools, which can lead to wrong solutions.

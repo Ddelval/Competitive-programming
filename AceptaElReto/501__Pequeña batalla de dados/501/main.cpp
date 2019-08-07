@@ -1,3 +1,4 @@
+// AceptaElReto 501:  Pequeña batalla de dados
 #include <iostream>
 #include <algorithm>
 #include <queue>
