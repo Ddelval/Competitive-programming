@@ -1,3 +1,4 @@
+// UVa Online Judge 10301: Rings_and_Glue
 //  10301
 //    main.cpp
 //  Created by David del Val on 02/08/2019

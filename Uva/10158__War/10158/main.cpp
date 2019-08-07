@@ -1,3 +1,4 @@
+// UVa Online Judge 10158: War
 //  10158
 //	main.cpp
 //  Created by David del Val on 02/08/2019

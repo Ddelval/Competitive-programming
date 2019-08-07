@@ -1,3 +1,4 @@
+// UVa Online Judge 727: Equation
 //  0727
 //	main.cpp
 //  Created by David del Val on 03/08/2019

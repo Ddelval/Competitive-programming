@@ -1,3 +1,4 @@
+// UVa Online Judge 11340: Newspaper
 //  11340
 //	main.cpp
 //  Created by David del Val on 03/08/2019
