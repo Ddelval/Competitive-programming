@@ -1,4 +1,4 @@
-// UVa Online Judge 10901: Ferry_Loading_III
+// UVa Online Judge 10901: Ferry Loading III
 //  10901
 //	main.cpp
 //  Created by David del Val on 04/08/2019

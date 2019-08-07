@@ -1,4 +1,4 @@
-// UVa Online Judge 109: SCUD_Busters
+// UVa Online Judge 109: SCUD Busters
 // 
 //  main.cpp
 //  0109

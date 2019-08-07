@@ -1,4 +1,4 @@
-// UVa Online Judge 111: History_Grading
+// UVa Online Judge 111: History Grading
 //
 //  main.cpp
 //  0111

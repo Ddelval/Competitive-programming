@@ -1,4 +1,4 @@
-// UVa Online Judge 11136: Hoax_or_what
+// UVa Online Judge 11136: Hoax or what
 //  11136
 //	main.cpp
 //  Created by David del Val on 04/08/2019

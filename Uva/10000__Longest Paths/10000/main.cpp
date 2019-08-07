@@ -1,1 +1,1 @@
-// UVa Online Judge 10000: Longest_Paths
+// UVa Online Judge 10000: Longest Paths

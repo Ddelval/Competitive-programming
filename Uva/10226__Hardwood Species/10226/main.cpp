@@ -1,4 +1,4 @@
-// UVa Online Judge 10226: Hardwood_Species
+// UVa Online Judge 10226: Hardwood Species
 //  10226
 //	main.cpp
 //  Created by David del Val on 04/08/2019

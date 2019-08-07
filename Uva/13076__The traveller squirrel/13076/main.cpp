@@ -1,4 +1,4 @@
-// UVa Online Judge 13076: The_traveller_squirrel
+// UVa Online Judge 13076: The traveller squirrel
 //  13076
 //	main.cpp
 //  Created by David del Val on 03/08/2019

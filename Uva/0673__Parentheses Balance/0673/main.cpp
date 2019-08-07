@@ -1,4 +1,4 @@
-// UVa Online Judge 673: Parentheses_Balance
+// UVa Online Judge 673: Parentheses Balance
 #include <iostream>
 #include <algorithm>
 #include <queue>

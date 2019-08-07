@@ -1,4 +1,4 @@
-// UVa Online Judge 11308: Bankrupt_Baker
+// UVa Online Judge 11308: Bankrupt Baker
 //  11308
 //	main.cpp
 //  Created by David del Val on 04/08/2019

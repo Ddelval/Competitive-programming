@@ -1,4 +1,4 @@
-// UVa Online Judge 459: Graph_Connectivity
+// UVa Online Judge 459: Graph Connectivity
 //  0459
 //	main.cpp
 //  Created by David del Val on 01/08/2019

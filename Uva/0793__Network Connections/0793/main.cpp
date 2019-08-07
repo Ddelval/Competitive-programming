@@ -1,4 +1,4 @@
-// UVa Online Judge 793: Network_Connections
+// UVa Online Judge 793: Network Connections
 //  0793
 //	main.cpp
 //  Created by David del Val on 01/08/2019

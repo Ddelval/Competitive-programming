@@ -1,4 +1,4 @@
-// UVa Online Judge 10099: The_Tourist_Guide
+// UVa Online Judge 10099: The Tourist Guide
 
 #include <iostream>
 #include <vector>

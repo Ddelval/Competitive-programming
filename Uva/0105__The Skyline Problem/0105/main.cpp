@@ -1,4 +1,4 @@
-// UVa Online Judge 105: The_Skyline_Problem
+// UVa Online Judge 105: The Skyline Problem
 //
 //  main.cpp
 //  0105

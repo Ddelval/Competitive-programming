@@ -1,4 +1,4 @@
-// UVa Online Judge 291: The_House_Of_Santa_Claus
+// UVa Online Judge 291: The House Of Santa Claus
 //  0291
 //	main.cpp
 //  Created by David del Val on 01/08/2019

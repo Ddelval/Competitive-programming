@@ -1,4 +1,4 @@
-// UVa Online Judge 594: One_Little,_Two_Little,_Three_Little_Endians
+// UVa Online Judge 594: One Little, Two Little, Three Little Endians
 //  0535
 //	main.cpp
 //  Created by David del Val on 03/08/2019

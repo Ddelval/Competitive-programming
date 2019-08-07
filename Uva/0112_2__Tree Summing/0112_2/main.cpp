@@ -1,4 +1,4 @@
-// UVa Online Judge 112: Tree_Summing
+// UVa Online Judge 112: Tree Summing
 #include <iostream>
 #include <vector>
 #include <algorithm>

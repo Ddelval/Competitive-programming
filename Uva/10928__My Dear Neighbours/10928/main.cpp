@@ -1,4 +1,4 @@
-// UVa Online Judge 10928: My_Dear_Neighbours
+// UVa Online Judge 10928: My Dear Neighbours
 //  10928
 //	main.cpp
 //  Created by David del Val on 01/08/2019

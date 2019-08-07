@@ -1,4 +1,4 @@
-// UVa Online Judge 11503: Virtual_Friends
+// UVa Online Judge 11503: Virtual Friends
 //  11503
 //	main.cpp
 //  Created by David del Val on 02/08/2019

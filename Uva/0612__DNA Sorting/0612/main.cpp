@@ -1,4 +1,4 @@
-// UVa Online Judge 612: DNA_Sorting
+// UVa Online Judge 612: DNA Sorting
 //  0612
 //	main.cpp
 //  Created by David del Val on 05/08/2019

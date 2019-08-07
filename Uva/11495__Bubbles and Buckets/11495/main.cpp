@@ -1,4 +1,4 @@
-// UVa Online Judge 11495: Bubbles_and_Buckets
+// UVa Online Judge 11495: Bubbles and Buckets
 //  11495
 //	main.cpp
 //  Created by David del Val on 06/08/2019

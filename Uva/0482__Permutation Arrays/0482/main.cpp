@@ -1,4 +1,4 @@
-// UVa Online Judge 482: Permutation_Arrays
+// UVa Online Judge 482: Permutation Arrays
 //  0482
 //	main.cpp
 //  Created by David del Val on 03/08/2019

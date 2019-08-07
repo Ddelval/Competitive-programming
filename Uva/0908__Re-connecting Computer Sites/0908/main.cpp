@@ -1,4 +1,4 @@
-// UVa Online Judge 908: Re-connecting_Computer_Sites
+// UVa Online Judge 908: Re-connecting Computer Sites
 //  0908
 //	main.cpp
 //  Created by David del Val on 06/08/2019

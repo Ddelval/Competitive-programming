@@ -1,4 +1,4 @@
-// UVa Online Judge 11462: Age_Sort
+// UVa Online Judge 11462: Age Sort
 //  11462
 //	main.cpp
 //  Created by David del Val on 06/08/2019
