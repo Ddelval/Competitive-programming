@@ -1,4 +1,5 @@
-//  0941
+// UVa Online Judge 837: Light and Transparencies
+//  0837
 //	main.cpp
 //  Created by David del Val on 07/08/2019
 //
@@ -58,31 +59,40 @@ inline int _gcd(int a, int b){ while(b) b %= a ^= b ^= a ^= b; return a;}
 typedef long long ll;
 typedef vector<int> vi;
 typedef pair<int, int> pii;
+typedef pair<double, double> pid;
 typedef pair<ll, ll> pll;
 
-ll fact[20];
+
 int main(){
     ios::sync_with_stdio(false);
 	int q;
-	fact[0]=1;
-	for(int i=1;i<20;++i)fact[i]=fact[i-1]*i;
 	cin>>q;
 	for(int z=0;z<q;++z){
-		string s;
-		ll n;
-		cin>>s>>n;
-		sort(s.begin(),s.end());
-		for(int i=0;i<s.length();++i){
-			sort(s.begin()+i,s.end());
-			if(!n)break;
-			int counter=0;
-			while(n>=fact[(int)s.length()-i-1]){
-				n-=fact[(int)s.length()-i-1];
-				counter++;
-			}
-			swap(s[i], s[min(i+counter,(int)s.length()-1)]);
+		int nl;
+		cin>>nl;
+		vector<pid> v;
+		double x1,y1,x2,y2;
+		double val;
+		for(int i=0;i<nl;++i){
+			cin>>x1>>y1>>x2>>y2>>val;
+			if(x2<x1)swap(x1,x2);
+			v.pb(mp(x1,val));
+			v.pb(mp(x2,1/val));
 		}
-		cout<<s<<"\n";
+		double prev=-INFINITY;
+		val=1;
+		sort(v.begin(),v.end());
+		cout<<fixed;
+		cout.precision(3);
+		cout<<v.size()+1<<"\n";
+		for(auto a:v){
+			cout<<prev<<" "<<a.fi<<" "<<val<<"\n";
+			val*=a.se;
+			prev=a.fi;
+		}
+		cout<<prev<<" "<<"+inf"<<" "<<1.0<<"\n";
+		if(z!=q-1)cout<<"\n";
+		
 	}
 
     return 0;

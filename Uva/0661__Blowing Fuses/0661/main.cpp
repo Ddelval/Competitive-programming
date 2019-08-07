@@ -1,4 +1,5 @@
-//  0739
+// UVa Online Judge 661: Blowing Fuses
+//  0661
 //	main.cpp
 //  Created by David del Val on 07/08/2019
 //
@@ -60,50 +61,37 @@ typedef vector<int> vi;
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
 
-char dic[200];
-
-void add(int code, char letter){
-	dic[letter]=code+'0';
-}
+int cost[20];
+int on[20];
 
 int main(){
     ios::sync_with_stdio(false);
-	
-	add(1,'B'); add(1,'P'); add(1,'F'); add(1,'V');
-	add(2,'C'); add(2,'S'); add(2,'K'); add(2,'G'); add(2,'J'); add(2,'Q'); add(2,'X'); add(2,'Z');
-	add(3,'D'); add(3,'T');
-	add(4,'L');
-	add(5,'M'); add(5,'N');
-	add(6,'R');
-	
-	REP(i, 9)cout<<" ";
-	cout<<"NAME";
-	REP(i, 21)cout<<" ";
-	cout<<"SOUNDEX CODE\n";
-	string s;
-	
-	while(cin>>s){
-		string a="";
-		a+=s[0];
-		int index=1;
-		for(int i=1;i<s.length();++i){
-			if(dic[s[i]]&&dic[s[i]]!=dic[s[i-1]]){
-				a+=dic[s[i]];
-				index++;
-				if(index==4)break;
-			}
+	int m,n,c;
+	int index=1;
+	while(cin>>n>>m>>c&&n&&m&&c){
+		REP(i,20)on[i]=0;
+		REP(i,n){
+			cin>>cost[i];
 		}
-		while(index<4){
-			a+='0';
-			index++;
+		int a;
+		int ccost=0;
+		int ma=0;
+		REP(i,m){
+			cin>>a;
+			a--;
+			on[a]=!on[a];
+			ccost+=(on[a])? cost[a]:(-1*cost[a]);
+			ma=max(ma,ccost);
 		}
-		REP(i, 9)cout<<" ";
-		cout<<s;
-		REP(i,35-10-(int)s.length())cout<<" ";
-		cout<<a<<"\n";
+		
+		cout<<"Sequence "<<index<<"\n";
+		index++;
+		if(ma>c)cout<<"Fuse was blown.\n";
+		else cout<<"Fuse was not blown.\nMaximal power consumption was "<<ma<<" amperes.\n";
+		cout<<"\n";
+		
 	}
-	REP(i, 19)cout<<" ";
-	cout<<"END OF OUTPUT\n";
+
     return 0;
 }
 

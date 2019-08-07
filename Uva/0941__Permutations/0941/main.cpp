@@ -1,4 +1,5 @@
-//  0483
+// UVa Online Judge 941: Permutations
+//  0941
 //	main.cpp
 //  Created by David del Val on 07/08/2019
 //
@@ -17,7 +18,7 @@
 #include <utility>
 #include <string.h>
 #include <limits.h>
-#include <sstream>
+
 using namespace std;
 
 #define mp(x, y) make_pair(x, y)
@@ -60,27 +61,28 @@ typedef vector<int> vi;
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
 
-
+ll fact[20];
 int main(){
     ios::sync_with_stdio(false);
-	string s;
-	while(getline(cin,s)){
-		string::iterator it1=s.begin();
-		string::iterator it2;
-		int i=0;
-		while(s[i]==' '){it1++;i++;}
-		for(i++;i<s.length();++i){
-			if(s[i]==' '){
-				it2=s.begin()+i;
-				reverse(it1,it2);
-				it1=it2;
-				while(i<s.length()&&s[i]==' '){it1++;i++;};
-				//i++;
+	int q;
+	fact[0]=1;
+	for(int i=1;i<20;++i)fact[i]=fact[i-1]*i;
+	cin>>q;
+	for(int z=0;z<q;++z){
+		string s;
+		ll n;
+		cin>>s>>n;
+		sort(s.begin(),s.end());
+		for(int i=0;i<s.length();++i){
+			sort(s.begin()+i,s.end());
+			if(!n)break;
+			int counter=0;
+			while(n>=fact[(int)s.length()-i-1]){
+				n-=fact[(int)s.length()-i-1];
+				counter++;
 			}
-			
+			swap(s[i], s[min(i+counter,(int)s.length()-1)]);
 		}
-		it2=s.end();
-		reverse(it1,it2);
 		cout<<s<<"\n";
 	}
 

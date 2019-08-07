@@ -1,4 +1,5 @@
-//  0837
+// UVa Online Judge 483: Word Scramble
+//  0483
 //	main.cpp
 //  Created by David del Val on 07/08/2019
 //
@@ -17,7 +18,7 @@
 #include <utility>
 #include <string.h>
 #include <limits.h>
-
+#include <sstream>
 using namespace std;
 
 #define mp(x, y) make_pair(x, y)
@@ -58,40 +59,30 @@ inline int _gcd(int a, int b){ while(b) b %= a ^= b ^= a ^= b; return a;}
 typedef long long ll;
 typedef vector<int> vi;
 typedef pair<int, int> pii;
-typedef pair<double, double> pid;
 typedef pair<ll, ll> pll;
 
 
 int main(){
     ios::sync_with_stdio(false);
-	int q;
-	cin>>q;
-	for(int z=0;z<q;++z){
-		int nl;
-		cin>>nl;
-		vector<pid> v;
-		double x1,y1,x2,y2;
-		double val;
-		for(int i=0;i<nl;++i){
-			cin>>x1>>y1>>x2>>y2>>val;
-			if(x2<x1)swap(x1,x2);
-			v.pb(mp(x1,val));
-			v.pb(mp(x2,1/val));
+	string s;
+	while(getline(cin,s)){
+		string::iterator it1=s.begin();
+		string::iterator it2;
+		int i=0;
+		while(s[i]==' '){it1++;i++;}
+		for(i++;i<s.length();++i){
+			if(s[i]==' '){
+				it2=s.begin()+i;
+				reverse(it1,it2);
+				it1=it2;
+				while(i<s.length()&&s[i]==' '){it1++;i++;};
+				//i++;
+			}
+			
 		}
-		double prev=-INFINITY;
-		val=1;
-		sort(v.begin(),v.end());
-		cout<<fixed;
-		cout.precision(3);
-		cout<<v.size()+1<<"\n";
-		for(auto a:v){
-			cout<<prev<<" "<<a.fi<<" "<<val<<"\n";
-			val*=a.se;
-			prev=a.fi;
-		}
-		cout<<prev<<" "<<"+inf"<<" "<<1.0<<"\n";
-		if(z!=q-1)cout<<"\n";
-		
+		it2=s.end();
+		reverse(it1,it2);
+		cout<<s<<"\n";
 	}
 
     return 0;
