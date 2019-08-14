@@ -1,5 +1,5 @@
-// UVa Online Judge 111: History Grading
-//  0111
+// UVa Online Judge 11456: Trainsorting
+//  11456
 //	main.cpp
 //  Created by David del Val on 14/08/2019
 //
@@ -8,7 +8,7 @@
 
 #include <iostream>
 #include <algorithm>
-#include <sstream>
+#include <queue>
 #include <stack>
 #include <vector>
 #include <string>
@@ -61,58 +61,64 @@ typedef vector<int> vi;
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
 
-int LIS(vi&a){
-	vi DP(a.size());
-	int ans;
-	for(int i=0;i<a.size();++i){
-		ans=1;
-		for(int j=0;j<i;++j){
-			if(a[j]<a[i])ans=max(ans,DP[j]+1);
+vi LIS (vi&a){
+	int n=(int)a.size();
+	vi DP(n);
+	vi M(n+1);
+	int L=0;
+	for(int i=n-1;i>=0;--i){
+		int r=L+1;
+		int l=0;
+		while(l+1!=r){
+			int mid=(l+r)/2;
+			if(a[M[mid]]>a[i])l=mid;
+			else r=mid;
 		}
-		DP[i]=ans;
+		int nL=l+1;
+		L=max(L,nL);
+		M[nL]=i;
+		DP[i]=nL;
 	}
-	return *max_element(DP.begin(), DP.end());
+	return DP;
+}
+
+vi LIS2 (vi&a){
+	int n=(int)a.size();
+	vi DP(n);
+	vi M(n+1);
+	int L=0;
+	for(int i=n-1;i>=0;--i){
+		int r=L+1;
+		int l=0;
+		while(l+1!=r){
+			int mid=(l+r)/2;
+			if(a[M[mid]]<a[i])l=mid;
+			else r=mid;
+		}
+		int nL=l+1;
+		L=max(L,nL);
+		M[nL]=i;
+		DP[i]=nL;
+	}
+	return DP;
 }
 
 int main(){
     ios::sync_with_stdio(false);
-	int n;
-	cin>>n;
-	while(true){
-		map<int,int> dic;
-		int a;
-		REP(i, n){
-			cin>>a;
-			dic[i+1]=a;
+	int q;
+	cin>>q;
+	while(q--){
+		int n;
+		cin>>n;
+		vi dat(n);
+		REP(i,n)cin>>dat[i];
+		vi li=LIS(dat);
+		vi ld=LIS2(dat);
+		int ma=min(n,1);
+		REP(i,n){
+			ma=max(ma,li[i]+ld[i]-1);
 		}
-		string in;
-		getline(cin,in);
-		while(true){
-			if(!getline(cin,in)){
-				return 0;
-			}
-string::size_type ab;
-int b=0;
-try{
-  b=stoi(in,&ab,10);
-}catch(exception e){return 0;}
-if(ab==in.length()){//There is only one number in the line
-	n=b;
-	break;
-}
-			else{
-				vi ex(n);
-				stringstream ss(in);
-				int a;
-				REP(i,n){
-					ss>>a;
-					ex[a-1]=i+1;
-					ex[a-1]=dic[ex[a-1]];
-				}
-				cout<<LIS(ex)<<"\n";
-			}
-		}
-		
+		cout<<ma<<"\n";
 	}
 
     return 0;
