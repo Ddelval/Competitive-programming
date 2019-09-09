@@ -1,14 +1,13 @@
-// UVa Online Judge 111: History Grading
-//  0111
+//  E
 //	main.cpp
-//  Created by David del Val on 14/08/2019
+//  Created by David del Val on 13/08/2019
 //
 //
 
 
 #include <iostream>
 #include <algorithm>
-#include <sstream>
+#include <queue>
 #include <stack>
 #include <vector>
 #include <string>
@@ -61,60 +60,30 @@ typedef vector<int> vi;
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
 
-int LIS(vi&a){
-	vi DP(a.size());
-	int ans;
-	for(int i=0;i<a.size();++i){
-		ans=1;
-		for(int j=0;j<i;++j){
-			if(a[j]<a[i])ans=max(ans,DP[j]+1);
-		}
-		DP[i]=ans;
-	}
-	return *max_element(DP.begin(), DP.end());
-}
 
 int main(){
     ios::sync_with_stdio(false);
 	int n;
 	cin>>n;
-	while(true){
-		map<int,int> dic;
-		int a;
-		REP(i, n){
-			cin>>a;
-			dic[i+1]=a;
+	int boxers=1;
+	vi box(n);
+	REP(i,n)cin>>box[i];
+	sort(box.begin(),box.end());
+	int cm;
+	if(box[0]!=1)cm=box[0]-1;
+	else cm=box[0];
+	for(int i=1;i<box.size();++i){
+		if(box[i]>cm){
+			boxers++;
+			if(box[i]-1==cm)cm=box[i];
+			else cm=box[i]-1;
 		}
-		string in;
-		getline(cin,in);
-		while(true){
-			if(!getline(cin,in)){
-				return 0;
-			}
-string::size_type ab;
-int b=0;
-try{
-  b=stoi(in,&ab,10);
-}catch(exception e){return 0;}
-if(ab==in.length()){//There is only one number in the line
-	n=b;
-	break;
-}
-			else{
-				vi ex(n);
-				stringstream ss(in);
-				int a;
-				REP(i,n){
-					ss>>a;
-					ex[a-1]=i+1;
-					ex[a-1]=dic[ex[a-1]];
-				}
-				cout<<LIS(ex)<<"\n";
-			}
+		else if(box[i]==cm){
+			boxers++;
+			cm=box[i]+1;
 		}
-		
 	}
-
+	cout<<boxers<<"\n";
     return 0;
 }
 

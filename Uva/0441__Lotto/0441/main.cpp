@@ -1,14 +1,13 @@
-// UVa Online Judge 111: History Grading
-//  0111
+//  0441
 //	main.cpp
-//  Created by David del Val on 14/08/2019
+//  Created by David del Val on 08/08/2019
 //
 //
 
 
 #include <iostream>
 #include <algorithm>
-#include <sstream>
+#include <queue>
 #include <stack>
 #include <vector>
 #include <string>
@@ -61,58 +60,31 @@ typedef vector<int> vi;
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
 
-int LIS(vi&a){
-	vi DP(a.size());
-	int ans;
-	for(int i=0;i<a.size();++i){
-		ans=1;
-		for(int j=0;j<i;++j){
-			if(a[j]<a[i])ans=max(ans,DP[j]+1);
-		}
-		DP[i]=ans;
-	}
-	return *max_element(DP.begin(), DP.end());
-}
 
 int main(){
     ios::sync_with_stdio(false);
-	int n;
-	cin>>n;
-	while(true){
-		map<int,int> dic;
-		int a;
-		REP(i, n){
-			cin>>a;
-			dic[i+1]=a;
-		}
-		string in;
-		getline(cin,in);
-		while(true){
-			if(!getline(cin,in)){
-				return 0;
-			}
-string::size_type ab;
-int b=0;
-try{
-  b=stoi(in,&ab,10);
-}catch(exception e){return 0;}
-if(ab==in.length()){//There is only one number in the line
-	n=b;
-	break;
-}
-			else{
-				vi ex(n);
-				stringstream ss(in);
-				int a;
-				REP(i,n){
-					ss>>a;
-					ex[a-1]=i+1;
-					ex[a-1]=dic[ex[a-1]];
-				}
-				cout<<LIS(ex)<<"\n";
-			}
-		}
+	int k;
+	int index=0;
+	while(cin>>k&&k){
+		if(index)cout<<"\n";
+		index=1;
+		vi v(k);
+		for(int i=0;i<k;++i)cin>>v[i];
+		sort(v.begin(), v.end());
 		
+		for(int i1=0;i1<v.size()-5;i1++){
+			for(int i2=i1+1;i2<v.size()-4;i2++){
+				for(int i3=i2+1;i3<v.size()-3;i3++){
+					for(int i4=i3+1;i4<v.size()-2;i4++){
+						for(int i5=i4+1;i5<v.size()-1;i5++){
+							for(int i6=i5+1;i6<v.size()  ;i6++){
+								cout<<v[i1]<<" "<<v[i2]<<" "<<v[i3]<<" "<<v[i4]<<" "<<v[i5]<<" "<<v[i6]<<"\n";
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 
     return 0;

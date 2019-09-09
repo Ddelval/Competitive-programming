@@ -1,14 +1,13 @@
-// UVa Online Judge 111: History Grading
-//  0111
+//  B
 //	main.cpp
-//  Created by David del Val on 14/08/2019
+//  Created by David del Val on 13/08/2019
 //
 //
 
 
 #include <iostream>
 #include <algorithm>
-#include <sstream>
+#include <queue>
 #include <stack>
 #include <vector>
 #include <string>
@@ -61,58 +60,42 @@ typedef vector<int> vi;
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
 
-int LIS(vi&a){
-	vi DP(a.size());
-	int ans;
-	for(int i=0;i<a.size();++i){
-		ans=1;
-		for(int j=0;j<i;++j){
-			if(a[j]<a[i])ans=max(ans,DP[j]+1);
-		}
-		DP[i]=ans;
-	}
-	return *max_element(DP.begin(), DP.end());
-}
 
 int main(){
     ios::sync_with_stdio(false);
-	int n;
-	cin>>n;
-	while(true){
-		map<int,int> dic;
+	int q;
+	cin>>q;
+	while(q--){
+		map<int,int> reg;
+		int n;
+		cin>>n;
+		n*=4;
 		int a;
-		REP(i, n){
+		REP(i,n){
 			cin>>a;
-			dic[i+1]=a;
+			reg[a]++;
 		}
-		string in;
-		getline(cin,in);
-		while(true){
-			if(!getline(cin,in)){
-				return 0;
-			}
-string::size_type ab;
-int b=0;
-try{
-  b=stoi(in,&ab,10);
-}catch(exception e){return 0;}
-if(ab==in.length()){//There is only one number in the line
-	n=b;
-	break;
-}
-			else{
-				vi ex(n);
-				stringstream ss(in);
-				int a;
-				REP(i,n){
-					ss>>a;
-					ex[a-1]=i+1;
-					ex[a-1]=dic[ex[a-1]];
-				}
-				cout<<LIS(ex)<<"\n";
+		vi sides;
+		for(auto b:reg){
+			for(int i=0;i<b.se/2;++i)sides.pb(b.fi);
+		}
+		int target;
+		if(sides.size()!=n/2){
+			cout<<"NO\n";
+			continue;
+		}
+		bool b=true;
+		target=sides[0]*sides[sides.size()-1];
+		int candid;
+		for(int i=1;i<sides.size()/2;++i){
+			candid=sides[i]*sides[sides.size()-1-i];
+			if(candid!=target){
+				cout<<"NO\n";
+				b=false;
+				break;
 			}
 		}
-		
+		if(b)cout<<"YES\n";
 	}
 
     return 0;

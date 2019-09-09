@@ -1,14 +1,14 @@
-// UVa Online Judge 111: History Grading
-//  0111
+// UVa Online Judge 10921: Find the Telephone
+//  10921
 //	main.cpp
-//  Created by David del Val on 14/08/2019
+//  Created by David del Val on 08/08/2019
 //
 //
 
 
 #include <iostream>
 #include <algorithm>
-#include <sstream>
+#include <queue>
 #include <stack>
 #include <vector>
 #include <string>
@@ -61,58 +61,24 @@ typedef vector<int> vi;
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
 
-int LIS(vi&a){
-	vi DP(a.size());
-	int ans;
-	for(int i=0;i<a.size();++i){
-		ans=1;
-		for(int j=0;j<i;++j){
-			if(a[j]<a[i])ans=max(ans,DP[j]+1);
-		}
-		DP[i]=ans;
-	}
-	return *max_element(DP.begin(), DP.end());
-}
 
 int main(){
     ios::sync_with_stdio(false);
-	int n;
-	cin>>n;
-	while(true){
-		map<int,int> dic;
-		int a;
-		REP(i, n){
-			cin>>a;
-			dic[i+1]=a;
+	char c;
+	c=getchar();
+	while(c!=EOF){
+		int in=(c-'A')/3+2;
+		if(in>1&&in<7){
+			putchar('0'+in);
 		}
-		string in;
-		getline(cin,in);
-		while(true){
-			if(!getline(cin,in)){
-				return 0;
-			}
-string::size_type ab;
-int b=0;
-try{
-  b=stoi(in,&ab,10);
-}catch(exception e){return 0;}
-if(ab==in.length()){//There is only one number in the line
-	n=b;
-	break;
-}
-			else{
-				vi ex(n);
-				stringstream ss(in);
-				int a;
-				REP(i,n){
-					ss>>a;
-					ex[a-1]=i+1;
-					ex[a-1]=dic[ex[a-1]];
-				}
-				cout<<LIS(ex)<<"\n";
-			}
-		}
+		else if(c>='P'&&c<='S')putchar('7');
+		else if(c>='T'&&c<='V')putchar('8');
+		else if(c>='W'&&c<='Z')putchar('9');
+		else putchar(c);
 		
+		
+		
+		c=getchar();
 	}
 
     return 0;

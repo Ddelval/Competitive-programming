@@ -1,30 +1,20 @@
-// UVa Online Judge 111: History Grading
-//  0111
+//  0260
 //	main.cpp
-//  Created by David del Val on 14/08/2019
+//  Created by David del Val on 24/08/2019
 //
 //
 
-
-#include <iostream>
-#include <algorithm>
-#include <sstream>
-#include <stack>
-#include <vector>
-#include <string>
-#include <set>
-#include <map>
-#include <math.h>
-#include <utility>
-#include <string.h>
-#include <limits.h>
+#include <bits/stdc++.h>
 
 using namespace std;
 
-#define mp(x, y) make_pair(x, y)
-#define pb(x) push_back(x)
+#define mp make_pair
+#define pb push_back
+#define all(x) (x).begin(), (x).end()
+#define sz(x) (int)(x).size()
 #define fi first
 #define se second
+#define LSB(x) ((x) & (-(x)))
 #define echobin(x) cout<<#x<<":"<<x<<" ="<<bitset<8>(x)<<"  ";
 #define echo(...) {cout<<"->";ECHO(#__VA_ARGS__, __VA_ARGS__ );}
 #define REPO(i,a,b) for(int i=a;i<b;i++)
@@ -54,67 +44,55 @@ template<typename T> inline T _min(T x1, T x2, T x3){return min(x1, min(x2, x3))
 template<typename T> inline T _min(T x1, T x2, T x3, T x4){return min(min(x1, x2), min(x2, x3));}
 
 //gcd(0, n) = n
-inline int _gcd(int a, int b){ while(b) b %= a ^= b ^= a ^= b; return a;}
+inline long long _gcd(long long a, long long b){ while(b) b %= a ^= b ^= a ^= b; return a;}
 
 typedef long long ll;
 typedef vector<int> vi;
+typedef vector<ll>  vl;
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
+typedef vector<pii> vii;
+typedef vector<pll> vll;
 
-int LIS(vi&a){
-	vi DP(a.size());
-	int ans;
-	for(int i=0;i<a.size();++i){
-		ans=1;
-		for(int j=0;j<i;++j){
-			if(a[j]<a[i])ans=max(ans,DP[j]+1);
-		}
-		DP[i]=ans;
+bool visited[210][210];
+bool black[201][210];
+int n,m;
+int dfs(int i,int j){
+	if(i<0||i>=n)return 0;
+	if(j<0||j>=m)return 0;
+	if(visited[i][j])return 0;
+	if(!black[i][j])return 0;
+	visited[i][j]=1;
+	if(i==n-1){
+		return 1;
 	}
-	return *max_element(DP.begin(), DP.end());
+	else return (dfs(i-1,j-1)||dfs(i-1,j)||dfs(i,j-1)||dfs(i,j+1)||dfs(i+1,j)||dfs(i+1,j+1));
 }
-
 int main(){
     ios::sync_with_stdio(false);
-	int n;
-	cin>>n;
-	while(true){
-		map<int,int> dic;
-		int a;
-		REP(i, n){
-			cin>>a;
-			dic[i+1]=a;
+	int cas=1;
+	while(cin>>n&&n){
+		m=n;
+		char c;
+		REP(i,n)REP(j,m){
+			cin>>c;
+			black[i][j]=(c=='b');
+			visited[i][j]=false;
 		}
-		string in;
-		getline(cin,in);
-		while(true){
-			if(!getline(cin,in)){
-				return 0;
+		bool fnd=false;
+		REP(i,n){
+			if(black[0][i]&&dfs(0,i)){
+				fnd=true;
+				break;
 			}
-string::size_type ab;
-int b=0;
-try{
-  b=stoi(in,&ab,10);
-}catch(exception e){return 0;}
-if(ab==in.length()){//There is only one number in the line
-	n=b;
-	break;
-}
-			else{
-				vi ex(n);
-				stringstream ss(in);
-				int a;
-				REP(i,n){
-					ss>>a;
-					ex[a-1]=i+1;
-					ex[a-1]=dic[ex[a-1]];
-				}
-				cout<<LIS(ex)<<"\n";
-			}
+			
 		}
-		
+		if(!fnd)cout<<cas<<" W\n";
+		else cout<<cas<<" B\n";
+		cas++;
 	}
 
     return 0;
 }
+
 

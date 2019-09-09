@@ -1,14 +1,14 @@
-// UVa Online Judge 111: History Grading
-//  0111
+// UVa Online Judge 10360: Rat Attack
+//  10360
 //	main.cpp
-//  Created by David del Val on 14/08/2019
+//  Created by David del Val on 08/08/2019
 //
 //
 
 
 #include <iostream>
 #include <algorithm>
-#include <sstream>
+#include <queue>
 #include <stack>
 #include <vector>
 #include <string>
@@ -61,57 +61,49 @@ typedef vector<int> vi;
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
 
-int LIS(vi&a){
-	vi DP(a.size());
-	int ans;
-	for(int i=0;i<a.size();++i){
-		ans=1;
-		for(int j=0;j<i;++j){
-			if(a[j]<a[i])ans=max(ans,DP[j]+1);
+int d;
+int grid[1025][1025];
+void fill(int x,int y,int inc){
+	int lim1,lim2;
+	lim1=min(x+d,1024);
+	lim2=min(y+d,1024);
+	for(int i=max(0,x-d);i<=lim1;++i){
+		for(int j=max(0,y-d);j<=lim2;++j){
+			grid[i][j]+=inc;
+			
 		}
-		DP[i]=ans;
 	}
-	return *max_element(DP.begin(), DP.end());
 }
-
 int main(){
     ios::sync_with_stdio(false);
-	int n;
-	cin>>n;
-	while(true){
-		map<int,int> dic;
-		int a;
-		REP(i, n){
-			cin>>a;
-			dic[i+1]=a;
-		}
-		string in;
-		getline(cin,in);
-		while(true){
-			if(!getline(cin,in)){
-				return 0;
+	int q;
+	cin>>q;
+	for(int z=0;z<q;++z){
+		int n;
+		for(int i=0;i<1025;++i){
+			for(int j=0;j<1025;++j){
+				grid[i][j]=0;
 			}
-string::size_type ab;
-int b=0;
-try{
-  b=stoi(in,&ab,10);
-}catch(exception e){return 0;}
-if(ab==in.length()){//There is only one number in the line
-	n=b;
-	break;
-}
-			else{
-				vi ex(n);
-				stringstream ss(in);
-				int a;
-				REP(i,n){
-					ss>>a;
-					ex[a-1]=i+1;
-					ex[a-1]=dic[ex[a-1]];
+		}
+		cin>>d>>n;
+		int x,y,c;
+		REP(i,n){
+			cin>>x>>y>>c;
+			fill(x,y,c);
+		}
+		int ma=-1;
+		int x0,y0;
+		for(int i=0;i<1025;++i){
+			for(int j=0;j<1025;++j){
+				if(grid[i][j]>ma){
+					ma=grid[i][j];
+					x0=i;
+					y0=j;
 				}
-				cout<<LIS(ex)<<"\n";
 			}
 		}
+		cout<<x0<<" "<<y0<<" "<<ma<<"\n";
+		
 		
 	}
 

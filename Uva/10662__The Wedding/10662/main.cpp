@@ -1,14 +1,14 @@
-// UVa Online Judge 111: History Grading
-//  0111
+// UVa Online Judge 10662: The Wedding
+//  10662
 //	main.cpp
-//  Created by David del Val on 14/08/2019
+//  Created by David del Val on 08/08/2019
 //
 //
 
 
 #include <iostream>
 #include <algorithm>
-#include <sstream>
+#include <queue>
 #include <stack>
 #include <vector>
 #include <string>
@@ -61,58 +61,84 @@ typedef vector<int> vi;
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
 
-int LIS(vi&a){
-	vi DP(a.size());
-	int ans;
-	for(int i=0;i<a.size();++i){
-		ans=1;
-		for(int j=0;j<i;++j){
-			if(a[j]<a[i])ans=max(ans,DP[j]+1);
-		}
-		DP[i]=ans;
-	}
-	return *max_element(DP.begin(), DP.end());
-}
+vector<vector<int>>adyList[3];
 
+int history[3],fin[3];
+int res;
+int val[3][20];
+int ady[3][20][20];
+void DFS(int layer,int cost,int cnode){
+	if(layer==2){
+		if(ady[layer][cnode][history[0]]){
+			if(cost<res){
+				res=cost;
+				REP(i,3)fin[i]=history[i];
+				
+			}
+		}
+		return;
+	}
+	for(int a:adyList[layer][cnode]){
+		history[layer+1]=a;
+		DFS(layer+1,cost+val[layer+1][a],a);
+	}
+}
 int main(){
     ios::sync_with_stdio(false);
-	int n;
-	cin>>n;
-	while(true){
-		map<int,int> dic;
-		int a;
-		REP(i, n){
-			cin>>a;
-			dic[i+1]=a;
-		}
-		string in;
-		getline(cin,in);
-		while(true){
-			if(!getline(cin,in)){
-				return 0;
-			}
-string::size_type ab;
-int b=0;
-try{
-  b=stoi(in,&ab,10);
-}catch(exception e){return 0;}
-if(ab==in.length()){//There is only one number in the line
-	n=b;
-	break;
-}
-			else{
-				vi ex(n);
-				stringstream ss(in);
-				int a;
-				REP(i,n){
-					ss>>a;
-					ex[a-1]=i+1;
-					ex[a-1]=dic[ex[a-1]];
+	int t,r,h;
+	while(cin>>t>>r>>h){
+		for(int i=0;i<3;++i){
+			for(int j=0;j<20;++j){
+				for(int z=0;z<20;++z){
+					ady[i][j][z]=0;
 				}
-				cout<<LIS(ex)<<"\n";
 			}
 		}
-		
+		vector<vector<int>> v;
+		adyList[0]=adyList[1]=adyList[2]=v;
+		vector<int> av;
+		for(int i=0;i<t;++i){
+			cin>>val[0][i];
+			adyList[0].pb(av);
+			for(int j=0;j<r;j++){
+				cin>>ady[0][i][j];
+				ady[0][i][j]=!ady[0][i][j];
+				if(ady[0][i][j]){
+					adyList[0][i].pb(j);
+				}
+			}
+		}
+		for(int i=0;i<r;++i){
+			cin>>val[1][i];
+			adyList[1].pb(av);
+			for(int j=0;j<h;j++){
+				cin>>ady[1][i][j];
+				ady[1][i][j]=!ady[1][i][j];
+				if(ady[1][i][j]){
+					adyList[1][i].pb(j);
+				}
+			}
+		}
+		for(int i=0;i<h;++i){
+			cin>>val[2][i];
+			adyList[2].pb(av);
+			for(int j=0;j<t;j++){
+				cin>>ady[2][i][j];
+				ady[2][i][j]=!ady[2][i][j];
+				if(ady[2][i][j]){
+					adyList[2][i].pb(j);
+				}
+			}
+		}
+		res=INT_MAX;
+		for(int i=0;i<t;++i){
+			history[0]=i;
+			DFS(0,val[0][i],i);
+		}
+		if(res==INT_MAX)cout<<"Don't get married!\n";
+		else {
+			cout<<fin[0]<<" "<<fin[1]<<" "<<fin[2]<<":"<<res<<"\n";
+		}
 	}
 
     return 0;

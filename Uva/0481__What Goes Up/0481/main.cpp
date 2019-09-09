@@ -1,5 +1,5 @@
-// UVa Online Judge 111: History Grading
-//  0111
+// UVa Online Judge 481: What Goes Up
+//  0481
 //	main.cpp
 //  Created by David del Val on 14/08/2019
 //
@@ -8,7 +8,7 @@
 
 #include <iostream>
 #include <algorithm>
-#include <sstream>
+#include <queue>
 #include <stack>
 #include <vector>
 #include <string>
@@ -61,60 +61,48 @@ typedef vector<int> vi;
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
 
-int LIS(vi&a){
-	vi DP(a.size());
-	int ans;
+vector<int> LIS(vi&a){
+	vi P(a.size());
+	vi M(a.size()+1);
+	int L=0;
 	for(int i=0;i<a.size();++i){
-		ans=1;
-		for(int j=0;j<i;++j){
-			if(a[j]<a[i])ans=max(ans,DP[j]+1);
+		int lo=0;
+		int hi=L+1;
+		while (lo+1<hi){
+			int mid=(lo+hi)/2;
+			
+			if(a[M[mid]]<a[i]) lo=mid;
+			else hi=mid;
 		}
-		DP[i]=ans;
+		int newL=lo+1;
+		P[i]=M[newL-1];
+		M[newL]=i;
+		if(newL>L){
+			L=newL;
+		}
 	}
-	return *max_element(DP.begin(), DP.end());
+	vi S(L);
+	int k=M[L];
+	for(int i=L-1;i>=0;--i){
+		S[i]=a[k];
+		k=P[k];
+	}
+	return S;
 }
 
 int main(){
     ios::sync_with_stdio(false);
-	int n;
-	cin>>n;
-	while(true){
-		map<int,int> dic;
-		int a;
-		REP(i, n){
-			cin>>a;
-			dic[i+1]=a;
-		}
-		string in;
-		getline(cin,in);
-		while(true){
-			if(!getline(cin,in)){
-				return 0;
-			}
-string::size_type ab;
-int b=0;
-try{
-  b=stoi(in,&ab,10);
-}catch(exception e){return 0;}
-if(ab==in.length()){//There is only one number in the line
-	n=b;
-	break;
-}
-			else{
-				vi ex(n);
-				stringstream ss(in);
-				int a;
-				REP(i,n){
-					ss>>a;
-					ex[a-1]=i+1;
-					ex[a-1]=dic[ex[a-1]];
-				}
-				cout<<LIS(ex)<<"\n";
-			}
-		}
-		
+	vi dat;
+	int a;
+	while(cin>>a){
+		dat.pb(a);
 	}
+	vi s=LIS(dat);
+	cout<<s.size()<<"\n"<<"-"<<"\n";
+	for(int a:s){
+		cout<<a<<"\n";
 
+	}
     return 0;
 }
 

@@ -1,14 +1,14 @@
-// UVa Online Judge 111: History Grading
-//  0111
+// UVa Online Judge 10341: Solve It
+//  10341
 //	main.cpp
-//  Created by David del Val on 14/08/2019
+//  Created by David del Val on 09/08/2019
 //
 //
 
 
 #include <iostream>
 #include <algorithm>
-#include <sstream>
+#include <queue>
 #include <stack>
 #include <vector>
 #include <string>
@@ -60,59 +60,28 @@ typedef long long ll;
 typedef vector<int> vi;
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
-
-int LIS(vi&a){
-	vi DP(a.size());
-	int ans;
-	for(int i=0;i<a.size();++i){
-		ans=1;
-		for(int j=0;j<i;++j){
-			if(a[j]<a[i])ans=max(ans,DP[j]+1);
-		}
-		DP[i]=ans;
-	}
-	return *max_element(DP.begin(), DP.end());
+int p,q,r,s,t,u;
+double calculate(double x){
+	return p*pow(M_E, -x)+q*sin(x)+r*cos(x)+s*tan(x)+t*x*x+u;
 }
 
 int main(){
     ios::sync_with_stdio(false);
-	int n;
-	cin>>n;
-	while(true){
-		map<int,int> dic;
-		int a;
-		REP(i, n){
-			cin>>a;
-			dic[i+1]=a;
+	while(cin>>p>>q>>r>>s>>t>>u){
+		double vr=calculate(1);
+		double r=1;
+		double l=0;
+		if(calculate(r)*calculate(l)>0){
+			printf("No solution\n");
+			continue;
 		}
-		string in;
-		getline(cin,in);
-		while(true){
-			if(!getline(cin,in)){
-				return 0;
-			}
-string::size_type ab;
-int b=0;
-try{
-  b=stoi(in,&ab,10);
-}catch(exception e){return 0;}
-if(ab==in.length()){//There is only one number in the line
-	n=b;
-	break;
-}
-			else{
-				vi ex(n);
-				stringstream ss(in);
-				int a;
-				REP(i,n){
-					ss>>a;
-					ex[a-1]=i+1;
-					ex[a-1]=dic[ex[a-1]];
-				}
-				cout<<LIS(ex)<<"\n";
-			}
+		while(r-l>=0.000000001){
+			double mid=(r+l)/2;
+			double vmid=calculate(mid);
+			if(vmid*vr>0)r=mid;
+			else l=mid;
 		}
-		
+		printf("%.4lf\n",l);
 	}
 
     return 0;

@@ -1,5 +1,5 @@
-// UVa Online Judge 111: History Grading
-//  0111
+// UVa Online Judge 11003: Boxes
+//  11003
 //	main.cpp
 //  Created by David del Val on 14/08/2019
 //
@@ -8,7 +8,7 @@
 
 #include <iostream>
 #include <algorithm>
-#include <sstream>
+#include <queue>
 #include <stack>
 #include <vector>
 #include <string>
@@ -60,59 +60,27 @@ typedef long long ll;
 typedef vector<int> vi;
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
-
-int LIS(vi&a){
-	vi DP(a.size());
-	int ans;
-	for(int i=0;i<a.size();++i){
-		ans=1;
-		for(int j=0;j<i;++j){
-			if(a[j]<a[i])ans=max(ans,DP[j]+1);
-		}
-		DP[i]=ans;
+int DP[1001][3005];
+vector<pii>b;
+int n;
+int eval(int s_w,int cpos){
+	if(cpos==n)return 0;
+	if(s_w<3005&&DP[cpos][s_w]!=-1)return DP[cpos][s_w];
+	if(b[cpos].fi<=s_w){
+		int a1=eval(min(s_w-b[cpos].fi,b[cpos].se),cpos+1)+1;
+		int a2=eval(s_w,cpos+1);
+		if(s_w<3005)return DP[cpos][s_w]=max(a1,a2);
+		else return max(a1,a2);
 	}
-	return *max_element(DP.begin(), DP.end());
+	else return DP[cpos][s_w]=eval(s_w,cpos+1);
 }
-
 int main(){
     ios::sync_with_stdio(false);
-	int n;
-	cin>>n;
-	while(true){
-		map<int,int> dic;
-		int a;
-		REP(i, n){
-			cin>>a;
-			dic[i+1]=a;
-		}
-		string in;
-		getline(cin,in);
-		while(true){
-			if(!getline(cin,in)){
-				return 0;
-			}
-string::size_type ab;
-int b=0;
-try{
-  b=stoi(in,&ab,10);
-}catch(exception e){return 0;}
-if(ab==in.length()){//There is only one number in the line
-	n=b;
-	break;
-}
-			else{
-				vi ex(n);
-				stringstream ss(in);
-				int a;
-				REP(i,n){
-					ss>>a;
-					ex[a-1]=i+1;
-					ex[a-1]=dic[ex[a-1]];
-				}
-				cout<<LIS(ex)<<"\n";
-			}
-		}
-		
+	while(cin>>n&&n){
+		REP(i,1001)REP(j,3005)DP[i][j]=-1;
+		b=vector<pii>(n);
+		REP(i,n)cin>>b[i].fi>>b[i].se;
+		cout<<eval(INT_MAX, 0)<<"\n";
 	}
 
     return 0;

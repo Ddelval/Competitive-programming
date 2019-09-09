@@ -1,5 +1,5 @@
-// UVa Online Judge 111: History Grading
-//  0111
+// UVa Online Judge 10534: Wavio Sequence
+//  10534
 //	main.cpp
 //  Created by David del Val on 14/08/2019
 //
@@ -8,7 +8,7 @@
 
 #include <iostream>
 #include <algorithm>
-#include <sstream>
+#include <queue>
 #include <stack>
 #include <vector>
 #include <string>
@@ -61,58 +61,42 @@ typedef vector<int> vi;
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
 
-int LIS(vi&a){
-	vi DP(a.size());
-	int ans;
-	for(int i=0;i<a.size();++i){
-		ans=1;
-		for(int j=0;j<i;++j){
-			if(a[j]<a[i])ans=max(ans,DP[j]+1);
+vi LIS(vi &n){
+	vi DP(n.size());
+	vi M(n.size()+1);
+	int L=0;
+	for(int i=0;i<n.size();++i){
+		int r=L+1;
+		int l=0;
+		while(l+1!=r){
+			int mid=(r+l)/2;
+			if(n[M[mid]]<n[i])l=mid;
+			else r=mid;
 		}
-		DP[i]=ans;
+		int nL=l+1;
+		L=max(L,nL);
+		M[nL]=i;
+		DP[i]=nL;
 	}
-	return *max_element(DP.begin(), DP.end());
+	return DP;
 }
 
 int main(){
     ios::sync_with_stdio(false);
 	int n;
-	cin>>n;
-	while(true){
-		map<int,int> dic;
-		int a;
-		REP(i, n){
-			cin>>a;
-			dic[i+1]=a;
+	while(cin>>n){
+		vi dat(n);
+		REP(i,n)cin>>dat[i];
+		vi lisd=LIS(dat);
+		reverse(dat.begin(), dat.end());
+		vi ldsd=LIS(dat);
+		reverse(ldsd.begin(),ldsd.end());
+		int ma=1;
+		for(int i=0;i<lisd.size();++i){
+			int candid=min(lisd[i],ldsd[i]);
+			ma=max(ma,candid);
 		}
-		string in;
-		getline(cin,in);
-		while(true){
-			if(!getline(cin,in)){
-				return 0;
-			}
-string::size_type ab;
-int b=0;
-try{
-  b=stoi(in,&ab,10);
-}catch(exception e){return 0;}
-if(ab==in.length()){//There is only one number in the line
-	n=b;
-	break;
-}
-			else{
-				vi ex(n);
-				stringstream ss(in);
-				int a;
-				REP(i,n){
-					ss>>a;
-					ex[a-1]=i+1;
-					ex[a-1]=dic[ex[a-1]];
-				}
-				cout<<LIS(ex)<<"\n";
-			}
-		}
-		
+		cout<<ma*2-1<<"\n";
 	}
 
     return 0;

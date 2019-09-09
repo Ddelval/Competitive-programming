@@ -1,14 +1,13 @@
-// UVa Online Judge 111: History Grading
-//  0111
+//  1202-B
 //	main.cpp
-//  Created by David del Val on 14/08/2019
+//  Created by David del Val on 09/08/2019
 //
 //
 
 
 #include <iostream>
 #include <algorithm>
-#include <sstream>
+#include <queue>
 #include <stack>
 #include <vector>
 #include <string>
@@ -61,58 +60,77 @@ typedef vector<int> vi;
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
 
-int LIS(vi&a){
-	vi DP(a.size());
-	int ans;
-	for(int i=0;i<a.size();++i){
-		ans=1;
-		for(int j=0;j<i;++j){
-			if(a[j]<a[i])ans=max(ans,DP[j]+1);
+int DP[10][10][10];
+bool visited[10];
+int dfs(int x, int y,int n){
+	REP(i,10)visited[i]=0;
+	
+	queue<pii>q;
+	q.push(mp(0,0));
+	bool st=false;
+	while(!q.empty()){
+		auto a=q.front(); q.pop();
+		if(st&&a.fi==n){
+			DP[y][x][n]=a.se;
+			return DP[x][y][n]=a.se;
 		}
-		DP[i]=ans;
+		if(visited[a.fi])continue;
+		visited[a.fi]=true;
+		
+		q.push(mp((a.fi+x)%10,a.se+1));
+		q.push(mp((a.fi+y)%10,a.se+1));
+		
+		
+		st=true;
 	}
-	return *max_element(DP.begin(), DP.end());
+	DP[y][x][n]=-1;
+	return DP[x][y][n]=-1;
 }
 
+int mod(char a,char b){
+	if(b-a<0)return b-a+10;
+	else return b-a;
+}
 int main(){
     ios::sync_with_stdio(false);
-	int n;
-	cin>>n;
-	while(true){
-		map<int,int> dic;
-		int a;
-		REP(i, n){
-			cin>>a;
-			dic[i+1]=a;
-		}
-		string in;
-		getline(cin,in);
-		while(true){
-			if(!getline(cin,in)){
-				return 0;
+	string str;
+	REP(i,10){
+		REP(j,10){
+			REP(z,10){
+				DP[i][j][z]=-5;
 			}
-string::size_type ab;
-int b=0;
-try{
-  b=stoi(in,&ab,10);
-}catch(exception e){return 0;}
-if(ab==in.length()){//There is only one number in the line
-	n=b;
-	break;
-}
-			else{
-				vi ex(n);
-				stringstream ss(in);
-				int a;
-				REP(i,n){
-					ss>>a;
-					ex[a-1]=i+1;
-					ex[a-1]=dic[ex[a-1]];
+		}
+	}
+	REP(i,10){
+		REPO(j,i,10){
+			REP(z,10){
+				DP[i][j][z]=dfs(i,j,z);
+			}
+		}
+	}
+	while(cin>>str){
+		vector<int> v;
+		v.reserve(str.length());
+		for(int i=1;i<str.length();++i){
+			v.pb(mod(str[i-1],str[i]));
+		}
+		for(int a=0;a<10;++a){
+			for(int b=0;b<10;++b){
+				ll sum=0;
+				for(int i:v){
+					int ab= DP[a][b][i];
+					if(ab==-1){
+						sum=INT_MIN;
+						break;
+					}
+					sum+=ab-1;
 				}
-				cout<<LIS(ex)<<"\n";
+				if(b)cout<<" ";
+				if(sum<0)cout<<"-1";
+				else cout<<sum;
 			}
+			cout<<"\n";
 		}
-		
 	}
 
     return 0;

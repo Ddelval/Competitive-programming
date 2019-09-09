@@ -1,14 +1,14 @@
-// UVa Online Judge 111: History Grading
-//  0111
+// UVa Online Judge 11800: Determine the Shape
+//  11800
 //	main.cpp
-//  Created by David del Val on 14/08/2019
+//  Created by David del Val on 09/08/2019
 //
 //
 
 
 #include <iostream>
 #include <algorithm>
-#include <sstream>
+#include <queue>
 #include <stack>
 #include <vector>
 #include <string>
@@ -61,58 +61,66 @@ typedef vector<int> vi;
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
 
-int LIS(vi&a){
-	vi DP(a.size());
-	int ans;
-	for(int i=0;i<a.size();++i){
-		ans=1;
-		for(int j=0;j<i;++j){
-			if(a[j]<a[i])ans=max(ans,DP[j]+1);
-		}
-		DP[i]=ans;
-	}
-	return *max_element(DP.begin(), DP.end());
+bool deg90(pii o, pii p1,pii p2){
+	p1.fi-=o.fi;
+	p1.se-=o.se;
+	p2.fi-=o.fi;
+	p2.se-=o.se;
+	return p1.fi*p2.fi+p1.se*p2.se==0;
 }
-
+bool parallel(pii o1,pii f1, pii o2,pii f2){
+	return ((double)o1.fi-f1.fi)/(o1.se-f1.se)==((double)o2.fi-f2.fi)/(o2.se-f2.se);
+}
+double dist(pii o,pii f){
+	return sqrt(pow(o.fi-f.fi,2)+pow(o.se-f.se,2));
+}
 int main(){
     ios::sync_with_stdio(false);
-	int n;
-	cin>>n;
-	while(true){
-		map<int,int> dic;
-		int a;
-		REP(i, n){
-			cin>>a;
-			dic[i+1]=a;
-		}
-		string in;
-		getline(cin,in);
-		while(true){
-			if(!getline(cin,in)){
-				return 0;
-			}
-string::size_type ab;
-int b=0;
-try{
-  b=stoi(in,&ab,10);
-}catch(exception e){return 0;}
-if(ab==in.length()){//There is only one number in the line
-	n=b;
-	break;
-}
-			else{
-				vi ex(n);
-				stringstream ss(in);
-				int a;
-				REP(i,n){
-					ss>>a;
-					ex[a-1]=i+1;
-					ex[a-1]=dic[ex[a-1]];
-				}
-				cout<<LIS(ex)<<"\n";
-			}
-		}
+	int t;
+	cin>>t;
+	for(int z=1;z<=t;++z){
+		vector<pii>da(4);
+		cin>>da[0].fi>>da[0].se>>da[1].fi>>da[1].se>>da[2].fi>>da[2].se>>da[3].fi>>da[3].se;
+		cout<<"Case "<<z<<": ";
+		//Get center
+		double px=da[0].fi+da[1].fi+da[2].fi+da[3].fi;
+		px/=4;
+		double py=da[0].se+da[1].se+da[2].se+da[3].se;
+		py/=4;
+		//Sort
+		sort(da.begin(), da.end(),[px,py](pii a,pii b){
+			double t1=atan2(a.fi-px,a.se-py);
+			double t2=atan2(b.fi-px,b.se-py);
+			double a1=((int)((t1+2*M_PI)*1000))%((int)(2*M_PI*1000));
+			double a2=((int)((t2+2*M_PI)*1000))%((int)(2*M_PI*1000));
+			return a1-a2<0;
+		});
 		
+		if(parallel(da[0], da[1], da[3], da[2])&&parallel(da[0], da[3], da[1], da[2])){
+			if(deg90(da[0],da[3],da[1])){
+				//90 deg angles
+				if(dist(da[0],da[1])==dist(da[0],da[3])){
+					cout<<"Square\n";
+				}
+				else{
+					cout<<"Rectangle\n";
+				}
+			}
+			else{
+				if(dist(da[0],da[1])==dist(da[0],da[3])){
+					cout<<"Rhombus\n";
+				}
+				else{
+					cout<<"Parallelogram\n";
+				}
+			}
+		}
+		else if(parallel(da[0], da[1], da[3], da[2])||parallel(da[0], da[3], da[1], da[2])){
+			cout<<"Trapezium\n";
+		}
+		else{
+			cout<<"Ordinary Quadrilateral\n";
+		}
 	}
 
     return 0;

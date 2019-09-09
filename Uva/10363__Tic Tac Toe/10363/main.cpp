@@ -1,14 +1,14 @@
-// UVa Online Judge 111: History Grading
-//  0111
+// UVa Online Judge 10363: Tic Tac Toe
+//  10363
 //	main.cpp
-//  Created by David del Val on 14/08/2019
+//  Created by David del Val on 08/08/2019
 //
 //
 
 
 #include <iostream>
 #include <algorithm>
-#include <sstream>
+#include <queue>
 #include <stack>
 #include <vector>
 #include <string>
@@ -61,58 +61,62 @@ typedef vector<int> vi;
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
 
-int LIS(vi&a){
-	vi DP(a.size());
-	int ans;
-	for(int i=0;i<a.size();++i){
-		ans=1;
-		for(int j=0;j<i;++j){
-			if(a[j]<a[i])ans=max(ans,DP[j]+1);
+int grid[3][3];
+int win[2]={0,0};
+bool check(){
+	int h[2]={0,0},v[2]={0,0};
+	int d[2]={0,0};
+	win[0]=0;
+	win[1]=0;
+	REP(i,3){
+		if(grid[i][0]&&grid[i][0]==grid[i][1]&&grid[i][1]==grid[i][2]){
+			win[grid[i][0]-1]++;
+			h[grid[i][0]-1]++;
 		}
-		DP[i]=ans;
 	}
-	return *max_element(DP.begin(), DP.end());
+	REP(i,3){
+		if(grid[0][i]&&grid[0][i]==grid[1][i]&&grid[1][i]==grid[2][i]){
+			win[grid[0][i]-1]++;
+			v[grid[0][i]-1]++;
+		}
+	}
+	if(grid[0][0]&&grid[0][0]==grid[1][1]&&grid[1][1]==grid[2][2])d[grid[0][0]-1]++;
+	if(grid[0][2]&&grid[0][2]==grid[1][1]&&grid[1][1]==grid[2][0])d[grid[0][2]-1]++;
+	win[0]+=d[0];
+	win[1]+=d[1];
+	if ((win[0]+win[1])<=1) return true;
+	if(!win[0])return h[1]<2&& v[1]<2;
+	if(!win[1])return h[0]<2&& v[0]<2;
+	return false;
 }
 
 int main(){
     ios::sync_with_stdio(false);
-	int n;
-	cin>>n;
-	while(true){
-		map<int,int> dic;
-		int a;
-		REP(i, n){
-			cin>>a;
-			dic[i+1]=a;
-		}
-		string in;
-		getline(cin,in);
-		while(true){
-			if(!getline(cin,in)){
-				return 0;
+	int q;
+	cin>>q;
+	REP(z,q){
+		char c;
+		int counter[3]={0,0,0};
+		REP(i,3){
+			REP(j,3){
+				cin>>c;
+				if(c=='.')grid[i][j]=0;
+				else if (c=='X')grid[i][j]=1;
+				else grid[i][j]=2;
+				counter[grid[i][j]]++;
 			}
-string::size_type ab;
-int b=0;
-try{
-  b=stoi(in,&ab,10);
-}catch(exception e){return 0;}
-if(ab==in.length()){//There is only one number in the line
-	n=b;
-	break;
-}
-			else{
-				vi ex(n);
-				stringstream ss(in);
-				int a;
-				REP(i,n){
-					ss>>a;
-					ex[a-1]=i+1;
-					ex[a-1]=dic[ex[a-1]];
-				}
-				cout<<LIS(ex)<<"\n";
-			}
+			
 		}
-		
+		if(!check()){
+			cout<<"no";
+		}
+		else if(!((!win[0]&&counter[1]-counter[2]==0)||(counter[1]-counter[2]==1&&!win[1]))){
+			cout<<"no";
+		}
+		else{
+			cout<<"yes";
+		}
+		cout<<"\n";
 	}
 
     return 0;

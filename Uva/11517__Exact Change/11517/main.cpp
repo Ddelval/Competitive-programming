@@ -1,30 +1,21 @@
-// UVa Online Judge 111: History Grading
-//  0111
+// UVa Online Judge 11517: Exact Change
+//  11517
 //	main.cpp
-//  Created by David del Val on 14/08/2019
+//  Created by David del Val on 15/08/2019
 //
 //
 
-
-#include <iostream>
-#include <algorithm>
-#include <sstream>
-#include <stack>
-#include <vector>
-#include <string>
-#include <set>
-#include <map>
-#include <math.h>
-#include <utility>
-#include <string.h>
-#include <limits.h>
+#include <bits/stdc++.h>
 
 using namespace std;
 
-#define mp(x, y) make_pair(x, y)
-#define pb(x) push_back(x)
+#define mp make_pair
+#define pb push_back
+#define all(x) (x).begin(), (x).end()
+#define sz(x) (int)(x).size()
 #define fi first
 #define se second
+#define LSB(x) ((x) & (-(x)))
 #define echobin(x) cout<<#x<<":"<<x<<" ="<<bitset<8>(x)<<"  ";
 #define echo(...) {cout<<"->";ECHO(#__VA_ARGS__, __VA_ARGS__ );}
 #define REPO(i,a,b) for(int i=a;i<b;i++)
@@ -54,67 +45,45 @@ template<typename T> inline T _min(T x1, T x2, T x3){return min(x1, min(x2, x3))
 template<typename T> inline T _min(T x1, T x2, T x3, T x4){return min(min(x1, x2), min(x2, x3));}
 
 //gcd(0, n) = n
-inline int _gcd(int a, int b){ while(b) b %= a ^= b ^= a ^= b; return a;}
+inline long long _gcd(long long a, long long b){ while(b) b %= a ^= b ^= a ^= b; return a;}
 
 typedef long long ll;
 typedef vector<int> vi;
+typedef vector<ll>  vl;
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
-
-int LIS(vi&a){
-	vi DP(a.size());
-	int ans;
-	for(int i=0;i<a.size();++i){
-		ans=1;
-		for(int j=0;j<i;++j){
-			if(a[j]<a[i])ans=max(ans,DP[j]+1);
-		}
-		DP[i]=ans;
-	}
-	return *max_element(DP.begin(), DP.end());
-}
-
+typedef vector<pii> vii;
+typedef vector<pll> vll;
+const long lim=20001;
+int DP[lim];
 int main(){
     ios::sync_with_stdio(false);
-	int n;
-	cin>>n;
-	while(true){
-		map<int,int> dic;
+	int q;
+	cin>>q;
+	while(q--){
+		REP(i,lim)DP[i]=INT_MAX/2;
+		DP[0]=0;
+		int pri,n;
+		cin>>pri>>n;
 		int a;
-		REP(i, n){
+		REP(i,n){
 			cin>>a;
-			dic[i+1]=a;
-		}
-		string in;
-		getline(cin,in);
-		while(true){
-			if(!getline(cin,in)){
-				return 0;
-			}
-string::size_type ab;
-int b=0;
-try{
-  b=stoi(in,&ab,10);
-}catch(exception e){return 0;}
-if(ab==in.length()){//There is only one number in the line
-	n=b;
-	break;
-}
-			else{
-				vi ex(n);
-				stringstream ss(in);
-				int a;
-				REP(i,n){
-					ss>>a;
-					ex[a-1]=i+1;
-					ex[a-1]=dic[ex[a-1]];
+			for(int j=lim-1-a;j>=0;--j){
+				if(DP[j]!=INT_MAX/2){
+					DP[j+a]=min(DP[j+a],DP[j]+1);
 				}
-				cout<<LIS(ex)<<"\n";
 			}
 		}
-		
+		for(int i = pri;i<lim;++i){
+			if(DP[i]!=INT_MAX/2){
+				cout<<i<<" "<<DP[i]<<"\n";
+				break;
+				
+			}
+		}
 	}
 
     return 0;
 }
+
 

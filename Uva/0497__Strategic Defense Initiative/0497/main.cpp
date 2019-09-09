@@ -1,5 +1,5 @@
-// UVa Online Judge 111: History Grading
-//  0111
+// UVa Online Judge 497: Strategic Defense Initiative
+//  0497
 //	main.cpp
 //  Created by David del Val on 14/08/2019
 //
@@ -8,7 +8,7 @@
 
 #include <iostream>
 #include <algorithm>
-#include <sstream>
+#include <queue>
 #include <stack>
 #include <vector>
 #include <string>
@@ -61,58 +61,54 @@ typedef vector<int> vi;
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
 
-int LIS(vi&a){
-	vi DP(a.size());
-	int ans;
+vi LIS(vi &a){
+	vi p(a.size());
+	vi m(a.size()+1);
+	int L=0;
 	for(int i=0;i<a.size();++i){
-		ans=1;
-		for(int j=0;j<i;++j){
-			if(a[j]<a[i])ans=max(ans,DP[j]+1);
+		int r=L+1;
+		int l=0;
+		while(l+1!=r){
+			int mid=(l+r)/2;
+			if(a[m[mid]]<a[i])l=mid;
+			else r=mid;
 		}
-		DP[i]=ans;
+		int nL=l+1;
+		L=max(L,nL);
+		m[nL]=i;
+		p[i]=m[nL-1];
 	}
-	return *max_element(DP.begin(), DP.end());
+	vi seq(L);
+	int k=m[L];
+	for(int i=L-1;i>=0;--i){
+		seq[i]=a[k];
+		k=p[k];
+	}
+	return seq;
 }
 
 int main(){
     ios::sync_with_stdio(false);
-	int n;
-	cin>>n;
-	while(true){
-		map<int,int> dic;
+	string in;
+	getline(cin,in);
+	int cas=stoi(in);
+	getline(cin,in);
+	while(cas--){
+		string s;
+		vi dat;
+		if(!getline(cin,s))return 0;
 		int a;
-		REP(i, n){
-			cin>>a;
-			dic[i+1]=a;
-		}
-		string in;
-		getline(cin,in);
 		while(true){
-			if(!getline(cin,in)){
-				return 0;
-			}
-string::size_type ab;
-int b=0;
-try{
-  b=stoi(in,&ab,10);
-}catch(exception e){return 0;}
-if(ab==in.length()){//There is only one number in the line
-	n=b;
-	break;
-}
-			else{
-				vi ex(n);
-				stringstream ss(in);
-				int a;
-				REP(i,n){
-					ss>>a;
-					ex[a-1]=i+1;
-					ex[a-1]=dic[ex[a-1]];
-				}
-				cout<<LIS(ex)<<"\n";
-			}
+			try{
+				a=stoi(s);
+				dat.pb(a);
+			}catch(exception e){break;}
+			if(!getline(cin,s))break;
 		}
-		
+		vi res=LIS(dat);
+		cout<<"Max hits: "<<res.size()<<"\n";
+		for(int a:res)cout<<a<<"\n";
+		if(cas)cout<<"\n";
 	}
 
     return 0;

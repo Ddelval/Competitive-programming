@@ -1,14 +1,14 @@
-// UVa Online Judge 111: History Grading
-//  0111
+// UVa Online Judge 714: Copying Books
+//  0714
 //	main.cpp
-//  Created by David del Val on 14/08/2019
+//  Created by David del Val on 10/08/2019
 //
 //
 
 
 #include <iostream>
 #include <algorithm>
-#include <sstream>
+#include <queue>
 #include <stack>
 #include <vector>
 #include <string>
@@ -60,59 +60,93 @@ typedef long long ll;
 typedef vector<int> vi;
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
-
-int LIS(vi&a){
-	vi DP(a.size());
-	int ans;
-	for(int i=0;i<a.size();++i){
-		ans=1;
-		for(int j=0;j<i;++j){
-			if(a[j]<a[i])ans=max(ans,DP[j]+1);
+vector<int> books;
+int k,m;
+bool check(ll n){
+	int kc=k;
+	ll csum=0;
+	for(int a:books){
+		csum+=a;
+		if(csum>n){
+			csum=a;
+			kc--;
+			if(kc<=0){
+				return false;
+			}
 		}
-		DP[i]=ans;
 	}
-	return *max_element(DP.begin(), DP.end());
+	return true;
 }
+
 
 int main(){
     ios::sync_with_stdio(false);
-	int n;
-	cin>>n;
-	while(true){
-		map<int,int> dic;
-		int a;
-		REP(i, n){
-			cin>>a;
-			dic[i+1]=a;
+	int q;
+	cin>>q;
+	REP(z,q){
+		cin>>m>>k;
+		books=vi(m);
+		ll r,l;
+		l=1;
+		r=0;
+		REP(i,m){
+			cin>>books[i];
+			l=max(l,(ll)books[i]);
+			r+=books[i];
 		}
-		string in;
-		getline(cin,in);
-		while(true){
-			if(!getline(cin,in)){
-				return 0;
+		l--;
+		//sort(books.begin(), books.end(),greater<int>());
+		reverse(books.begin(),books.end());
+		while(r-l>1){
+			ll mid=(r+l)/2;
+			if(check(mid))r=mid;
+			else l=mid;
+		}
+		int kc=k;
+		vi lims;
+		ll csum=0;
+		REP(i,books.size()){
+			int a=books[i];
+			csum+=a;
+			if(csum>r){
+				lims.pb(i);
+				csum=a;
+				kc--;
 			}
-string::size_type ab;
-int b=0;
-try{
-  b=stoi(in,&ab,10);
-}catch(exception e){return 0;}
-if(ab==in.length()){//There is only one number in the line
-	n=b;
-	break;
-}
-			else{
-				vi ex(n);
-				stringstream ss(in);
-				int a;
-				REP(i,n){
-					ss>>a;
-					ex[a-1]=i+1;
-					ex[a-1]=dic[ex[a-1]];
+		}
+		for(int &a:lims)a=(int)books.size()-a;
+		reverse(lims.begin(),lims.end());
+		reverse(books.begin(),books.end());
+		if(kc==1){
+			int index=0;
+			REP(i,books.size()){
+				if(i)cout<<" ";
+				if(i==lims[index]){
+					cout<<"/ ";
+					index++;
 				}
-				cout<<LIS(ex)<<"\n";
+				cout<<books[i];
+				
+			}
+		}
+		else{
+			int index=0;
+			REP(i,books.size()){
+				if(i)cout<<" ";
+				if(i==lims[index]){
+					cout<<"/ ";
+					index++;
+				}
+				else if(i&&kc>1){
+					cout<<"/ ";
+					kc--;
+				}
+				cout<<books[i];
+				
 			}
 		}
 		
+		cout<<"\n";
 	}
 
     return 0;

@@ -1,30 +1,21 @@
-// UVa Online Judge 111: History Grading
-//  0111
+// UVa Online Judge 193: Graph Coloring
+//  0193
 //	main.cpp
-//  Created by David del Val on 14/08/2019
+//  Created by David del Val on 19/08/2019
 //
 //
 
-
-#include <iostream>
-#include <algorithm>
-#include <sstream>
-#include <stack>
-#include <vector>
-#include <string>
-#include <set>
-#include <map>
-#include <math.h>
-#include <utility>
-#include <string.h>
-#include <limits.h>
+#include <bits/stdc++.h>
 
 using namespace std;
 
-#define mp(x, y) make_pair(x, y)
-#define pb(x) push_back(x)
+#define mp make_pair
+#define pb push_back
+#define all(x) (x).begin(), (x).end()
+#define sz(x) (int)(x).size()
 #define fi first
 #define se second
+#define LSB(x) ((x) & (-(x)))
 #define echobin(x) cout<<#x<<":"<<x<<" ="<<bitset<8>(x)<<"  ";
 #define echo(...) {cout<<"->";ECHO(#__VA_ARGS__, __VA_ARGS__ );}
 #define REPO(i,a,b) for(int i=a;i<b;i++)
@@ -54,67 +45,79 @@ template<typename T> inline T _min(T x1, T x2, T x3){return min(x1, min(x2, x3))
 template<typename T> inline T _min(T x1, T x2, T x3, T x4){return min(min(x1, x2), min(x2, x3));}
 
 //gcd(0, n) = n
-inline int _gcd(int a, int b){ while(b) b %= a ^= b ^= a ^= b; return a;}
+inline long long _gcd(long long a, long long b){ while(b) b %= a ^= b ^= a ^= b; return a;}
 
 typedef long long ll;
 typedef vector<int> vi;
+typedef vector<ll>  vl;
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
+typedef vector<pii> vii;
+typedef vector<pll> vll;
 
-int LIS(vi&a){
-	vi DP(a.size());
-	int ans;
-	for(int i=0;i<a.size();++i){
-		ans=1;
-		for(int j=0;j<i;++j){
-			if(a[j]<a[i])ans=max(ans,DP[j]+1);
+bool black[110];
+bool fin[110];
+vector<vi> adyList;
+int solve(int nnode){
+	if(nnode==sz(adyList))return 0;
+	bool b=false;
+	for(int a:adyList[nnode]){
+		if(black[a]){
+			b=true;
+			break;
 		}
-		DP[i]=ans;
 	}
-	return *max_element(DP.begin(), DP.end());
+	if(!b){
+		black[nnode]=true;
+		int pr=solve(nnode+1);
+		black[nnode]=false;
+		int p2=solve(nnode+1);
+		if(pr>=p2){
+			fin[nnode]=true;
+			black[nnode]=true;
+			pr=solve(nnode+1);
+			black[nnode]=false;
+			return 1+pr;
+		}
+		fin[nnode]=false;
+		return p2;
+	}
+	fin[nnode]=false;
+	return solve(nnode+1);
 }
 
 int main(){
     ios::sync_with_stdio(false);
-	int n;
-	cin>>n;
-	while(true){
-		map<int,int> dic;
-		int a;
-		REP(i, n){
-			cin>>a;
-			dic[i+1]=a;
+	int q;
+	cin>>q;
+	while(q--){
+		REP(i,110)black[i]=false;
+		REP(i,110)fin[i]=false;
+		int n,k;
+		cin>>n>>k;
+		vi a;
+		adyList=vector<vi>(n,a);
+		int b1,b2;
+		REP(i,k){
+			cin>>b1>>b2;
+			b1--;
+			b2--;
+			adyList[b1].pb(b2);
+			adyList[b2].pb(b1);
 		}
-		string in;
-		getline(cin,in);
-		while(true){
-			if(!getline(cin,in)){
-				return 0;
-			}
-string::size_type ab;
-int b=0;
-try{
-  b=stoi(in,&ab,10);
-}catch(exception e){return 0;}
-if(ab==in.length()){//There is only one number in the line
-	n=b;
-	break;
-}
-			else{
-				vi ex(n);
-				stringstream ss(in);
-				int a;
-				REP(i,n){
-					ss>>a;
-					ex[a-1]=i+1;
-					ex[a-1]=dic[ex[a-1]];
-				}
-				cout<<LIS(ex)<<"\n";
+		cout<<solve(0)<<"\n";
+		bool b=false;
+		for(int i=0;i<100;++i){
+			if(fin[i]){
+				if(b)cout<<" ";
+				cout<<i+1;
+				b=1;
 			}
 		}
-		
+		cout<<"\n";
 	}
 
     return 0;
 }
+
 

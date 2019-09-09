@@ -1,14 +1,14 @@
-// UVa Online Judge 111: History Grading
-//  0111
+// UVa Online Judge 11804: Argentina
+//  11804
 //	main.cpp
-//  Created by David del Val on 14/08/2019
+//  Created by David del Val on 10/08/2019
 //
 //
 
 
 #include <iostream>
 #include <algorithm>
-#include <sstream>
+#include <queue>
 #include <stack>
 #include <vector>
 #include <string>
@@ -61,58 +61,37 @@ typedef vector<int> vi;
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
 
-int LIS(vi&a){
-	vi DP(a.size());
-	int ans;
-	for(int i=0;i<a.size();++i){
-		ans=1;
-		for(int j=0;j<i;++j){
-			if(a[j]<a[i])ans=max(ans,DP[j]+1);
-		}
-		DP[i]=ans;
-	}
-	return *max_element(DP.begin(), DP.end());
-}
 
 int main(){
     ios::sync_with_stdio(false);
-	int n;
-	cin>>n;
-	while(true){
-		map<int,int> dic;
-		int a;
-		REP(i, n){
-			cin>>a;
-			dic[i+1]=a;
+	vector<pair<pii,string>> vec;
+	int t;
+	cin>>t;
+	REP(z,t){
+		string s;
+		int a,d;
+		vec.clear();
+		REP(i, 10){
+			cin>>s;
+			cin>>a>>d;
+			vec.pb(mp(mp(a,d),s));
 		}
-		string in;
-		getline(cin,in);
-		while(true){
-			if(!getline(cin,in)){
-				return 0;
-			}
-string::size_type ab;
-int b=0;
-try{
-  b=stoi(in,&ab,10);
-}catch(exception e){return 0;}
-if(ab==in.length()){//There is only one number in the line
-	n=b;
-	break;
-}
-			else{
-				vi ex(n);
-				stringstream ss(in);
-				int a;
-				REP(i,n){
-					ss>>a;
-					ex[a-1]=i+1;
-					ex[a-1]=dic[ex[a-1]];
-				}
-				cout<<LIS(ex)<<"\n";
-			}
-		}
-		
+		sort(vec.begin(),vec.end(),[](pair<pii,string> a, pair<pii,string> b){
+			if(a.fi.fi!=b.fi.fi)return a.fi.fi>b.fi.fi;
+			if(a.fi.se!=b.fi.se)return a.fi.se<b.fi.se;
+			return a.se<b.se;
+		});
+		sort(vec.begin(),vec.begin()+5,[](pair<pii,string> a,pair<pii,string> b){
+			return a.se<b.se;
+		});
+		sort(vec.begin()+5,vec.end(),[](pair<pii,string> a,pair<pii,string> b){
+			return a.se<b.se;
+		});
+		cout<<"Case "<<z+1<<":\n(";
+		REP(i, 4)cout<<vec[i].se<<", ";
+		cout<<vec[4].se<<")\n(";
+		REPO(i,5, 9)cout<<vec[i].se<<", ";
+		cout<<vec[9].se<<")\n";
 	}
 
     return 0;

@@ -1,14 +1,13 @@
-// UVa Online Judge 111: History Grading
-//  0111
+//  1202-C
 //	main.cpp
-//  Created by David del Val on 14/08/2019
+//  Created by David del Val on 09/08/2019
 //
 //
 
 
 #include <iostream>
 #include <algorithm>
-#include <sstream>
+#include <queue>
 #include <stack>
 #include <vector>
 #include <string>
@@ -60,58 +59,91 @@ typedef long long ll;
 typedef vector<int> vi;
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
-
-int LIS(vi&a){
-	vi DP(a.size());
-	int ans;
-	for(int i=0;i<a.size();++i){
-		ans=1;
-		for(int j=0;j<i;++j){
-			if(a[j]<a[i])ans=max(ans,DP[j]+1);
+string s;
+bool checkx(int ma,int mi){
+	if(mi>0||ma<0)return false;
+	int cx=0;
+	bool A;
+	A=true;
+	for(char a:s){
+		if(a=='A'){
+			cx--;
+			if(cx<mi){
+				if(ma>(cx+1)&&A)cx++;
+				else return false;
+				A=false;
+			}
 		}
-		DP[i]=ans;
+		else if(a=='D'){
+			cx++;
+			if(cx>ma){
+				if(mi<(cx-1)&&A)cx--;
+				else return false;
+				A=false;
+			}
+		}
 	}
-	return *max_element(DP.begin(), DP.end());
+	return true;
 }
-
+bool checky(int ma,int mi){
+	if(mi>0||ma<0)return false;
+	int cx=0;
+	bool A;
+	A=true;
+	for(char a:s){
+		if(a=='S'){
+			cx--;
+			if(cx<mi){
+				if(ma>(cx+1)&&A)cx++;
+				else return false;
+				A=false;
+			}
+		}
+		else if(a=='W'){
+			cx++;
+			if(cx>ma){
+				if(mi<(cx-1)&&A)cx--;
+				else return false;
+				A=false;
+			}
+		}
+	}
+	return true;
+}
 int main(){
     ios::sync_with_stdio(false);
-	int n;
-	cin>>n;
-	while(true){
-		map<int,int> dic;
-		int a;
-		REP(i, n){
-			cin>>a;
-			dic[i+1]=a;
+	int t;
+	cin>>t;
+	getline(cin,s);
+	while(t--){
+		int cx,cy;
+		int Mx,mx,My,my;
+		Mx=My=mx=my=cx=cy=0;
+		getline(cin,s);
+		for(char a:s){
+			if(a=='S')cy--;
+			else if(a=='W')cy++;
+			else if(a=='A')cx--;
+			else cx++;
+			if(cx>Mx)Mx=cx;
+			if(cy>My)My=cy;
+			if(cy<my)my=cy;
+			if(cx<mx)mx=cx;
 		}
-		string in;
-		getline(cin,in);
-		while(true){
-			if(!getline(cin,in)){
-				return 0;
-			}
-string::size_type ab;
-int b=0;
-try{
-  b=stoi(in,&ab,10);
-}catch(exception e){return 0;}
-if(ab==in.length()){//There is only one number in the line
-	n=b;
-	break;
-}
-			else{
-				vi ex(n);
-				stringstream ss(in);
-				int a;
-				REP(i,n){
-					ss>>a;
-					ex[a-1]=i+1;
-					ex[a-1]=dic[ex[a-1]];
-				}
-				cout<<LIS(ex)<<"\n";
-			}
+		ll width,height;
+		width=abs(Mx)+abs(mx)+1;
+		height=abs(My)+abs(my)+1;
+		if(width>height){
+			if(checky(My,my+1)||checky(My-1,my))height--;
+			else if(checkx(Mx,mx+1)||checkx(Mx-1,mx))width--;
 		}
+		else{
+			if(checkx(Mx,mx+1)||checkx(Mx-1,mx))width--;
+			else if(checky(My,my+1)||checky(My-1,my))height--;
+		}
+		
+		
+		cout<<width*height<<"\n";
 		
 	}
 

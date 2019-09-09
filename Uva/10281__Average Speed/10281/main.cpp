@@ -1,14 +1,14 @@
-// UVa Online Judge 111: History Grading
-//  0111
+// UVa Online Judge 10281: Average Speed
+//  10281
 //	main.cpp
-//  Created by David del Val on 14/08/2019
+//  Created by David del Val on 08/08/2019
 //
 //
 
 
 #include <iostream>
 #include <algorithm>
-#include <sstream>
+#include <queue>
 #include <stack>
 #include <vector>
 #include <string>
@@ -17,7 +17,7 @@
 #include <math.h>
 #include <utility>
 #include <string.h>
-#include <limits.h>
+#include <bits/stdc++.h>
 
 using namespace std;
 
@@ -61,58 +61,28 @@ typedef vector<int> vi;
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
 
-int LIS(vi&a){
-	vi DP(a.size());
-	int ans;
-	for(int i=0;i<a.size();++i){
-		ans=1;
-		for(int j=0;j<i;++j){
-			if(a[j]<a[i])ans=max(ans,DP[j]+1);
-		}
-		DP[i]=ans;
-	}
-	return *max_element(DP.begin(), DP.end());
-}
 
 int main(){
     ios::sync_with_stdio(false);
-	int n;
-	cin>>n;
-	while(true){
-		map<int,int> dic;
-		int a;
-		REP(i, n){
-			cin>>a;
-			dic[i+1]=a;
-		}
-		string in;
-		getline(cin,in);
-		while(true){
-			if(!getline(cin,in)){
-				return 0;
-			}
-string::size_type ab;
-int b=0;
-try{
-  b=stoi(in,&ab,10);
-}catch(exception e){return 0;}
-if(ab==in.length()){//There is only one number in the line
-	n=b;
-	break;
-}
-			else{
-				vi ex(n);
-				stringstream ss(in);
-				int a;
-				REP(i,n){
-					ss>>a;
-					ex[a-1]=i+1;
-					ex[a-1]=dic[ex[a-1]];
-				}
-				cout<<LIS(ex)<<"\n";
-			}
-		}
+	string s;
+	double elapsed=0;
+	int lastim=0;
+	int lastvel=0;
+	int h,m,seg;
+	int tim;
+	while(getline(cin,s)){
 		
+		sscanf(s.data(), "%d:%d:%d",&h,&m,&seg);
+		tim=seg+(h*60+m)*60;
+		elapsed+=lastvel*((tim-lastim)/3600.0);
+		lastim=tim;
+		if(s.length()>8){
+			s=s.substr(8,s.length()-8);
+			lastvel=stoi(s);
+		}
+		else{
+			printf("%.2d:%.2d:%.2d %.2lf km\n",h,m,seg,elapsed);
+		}
 	}
 
     return 0;

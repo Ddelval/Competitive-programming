@@ -1,14 +1,14 @@
-// UVa Online Judge 111: History Grading
-//  0111
+// UVa Online Judge 10703: Free spots
+//  10703
 //	main.cpp
-//  Created by David del Val on 14/08/2019
+//  Created by David del Val on 08/08/2019
 //
 //
 
 
 #include <iostream>
 #include <algorithm>
-#include <sstream>
+#include <queue>
 #include <stack>
 #include <vector>
 #include <string>
@@ -61,58 +61,37 @@ typedef vector<int> vi;
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
 
-int LIS(vi&a){
-	vi DP(a.size());
-	int ans;
-	for(int i=0;i<a.size();++i){
-		ans=1;
-		for(int j=0;j<i;++j){
-			if(a[j]<a[i])ans=max(ans,DP[j]+1);
-		}
-		DP[i]=ans;
-	}
-	return *max_element(DP.begin(), DP.end());
-}
-
+int board[501][501];
 int main(){
     ios::sync_with_stdio(false);
-	int n;
-	cin>>n;
-	while(true){
-		map<int,int> dic;
-		int a;
-		REP(i, n){
-			cin>>a;
-			dic[i+1]=a;
-		}
-		string in;
-		getline(cin,in);
-		while(true){
-			if(!getline(cin,in)){
-				return 0;
+	int w,h,n;
+	while(cin>>w>>h>>n&&w&&h){
+		for(int i=1;i<=h;i++){
+			for(int j=1;j<=w;j++){
+				board[i][j]=1;
 			}
-string::size_type ab;
-int b=0;
-try{
-  b=stoi(in,&ab,10);
-}catch(exception e){return 0;}
-if(ab==in.length()){//There is only one number in the line
-	n=b;
-	break;
-}
-			else{
-				vi ex(n);
-				stringstream ss(in);
-				int a;
-				REP(i,n){
-					ss>>a;
-					ex[a-1]=i+1;
-					ex[a-1]=dic[ex[a-1]];
+		}
+		for(int w=0;w<n;w++){
+			pii p1,p2;
+			cin>>p1.fi>>p1.se>>p2.fi>>p2.se;
+			if(p1.fi>p2.fi)swap(p1.fi,p2.fi);
+			if(p1.se>p2.se)swap(p1.se,p2.se);
+			for(int i=p1.fi;i<=p2.fi;i++){
+				for(int j=p1.se;j<=p2.se;j++){
+					board[j][i]=0;
 				}
-				cout<<LIS(ex)<<"\n";
 			}
 		}
-		
+		int free=0;
+		for(int i=1;i<=h;i++){
+			for(int j=1;j<=w;j++){
+				free+=board[i][j];
+			}
+		}
+		if(!free)cout<<"There is no empty spots.";
+		else if(free==1)cout<<"There is one empty spot.";
+		else cout<<"There are "<<free<<" empty spots.";
+		cout<<"\n";
 	}
 
     return 0;

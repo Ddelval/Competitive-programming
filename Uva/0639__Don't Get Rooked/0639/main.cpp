@@ -1,14 +1,14 @@
-// UVa Online Judge 111: History Grading
-//  0111
+// UVa Online Judge 639: Don't Get Rooked
+//  0639
 //	main.cpp
-//  Created by David del Val on 14/08/2019
+//  Created by David del Val on 08/08/2019
 //
 //
 
 
 #include <iostream>
 #include <algorithm>
-#include <sstream>
+#include <queue>
 #include <stack>
 #include <vector>
 #include <string>
@@ -60,59 +60,75 @@ typedef long long ll;
 typedef vector<int> vi;
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
-
-int LIS(vi&a){
-	vi DP(a.size());
-	int ans;
-	for(int i=0;i<a.size();++i){
-		ans=1;
-		for(int j=0;j<i;++j){
-			if(a[j]<a[i])ans=max(ans,DP[j]+1);
-		}
-		DP[i]=ans;
+int n;
+int board[4][4];
+void fill(int i,int nq){
+	int x=i/n;
+	int y=i%n;
+	for(int j=x;j<n;++j){
+		if(board[j][y]==-1)break;
+		if(!board[j][y])board[j][y]=nq;
 	}
-	return *max_element(DP.begin(), DP.end());
+	for(int j=y;j<n;++j){
+		if(board[x][j]==-1)break;
+		if(!board[x][j])board[x][j]=nq;
+	}
+	for(int j=x-1;j>=0;--j){
+		if(board[j][y]==-1)break;
+		if(!board[j][y])board[j][y]=nq;
+	}
+	for(int j=y-1;j>=0;--j){
+		if(board[x][j]==-1)break;
+		if(!board[x][j])board[x][j]=nq;
+	}
 }
-
+void unfill(int i,int nq){
+	int x=i/n;
+	int y=i%n;
+	for(int j=x;j<n;++j){
+		if(board[j][y]==-1)break;
+		if(board[j][y]==nq)board[j][y]=0;
+	}
+	for(int j=y;j<n;++j){
+		if(board[x][j]==-1)break;
+		if(board[x][j]==nq)board[x][j]=0;
+	}
+	for(int j=x-1;j>=0;--j){
+		if(board[j][y]==-1)break;
+		if(board[j][y]==nq)board[j][y]=0;
+	}
+	for(int j=y-1;j>=0;--j){
+		if(board[x][j]==-1)break;
+		if(board[x][j]==nq)board[x][j]=0;
+	}
+}
+int ma;
+void place(int stindex,int nq){
+	for(int i=stindex;i<n*n;++i){
+		if(!board[i/n][i%n]){
+			nq++;
+			ma=max(ma,nq);
+			fill(i,nq);
+			place(i+1, nq);
+			unfill(i, nq);
+			nq--;
+		}
+	}
+}
 int main(){
     ios::sync_with_stdio(false);
-	int n;
-	cin>>n;
-	while(true){
-		map<int,int> dic;
-		int a;
-		REP(i, n){
-			cin>>a;
-			dic[i+1]=a;
-		}
-		string in;
-		getline(cin,in);
-		while(true){
-			if(!getline(cin,in)){
-				return 0;
-			}
-string::size_type ab;
-int b=0;
-try{
-  b=stoi(in,&ab,10);
-}catch(exception e){return 0;}
-if(ab==in.length()){//There is only one number in the line
-	n=b;
-	break;
-}
-			else{
-				vi ex(n);
-				stringstream ss(in);
-				int a;
-				REP(i,n){
-					ss>>a;
-					ex[a-1]=i+1;
-					ex[a-1]=dic[ex[a-1]];
-				}
-				cout<<LIS(ex)<<"\n";
+	while(cin>>n&&n){
+		char c;
+		for(int i=0;i<n;++i){
+			for(int j=0;j<n;++j){
+				cin>>c;
+				if(c=='X')board[i][j]=-1;
+				else board[i][j]=0;
 			}
 		}
-		
+		ma=0;
+		place(0,0);
+		cout<<ma<<"\n";
 	}
 
     return 0;

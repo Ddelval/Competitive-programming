@@ -1,14 +1,14 @@
-// UVa Online Judge 111: History Grading
-//  0111
+// UVa Online Judge 10683: The decadary watch
+//  10683
 //	main.cpp
-//  Created by David del Val on 14/08/2019
+//  Created by David del Val on 08/08/2019
 //
 //
 
 
 #include <iostream>
 #include <algorithm>
-#include <sstream>
+#include <queue>
 #include <stack>
 #include <vector>
 #include <string>
@@ -61,58 +61,26 @@ typedef vector<int> vi;
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
 
-int LIS(vi&a){
-	vi DP(a.size());
-	int ans;
-	for(int i=0;i<a.size();++i){
-		ans=1;
-		for(int j=0;j<i;++j){
-			if(a[j]<a[i])ans=max(ans,DP[j]+1);
-		}
-		DP[i]=ans;
-	}
-	return *max_element(DP.begin(), DP.end());
-}
 
 int main(){
     ios::sync_with_stdio(false);
-	int n;
-	cin>>n;
-	while(true){
-		map<int,int> dic;
-		int a;
-		REP(i, n){
-			cin>>a;
-			dic[i+1]=a;
-		}
-		string in;
-		getline(cin,in);
-		while(true){
-			if(!getline(cin,in)){
-				return 0;
-			}
-string::size_type ab;
-int b=0;
-try{
-  b=stoi(in,&ab,10);
-}catch(exception e){return 0;}
-if(ab==in.length()){//There is only one number in the line
-	n=b;
-	break;
-}
-			else{
-				vi ex(n);
-				stringstream ss(in);
-				int a;
-				REP(i,n){
-					ss>>a;
-					ex[a-1]=i+1;
-					ex[a-1]=dic[ex[a-1]];
-				}
-				cout<<LIS(ex)<<"\n";
-			}
-		}
-		
+	string lin;
+	int h,m,s,c,dc,ds,dm,dh,time,dtime;
+	while(getline(cin,lin)){
+		h=stoi(lin.substr(0,2));
+		m=stoi(lin.substr(2,2));
+		s=stoi(lin.substr(4,2));
+		c=stoi(lin.substr(6,2));
+		time=c+100*(s+60*(m+60*(h)));
+		dtime=(int)(time*(10*100*100*100.0)/(24*3600*100.0));
+		dc=dtime%100;
+		dtime/=100;
+		ds=dtime%100;
+		dtime/=100;
+		dm=dtime%100;
+		dtime/=100;
+		dh=dtime;
+		printf("%d%.2d%.2d%.2d\n",dh,dm,ds,dc);
 	}
 
     return 0;

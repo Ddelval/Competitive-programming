@@ -1,15 +1,15 @@
-// UVa Online Judge 111: History Grading
-//  0111
+// UVa Online Judge 10528: Major Scales
+//  10528
 //	main.cpp
-//  Created by David del Val on 14/08/2019
+//  Created by David del Val on 08/08/2019
 //
 //
 
 
 #include <iostream>
 #include <algorithm>
+#include <queue>
 #include <sstream>
-#include <stack>
 #include <vector>
 #include <string>
 #include <set>
@@ -61,60 +61,53 @@ typedef vector<int> vi;
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
 
-int LIS(vi&a){
-	vi DP(a.size());
-	int ans;
-	for(int i=0;i<a.size();++i){
-		ans=1;
-		for(int j=0;j<i;++j){
-			if(a[j]<a[i])ans=max(ans,DP[j]+1);
-		}
-		DP[i]=ans;
-	}
-	return *max_element(DP.begin(), DP.end());
-}
 
 int main(){
     ios::sync_with_stdio(false);
-	int n;
-	cin>>n;
-	while(true){
-		map<int,int> dic;
-		int a;
-		REP(i, n){
-			cin>>a;
-			dic[i+1]=a;
+	vector<string> raw;
+	raw.pb("C");raw.pb("C#");raw.pb("D");raw.pb("D#");raw.pb("E");raw.pb("F");raw.pb("F#");
+	raw.pb("G");raw.pb("G#");raw.pb("A");raw.pb("A#");raw.pb("B");
+	vector<int> indexes;
+	REP(i,2)indexes.pb(2);
+	REP(i,1)indexes.pb(1);
+	REP(i,3)indexes.pb(2);
+	REP(i,1)indexes.pb(1);
+	map<string,set<string>> keys;
+	
+	
+	for(int i=0;i<raw.size();++i){
+		int index=i;
+		set<string> st;
+		for(int j=0;j<8;++j){
+			st.insert(raw[index%raw.size()]);
+			index+=indexes[j];
 		}
-		string in;
-		getline(cin,in);
-		while(true){
-			if(!getline(cin,in)){
-				return 0;
-			}
-string::size_type ab;
-int b=0;
-try{
-  b=stoi(in,&ab,10);
-}catch(exception e){return 0;}
-if(ab==in.length()){//There is only one number in the line
-	n=b;
-	break;
-}
-			else{
-				vi ex(n);
-				stringstream ss(in);
-				int a;
-				REP(i,n){
-					ss>>a;
-					ex[a-1]=i+1;
-					ex[a-1]=dic[ex[a-1]];
-				}
-				cout<<LIS(ex)<<"\n";
-			}
-		}
-		
+		keys[raw[i]]=st;
 	}
-
+	string str;
+	while(getline(cin,str)){
+		if(str=="END")break;
+		set<string> in;
+		stringstream ss(str);
+		string a;
+		while(ss>>a)in.insert(a);
+		vector<string> out;
+		for(auto a:keys){
+			bool b=true;
+			for_each(in.begin(), in.end(), [a,&b](string ab){if(!a.se.count(ab))b=false;});
+			if(b)out.pb(a.fi);
+		}
+		bool abc=false;
+		sort(out.begin(),out.end(),[raw](string a,string b){
+			return find(raw.begin(),raw.end(),a)<find(raw.begin(),raw.end(),b);
+		});
+		for(auto a:out){
+			if(abc)cout<<" ";
+			abc=true;
+			cout<<a;
+		}
+		cout<<"\n";
+	}
     return 0;
 }
 

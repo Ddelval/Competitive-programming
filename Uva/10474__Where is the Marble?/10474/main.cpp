@@ -1,14 +1,14 @@
-// UVa Online Judge 111: History Grading
-//  0111
+// UVa Online Judge 10474: Where is the Marble?
+//  10474
 //	main.cpp
-//  Created by David del Val on 14/08/2019
+//  Created by David del Val on 13/08/2019
 //
 //
 
 
 #include <iostream>
 #include <algorithm>
-#include <sstream>
+#include <queue>
 #include <stack>
 #include <vector>
 #include <string>
@@ -61,57 +61,32 @@ typedef vector<int> vi;
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
 
-int LIS(vi&a){
-	vi DP(a.size());
-	int ans;
-	for(int i=0;i<a.size();++i){
-		ans=1;
-		for(int j=0;j<i;++j){
-			if(a[j]<a[i])ans=max(ans,DP[j]+1);
-		}
-		DP[i]=ans;
-	}
-	return *max_element(DP.begin(), DP.end());
-}
 
 int main(){
     ios::sync_with_stdio(false);
-	int n;
-	cin>>n;
-	while(true){
-		map<int,int> dic;
+	int n,q;
+	int cas=0;
+	while(cin>>n>>q&&n&&q){
+		vi balls(n);
 		int a;
-		REP(i, n){
+		REP(i,n){
+			cin>>balls[i];
+		}
+		sort(balls.begin(),balls.end());
+		cas++;
+		if(q){
+			cout<<"CASE# "<<cas<<":\n";
+		}
+		REP(i,q){
 			cin>>a;
-			dic[i+1]=a;
+			auto it=lower_bound(balls.begin(), balls.end(), a);
+			
+			if(*it==a)cout<<a<<" found at "<<it-balls.begin()+1<<"\n";
+			else cout<<a<<" not found\n";
 		}
-		string in;
-		getline(cin,in);
-		while(true){
-			if(!getline(cin,in)){
-				return 0;
-			}
-string::size_type ab;
-int b=0;
-try{
-  b=stoi(in,&ab,10);
-}catch(exception e){return 0;}
-if(ab==in.length()){//There is only one number in the line
-	n=b;
-	break;
-}
-			else{
-				vi ex(n);
-				stringstream ss(in);
-				int a;
-				REP(i,n){
-					ss>>a;
-					ex[a-1]=i+1;
-					ex[a-1]=dic[ex[a-1]];
-				}
-				cout<<LIS(ex)<<"\n";
-			}
-		}
+		
+		
+		
 		
 	}
 
