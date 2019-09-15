@@ -1,9 +1,8 @@
 //  1175-B
 //	main.cpp
-//  Created by David del Val on 28/06/2019
+//  Created by David del Val on 11/09/2019
 //
 //
-
 
 #include <iostream>
 #include <algorithm>
@@ -26,6 +25,8 @@ using namespace std;
 #define se second
 #define echobin(x) cout<<#x<<":"<<x<<" ="<<bitset<8>(x)<<"  ";
 #define echo(...) {cout<<"->";ECHO(#__VA_ARGS__, __VA_ARGS__ );}
+#define REPO(i,a,b) for(int i=a;i<b;i++)
+#define REP(i,b) for(int i=0;i<b;i++)
 
 void ECHO(string _s){cout<<endl;(void)_s;}
 template<typename T, typename ...Args> void ECHO(string _s, T x, Args... args){
@@ -57,77 +58,46 @@ typedef long long ll;
 typedef vector<int> vi;
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
-ll x;
-ll lim;
-bool over;
-struct Command{
-    int a;
-    //a=0: for
-    //a=1: end
-    //a=2: add
-    //a=3: void
-    int aux;
-    //times for loop
-    Command(int a,int b){
-        this->a=a;
-        this->aux=b;
-    }
-    Command(){
-
-    }
-};
-vector<Command> data;
-void loop(int n, int ipos){
-    int it;
-    for(int i=0;i<n;++i){
-        it=ipos;
-        while(data[it].a!=1){
-            if(data[it].a==0){
-                loop(data[it].aux,it+1);
-                while(data[it].a!=1)it++;
-            }
-            else if(data[it].a==2){
-                x++;
-                if(x>lim){
-                    over=true;
-                    return;
-                }
-            }
-            it++;
-        }
-        if(over)return;
-    }
-}
-
-
 int main(){
-    ios::sync_with_stdio(false);
-    x=0;
-    string s;
-    over=false;
-    lim=(ll)pow(2,32)-1;
-    Command c;
-    int n,a;
-    cin>>n;
-    for(int i=0;i<n;++i){
-        cin>>s;
-        if(s=="add"){
-            c=Command(2,0);
-        }
-        else if(s=="for"){
-            cin>>a;
-            c=Command(0,a);
-        }
-        else if(s=="end"){
-            c=Command(1,0);
-        }
-        data.push_back(c);
-    }
-    c=Command(1,0);
-    data.push_back(c);
-    loop(1, 0);
-    cout<<x;
-
-    return 0;
+	ios::sync_with_stdio(false);
+	int n;
+	cin>>n;
+	ll x=0;
+	ll curr=1;
+	bool over=false;
+	ll lim=(1ll<<32)-1;
+	stack<ll> multi;
+	for(int i=0;i<n;++i){
+		string s;
+		cin>>s;
+		if(s=="add"){
+			x+=curr;
+			if(x>lim){
+				over=true;
+				x=0;
+			}
+		}
+		else if(s=="for"){
+			int ii;
+			cin>>ii;
+			curr = min(curr*=ii,lim+5);
+			multi.push(curr);
+			
+			
+		}
+		else if(s=="end"){
+			multi.pop();
+			if(multi.empty())curr=1;
+			else curr=multi.top();
+		}
+	}
+	if(over){
+		cout<<"OVERFLOW!!!";
+	}
+	else{
+		cout<<x;
+	}
+	
+	return 0;
 }
 
