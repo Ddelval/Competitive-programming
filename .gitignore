@@ -2,3 +2,7 @@
 *.xcodeproj/
 DerivedData/ 
 *.o
+*.in
+*.out
+*.json
+*.plist
