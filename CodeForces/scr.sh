@@ -4,6 +4,7 @@
 A="$(ls)"
 for a in $A
 do
-    echo "$( ls $a/$a)"
+    b= "$( ls $a/$a)"
+    mv $a/$a/main.cpp $a.cpp
     echo "\n\n"
 done
