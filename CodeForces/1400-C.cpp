@@ -1,5 +1,5 @@
-//  1391-C.cpp
-//  Created by David del Val on 14/08/2020
+//  1400-C.cpp
+//  Created by David del Val on 26/08/2020
 //
 //
 
@@ -9,7 +9,7 @@ using namespace std;
 
 #define mp make_pair
 #define pb push_back
-#define all(x) (x).begin(), (x).end()
+#define all(x) (n, (x).end()
 #define sz(x) (int)(x).size()
 #define fi first
 #define se second
@@ -54,30 +54,47 @@ inline ostream& operator<<(ostream& o, vector<T>& p) {
 #else
 // Judge constraints
 #endif
-const ll mod = 1e9 + 7;
-
-ll binExp(ll n, ll exp) {
-    if (exp == 0) return 1;
-    ll res = binExp(n, exp / 2);
-    res = (res * res) % mod;
-    if (exp % 2) res *= n;
-
-    return res % mod;
-}
 
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
 
-    ll n;
-    cin >> n;
-    ll fac = 1;
-    for (int i = 2; i <= n; ++i) {
-        fac = (fac * i) % mod;
-    }
+    int t;
+    cin >> t;
+    while (t--) {
+        string s;
+        cin >> s;
+        int x;
+        cin >> x;
+        vector<int> buff;
+        int n = s.length();
+        buff.assign(n, 1);
+        for (int i = 0; i < n; ++i) {
+            if (s[i] == '1') continue;
+            if (i >= x) buff[i - x] = 0;
+            if (i + x < n) buff[i + x] = 0;
+        }
 
-    cout << (fac - binExp(2, n - 1) + mod) % mod;
+        string s2;
+        for (int i = 0; i < n; ++i) {
+            int r = 0;
+            if (i >= x) r += buff[i - x];
+            if (i + x < n) r += buff[i + x];
+            if (r)
+                s2.push_back('1');
+            else
+                s2.push_back('0');
+        }
+        //cout << "buff" << buff << endl;
+
+        if (s == s2) {
+            for (int i = 0; i < n; ++i) cout << buff[i];
+            cout << "\n";
+        } else {
+            cout << "-1\n";
+        }
+    }
 
     return 0;
 }

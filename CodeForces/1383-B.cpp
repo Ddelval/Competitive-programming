@@ -1,5 +1,5 @@
-//  1391-C.cpp
-//  Created by David del Val on 14/08/2020
+//  1383-B.cpp
+//  Created by David del Val on 20/08/2020
 //
 //
 
@@ -54,30 +54,49 @@ inline ostream& operator<<(ostream& o, vector<T>& p) {
 #else
 // Judge constraints
 #endif
-const ll mod = 1e9 + 7;
-
-ll binExp(ll n, ll exp) {
-    if (exp == 0) return 1;
-    ll res = binExp(n, exp / 2);
-    res = (res * res) % mod;
-    if (exp % 2) res *= n;
-
-    return res % mod;
-}
 
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
 
-    ll n;
-    cin >> n;
-    ll fac = 1;
-    for (int i = 2; i <= n; ++i) {
-        fac = (fac * i) % mod;
-    }
+    int t;
+    cin >> t;
+    while (t--) {
+        int n;
+        cin >> n;
+        int quant[30];
+        int a;
+        memset(quant, 0, 30 * sizeof(int));
+        for (int j = 0; j < n; ++j) {
+            cin >> a;
+            for (int i = 0; i < 30; ++i) {
+                quant[i] += (a & (1ll << i)) != 0;
+            }
+        }
 
-    cout << (fac - binExp(2, n - 1) + mod) % mod;
+        bool kW = false;
+        bool kL = false;
+
+        for (int j = 29; j >= 0; j--) {
+            //cout << quant[j] << " ";
+            if (quant[j] % 2) {
+                if (quant[j] % 4 == 3 && (n - quant[j]) % 2 == 0) {
+                    kL = true;
+                } else {
+                    kW = true;
+                }
+                break;
+            }
+        }
+        if (kW)
+            cout << "WIN\n";
+        else if (kL)
+            cout << "LOSE\n";
+        else {
+            cout << "DRAW\n";
+        }
+    }
 
     return 0;
 }

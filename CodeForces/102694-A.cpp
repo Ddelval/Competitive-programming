@@ -1,5 +1,5 @@
-//  1391-C.cpp
-//  Created by David del Val on 14/08/2020
+//  102694-A.cpp
+//  Created by David del Val on 23/08/2020
 //
 //
 
@@ -54,15 +54,26 @@ inline ostream& operator<<(ostream& o, vector<T>& p) {
 #else
 // Judge constraints
 #endif
-const ll mod = 1e9 + 7;
-
-ll binExp(ll n, ll exp) {
-    if (exp == 0) return 1;
-    ll res = binExp(n, exp / 2);
-    res = (res * res) % mod;
-    if (exp % 2) res *= n;
-
-    return res % mod;
+int n;
+vector<vi> adyList;
+pii bfs(int inode) {
+    vi visited(n);
+    queue<pii> q;
+    q.push({inode, 0});
+    pii a;
+    visited[inode] = true;
+    while (!q.empty()) {
+        a = q.front();
+        //cout << a << endl;
+        q.pop();
+        for (int i : adyList[a.fi]) {
+            if (!visited[i]) {
+                visited[i] = true;
+                q.push({i, a.se + 1});
+            }
+        }
+    }
+    return a;
 }
 
 int main() {
@@ -70,14 +81,19 @@ int main() {
     cin.tie(0);
     cout.tie(0);
 
-    ll n;
     cin >> n;
-    ll fac = 1;
-    for (int i = 2; i <= n; ++i) {
-        fac = (fac * i) % mod;
-    }
+    adyList = vector<vi>(n, vi());
+    int a, b;
 
-    cout << (fac - binExp(2, n - 1) + mod) % mod;
+    for (int i = 0; i < n - 1; ++i) {
+        cin >> a >> b;
+        a--, b--;
+        adyList[a].pb(b);
+        adyList[b].pb(a);
+    }
+    pii res1 = bfs(0);
+    //cout << res1 << endl;
+    cout << 3 * bfs(res1.fi).se << "\n";
 
     return 0;
 }

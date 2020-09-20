@@ -1,5 +1,5 @@
-//  1391-C.cpp
-//  Created by David del Val on 14/08/2020
+//  1400-E.cpp
+//  Created by David del Val on 26/08/2020
 //
 //
 
@@ -48,36 +48,59 @@ inline ostream& operator<<(ostream& o, vector<T>& p) {
     return o;
 }
 
+template <typename T = ll>
+inline vector<T> readVector(int size) {
+    vector<T> v;
+    v.reserve(size);
+    int a;
+    for (int i = 0; i < size; ++i) {
+        cin >> a;
+        v.push_back(a);
+    }
+    return v;
+}
+
 #ifdef _LOCAL_
 //Local constraints
 
 #else
 // Judge constraints
 #endif
-const ll mod = 1e9 + 7;
+vi arr;
+const int lim = 5010;
+int dp[lim][lim];
+ll n;
 
-ll binExp(ll n, ll exp) {
-    if (exp == 0) return 1;
-    ll res = binExp(n, exp / 2);
-    res = (res * res) % mod;
-    if (exp % 2) res *= n;
+int explore(int index, int heightConIndex) {
+    if (index == n) return 0;
+    if (dp[index][heightConIndex] != -1) return dp[index][heightConIndex];
+    int ans = 0;
 
-    return res % mod;
+    if (arr[index] <= arr[heightConIndex]) {
+        ans = explore(index + 1, index);
+    } else {
+        ans = 1 + explore(index + 1, heightConIndex);
+        ans = min(ans, arr[index] - arr[heightConIndex] + explore(index + 1, index));
+    }
+    //cout << index << " " << heightConIndex << " " << ans << endl;
+    return dp[index][heightConIndex] = ans;
 }
-
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
 
-    ll n;
     cin >> n;
-    ll fac = 1;
-    for (int i = 2; i <= n; ++i) {
-        fac = (fac * i) % mod;
+    arr = readVector<int>(n);
+    arr.pb(0);
+
+    for (int i = 0; i < lim; i++) {
+        for (int j = 0; j < lim; j++) {
+            dp[i][j] = -1;
+        }
     }
 
-    cout << (fac - binExp(2, n - 1) + mod) % mod;
+    cout << explore(0, n) << "\n";
 
     return 0;
 }

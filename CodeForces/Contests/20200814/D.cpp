@@ -58,55 +58,9 @@ int sizes[3];
 vl elems[3];
 
 const int siz = 200 + 10;
-int dp[siz][siz][siz];
-ll ma;
-void explore(ll val, ll used1, ll used2, ll used3);
+ll dp[siz][siz][siz];
 
-void explore1(ll val, ll used1, ll used2, ll used3) {
-    if (used1 == sizes[0] || used2 == sizes[1]) {
-    } else {
-        ll nval = val + elems[0][used1] * elems[1][used2];
-        explore(nval, used1 + 1, used2 + 1, used3);
-    }
-}
-void explore2(ll val, ll used1, ll used2, ll used3) {
-    if (used2 == sizes[1] || used3 == sizes[2]) {
-    } else {
-        ll nval = val + elems[1][used2] * elems[2][used3];
-        explore(nval, used1, used2 + 1, used3 + 1);
-    }
-}
-void explore3(ll val, ll used1, ll used2, ll used3) {
-    if (used1 == sizes[0] || used3 == sizes[2]) {
-    } else {
-        ll nval = val + elems[0][used1] * elems[2][used3];
-        explore(nval, used1 + 1, used2, used3 + 1);
-    }
-}
 
-void explore(ll val, ll used1, ll used2, ll used3) {
-    ma = max(ma, val);
-    if (used1 == sizes[0] && used2 == sizes[1]) return;
-    if (used2 == sizes[1] && used3 == sizes[2]) return;
-    if (used1 == sizes[0] && used3 == sizes[2]) return;
-
-    if (dp[used1][used2][used3] > val) return;
-    dp[used1][used2][used3] = val;
-    pii arr[3];
-    arr[0] = {-1, 0};
-    arr[1] = {-1, 1};
-    arr[2] = {-1, 2};
-
-    if (used1 != sizes[0] && used2 != sizes[1]) arr[0] = {elems[0][used1] * elems[1][used2], 0};
-    if (used2 != sizes[1] && used3 != sizes[2]) arr[1] = {elems[1][used2] * elems[2][used3], 1};
-    if (used3 != sizes[2] && used1 != sizes[0]) arr[2] = {elems[2][used3] * elems[0][used1], 2};
-    sort(arr, arr + 3, greater<pii>());
-    for (int i = 0; i < 3; ++i) {
-        if (arr[i].se == 0) explore1(val, used1, used2, used3);
-        if (arr[i].se == 1) explore2(val, used1, used2, used3);
-        if (arr[i].se == 2) explore3(val, used1, used2, used3);
-    }
-}
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
@@ -117,13 +71,34 @@ int main() {
         cin >> sizes[i];
     }
     for (int i = 0; i < 3; ++i) {
+
         elems[i] = vl(sizes[i]);
         for (int j = 0; j < sizes[i]; ++j) {
             cin >> elems[i][j];
         }
+
         sort(all(elems[i]), greater<int>());
+        elems[i].push_back(0);
     }
-    explore(0, 0, 0, 0);
-    cout << ma << "\n";
+
+    for (int i = 0; i <= sizes[0]; ++i) {
+        for (int j = 0; j <= sizes[1]; ++j) {
+            for (int w = 0; w <= sizes[2]; ++w) {
+                dp[i + 1][j + 1][w] = max(dp[i + 1][j + 1][w], dp[i][j][w] + elems[0][i] * elems[1][j]);
+                dp[i][j + 1][w + 1] = max(dp[i][j + 1][w + 1], dp[i][j][w] + elems[1][j] * elems[2][w]);
+                dp[i + 1][j][w + 1] = max(dp[i + 1][j][w + 1], dp[i][j][w] + elems[0][i] * elems[2][w]);
+            }
+        }
+    }
+
+    ll ans = 0;
+    for (int i = 0; i < siz;++i){
+        for (int j = 0; j < siz;++j){
+            for (int w = 0; w < siz;++w){
+                ans = max(ans, dp[i][j][w]);
+            }
+        }
+    }
+    cout << ans << "\n";
     return 0;
 }

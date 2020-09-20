@@ -1,5 +1,5 @@
-//  1391-C.cpp
-//  Created by David del Val on 14/08/2020
+//  0677-A.cpp
+//  Created by David del Val on 20/08/2020
 //
 //
 
@@ -54,30 +54,27 @@ inline ostream& operator<<(ostream& o, vector<T>& p) {
 #else
 // Judge constraints
 #endif
-const ll mod = 1e9 + 7;
-
-ll binExp(ll n, ll exp) {
-    if (exp == 0) return 1;
-    ll res = binExp(n, exp / 2);
-    res = (res * res) % mod;
-    if (exp % 2) res *= n;
-
-    return res % mod;
-}
 
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
 
-    ll n;
-    cin >> n;
-    ll fac = 1;
-    for (int i = 2; i <= n; ++i) {
-        fac = (fac * i) % mod;
+    int n, h;
+    cin >> n >> h;
+    int solution = 0;
+    int a;
+    for (int i = 0; i < n; ++i) {
+        cin >> a;
+        if (a > h) {
+            solution = solution + 2;
+        } 
+        else {
+            solution = solution + 1;
+        }
+        
     }
-
-    cout << (fac - binExp(2, n - 1) + mod) % mod;
+    cout << solution << "\n";
 
     return 0;
 }
