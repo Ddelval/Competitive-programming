@@ -1,5 +1,5 @@
-//  1391-C.cpp
-//  Created by David del Val on 14/08/2020
+//  1397-A.cpp
+//  Created by David del Val on 01/09/2020
 //
 //
 
@@ -29,11 +29,11 @@ inline pii operator+(pii a, pii b) {
     return {a.fi + b.fi, a.se + b.se};
 }
 
-inline ostream& operator<<(ostream& o, pii p) {
+template <typename T, typename Q>
+inline ostream& operator<<(ostream& o, pair<T, Q> p) {
     o << p.fi << " " << p.se;
     return o;
 }
-
 template <typename>
 struct is_std_vector : std::false_type {};
 template <typename T, typename A>
@@ -48,36 +48,51 @@ inline ostream& operator<<(ostream& o, vector<T>& p) {
     return o;
 }
 
+template <typename T = ll>
+inline vector<T> readVector(int size) {
+    vector<T> v;
+    v.reserve(size);
+    int a;
+    for (int i = 0; i < size; ++i) {
+        cin >> a;
+        v.push_back(a);
+    }
+    return v;
+}
+
 #ifdef _LOCAL_
 //Local constraints
 
 #else
 // Judge constraints
 #endif
-const ll mod = 1e9 + 7;
-
-ll binExp(ll n, ll exp) {
-    if (exp == 0) return 1;
-    ll res = binExp(n, exp / 2);
-    res = (res * res) % mod;
-    if (exp % 2) res *= n;
-
-    return res % mod;
-}
 
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
 
-    ll n;
-    cin >> n;
-    ll fac = 1;
-    for (int i = 2; i <= n; ++i) {
-        fac = (fac * i) % mod;
-    }
-
-    cout << (fac - binExp(2, n - 1) + mod) % mod;
+    int t;
+    cin >> t;
+    while (t--) {
+        int n;
+        cin >> n;
+        int vals[30];
+        for (int i = 0; i < 30; ++i) vals[i] = 0;
+        string s;
+        for (int i = 0; i < n; ++i) {
+            cin >> s;
+            for (char c : s) vals[c - 'a']++;
+        }
+        bool possible = true;
+        for (int i = 0; i < 30; ++i) {
+            if (vals[i] % n) possible = false;
+        }
+        if (possible)
+            cout << "YES\n";
+        else
+            cout << "NO\n";
+        }
 
     return 0;
 }

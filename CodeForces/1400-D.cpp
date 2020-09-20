@@ -1,5 +1,5 @@
-//  1391-C.cpp
-//  Created by David del Val on 14/08/2020
+//  1400-D.cpp
+//  Created by David del Val on 26/08/2020
 //
 //
 
@@ -54,30 +54,38 @@ inline ostream& operator<<(ostream& o, vector<T>& p) {
 #else
 // Judge constraints
 #endif
-const ll mod = 1e9 + 7;
-
-ll binExp(ll n, ll exp) {
-    if (exp == 0) return 1;
-    ll res = binExp(n, exp / 2);
-    res = (res * res) % mod;
-    if (exp % 2) res *= n;
-
-    return res % mod;
-}
 
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
 
-    ll n;
-    cin >> n;
-    ll fac = 1;
-    for (int i = 2; i <= n; ++i) {
-        fac = (fac * i) % mod;
-    }
+    int t;
+    cin >> t;
+    while (t--) {
+        int n;
+        cin >> n;
+        vi data(n);
+        for (int i = 0; i < n; ++i) cin >> data[i];
 
-    cout << (fac - binExp(2, n - 1) + mod) % mod;
+        ll totalSum = 0;
+        vi buffer2(n + 1, 0);
+        for (int i = 0; i < n; ++i) {
+            ll sum = 0;
+            ll tsum = 0;
+            for (int j = i + 1; j < n; ++j) {
+                if (data[j] == data[i]) {
+                    tsum += sum;
+                    sum += buffer2[data[j]];
+                } else {
+                    sum += buffer2[data[j]];
+                }
+            }
+            buffer2[data[i]]++;
+            totalSum += tsum;
+        }
+        cout << totalSum << "\n";
+    }
 
     return 0;
 }

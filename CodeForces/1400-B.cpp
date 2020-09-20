@@ -1,5 +1,5 @@
-//  1391-C.cpp
-//  Created by David del Val on 14/08/2020
+//  1400-B.cpp
+//  Created by David del Val on 25/08/2020
 //
 //
 
@@ -54,15 +54,27 @@ inline ostream& operator<<(ostream& o, vector<T>& p) {
 #else
 // Judge constraints
 #endif
-const ll mod = 1e9 + 7;
 
-ll binExp(ll n, ll exp) {
-    if (exp == 0) return 1;
-    ll res = binExp(n, exp / 2);
-    res = (res * res) % mod;
-    if (exp % 2) res *= n;
+ll p, f;
+ll s, w;
+ll cs, cw;
 
-    return res % mod;
+ll calculate(ll ns, ll nw, ll capacity) {
+    ll ps, pw;
+    ps = s;
+    pw = w;
+    if (ps > pw) {
+        swap(ps, pw);
+        swap(ns, nw);
+    }
+
+    if (ps * ns >= capacity) {
+        return capacity / ps;
+    }
+    ll accum = ns;
+    capacity -= ns * ps;
+    accum += min((capacity / pw), nw);
+    return accum;
 }
 
 int main() {
@@ -70,14 +82,25 @@ int main() {
     cin.tie(0);
     cout.tie(0);
 
-    ll n;
-    cin >> n;
-    ll fac = 1;
-    for (int i = 2; i <= n; ++i) {
-        fac = (fac * i) % mod;
-    }
+    int t;
+    cin >> t;
 
-    cout << (fac - binExp(2, n - 1) + mod) % mod;
+    while (t--) {
+        cin >> p >> f;
+        cin >> cs >> cw;
+        cin >> s >> w;
+
+        ll mM = 0;
+        for (ll s1 = 0; s1 <= cs; ++s1) {
+            if (s1 * s > p) break;
+            ll w1 = (p - s1 * s) / w;
+            w1 = min(w1, cw);
+            //cout << "to1 " << s1 << " " << w1 << "    " << s1 + w1 << "\n";
+            //cout << "to2 " << cs - s1 << " " << cw - w1 << "    " << calculate(cs - s1, cw - w1, f) << "\n";
+            mM = max(mM, s1 + w1 + calculate(cs - s1, cw - w1, f));
+        }
+        cout << mM << "\n";
+    }
 
     return 0;
 }

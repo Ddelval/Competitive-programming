@@ -1,5 +1,5 @@
-//  1391-C.cpp
-//  Created by David del Val on 14/08/2020
+//  D.cpp
+//  Created by David del Val on 16/08/2020
 //
 //
 
@@ -33,6 +33,11 @@ inline ostream& operator<<(ostream& o, pii p) {
     o << p.fi << " " << p.se;
     return o;
 }
+template <typename T, typename A>
+inline ostream& operator<<(ostream& o, pair<T, A> p) {
+    o << "{" << p.fi << " " << p.se << "}";
+    return o;
+}
 
 template <typename>
 struct is_std_vector : std::false_type {};
@@ -54,30 +59,46 @@ inline ostream& operator<<(ostream& o, vector<T>& p) {
 #else
 // Judge constraints
 #endif
-const ll mod = 1e9 + 7;
-
-ll binExp(ll n, ll exp) {
-    if (exp == 0) return 1;
-    ll res = binExp(n, exp / 2);
-    res = (res * res) % mod;
-    if (exp % 2) res *= n;
-
-    return res % mod;
-}
 
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
 
-    ll n;
-    cin >> n;
-    ll fac = 1;
-    for (int i = 2; i <= n; ++i) {
-        fac = (fac * i) % mod;
+    int t;
+    cin >> t;
+    while (t--) {
+        int n;
+        cin >> n;
+        string s;
+        cin >> s;
+        vector<pair<char, int>> lengths;
+        int clen = 0;
+        char ch = s[0];
+        for (int i = 0; i < n; ++i) {
+            if (s[i] == ch) {
+                clen++;
+            } else {
+                lengths.push_back({ch, clen});
+                clen = 1;
+                ch = s[i];
+            }
+        }
+        lengths.push_back({ch, clen});
+        if (lengths.size() > 1 && lengths.back().fi == lengths[0].fi) {
+            lengths[0].se += lengths.back().se;
+            lengths.pop_back();
+        }
+        ll res = 0;
+        if(lengths.size()==1 && n>2){
+            res++;
+            lengths[0].se--;
+        }
+        //cout << lengths;
+        for (auto p : lengths) {
+            res += p.se / 3;
+        }
+        cout << res << "\n";
     }
-
-    cout << (fac - binExp(2, n - 1) + mod) % mod;
-
     return 0;
 }
