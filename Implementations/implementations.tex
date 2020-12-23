@@ -1,0 +1,164 @@
+\documentclass[12pt]{report}
+\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage{tcolorbox}
+\usepackage[margin=1in]{geometry} 
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc} %escribe lo del teclado
+\usepackage[utf8]{inputenc} %Reconoce algunos símbolos
+\usepackage{graphicx}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{diagbox} %diagonal cells
+\usepackage{dirtytalk}
+\usepackage{minted}
+\usepackage{booktabs}
+\usepackage{import}
+\usepackage{hyperref}
+\usepackage{titlesec} % To configure subsections
+
+\titleformat*{\subsection}{\normalsize\bfseries}
+\setcounter{tocdepth}{1} % Only sections
+\definecolor{bg}{RGB}{240,240,240}
+\newcolumntype{Z}{>{\ttfamily}{c}<{}}
+
+
+\definecolor{mintedbackground}{rgb}{0.95,0.95,0.95}
+
+\newmintedfile[cppcode]{cpp}{
+bgcolor=mintedbackground,
+linenos=true,
+numberblanklines=true,
+numbersep=5pt,
+gobble=0,
+frame=leftline,
+framerule=0.4pt,
+framesep=2mm,
+funcnamehighlighting=true,
+tabsize=4,
+obeytabs=false,
+mathescape=false
+samepage=true, %with this setting you can force the list to appear on the same page
+showspaces=false,
+showtabs =false,
+texcl=false,
+fontsize=\small
+}
+
+\setminted[cpp]{
+bgcolor=mintedbackground,
+linenos=true,
+numberblanklines=true,
+numbersep=5pt,
+gobble=0,
+frame=leftline,
+framerule=0.4pt,
+framesep=2mm,
+funcnamehighlighting=true,
+tabsize=4,
+obeytabs=false,
+mathescape=false
+samepage=true, %with this setting you can force the list to appear on the same page
+showspaces=false,
+showtabs =false,
+texcl=false,
+fontsize=\small
+}
+
+\begin{document}
+
+\begin{titlepage}
+    \begin{center}
+        \vspace*{1cm}
+ 
+        \Huge
+        \textbf{CP implementations}
+ 
+
+ 
+        \vspace{1.5cm}
+ 
+        \textbf{David del Val}
+ 
+        \vfill
+ 
+ 
+        \vspace{0.8cm}
+ 
+ 
+        \Large
+	\today
+ 
+    \end{center}
+\end{titlepage}
+
+\tableofcontents 
+
+\chapter{Graphs}
+
+\section{Dijkstra}
+Shortest path from \texttt{orig} node to \texttt{dest} (or to every node) in a graph
+that does not contain negative edges. 
+It chooses the best path greedily in each iteration and, therefore, it only works
+on graphs without negative weights. 
+\cppcode[firstline=20]{code/graph/dijkstra.cpp}
+\noindent \textbf{\boldmath Running time: $\mathcal{O}(V+E\log(E))$}
+\\ {\small(V = vertices, E = edges)}
+
+\subsection*{Observations}
+\begin{itemize}
+	\item If we ignore the check in line 30, we can return the distances 
+		vector, which will contain the shortest distance from \texttt{dist}
+		to every other node.
+	\item If we are doing some kind of pruning it is imperative that we prune 
+	as many branches as possible in the main loop. That is to say, we should
+	introduce as many \texttt{if} statements in line 36 to make sure that we
+	run the \texttt{for} loop as few times as possible. 
+
+	An example of this approach is problem \texttt{UVA-11635}. In that problem, we
+	add a lot of branches to the queue (we may run the \texttt{for} loop
+	twice in some nodes) but we prune them in the main loop. Thus the 
+	running time is still acceptable.
+
+\end{itemize}
+
+\section{Bellman Ford}
+Shortest parth from \texttt{orig} to every other node. It is slower than Dijkstra but 
+it works on graphs with negative weights. 
+
+This algorithm works by trying to relax every edge $V-1$ times. If there are no 
+negative cycles, after $V-1$ iterations, we must have found the minimum distance
+to every node. Therefore if after these iterations, we run another
+iteration and the distance to a node decreases, we must have a negative cycle.
+
+\cppcode[firstline=20]{code/graph/bellman_ford.cpp}
+\noindent \textbf{\boldmath Running time: $\mathcal{O}(VE)$}
+\\ {\small(V = vertices, E = edges)}
+\subsection*{Observations}
+\begin{itemize}
+	\item If we keep track of the distance that decrease when we check for
+		a negative cycle, we will get at least one node of 
+		every negative cycle present in the graph.
+
+		We can use this, for instance, to check if we can reach a node with 
+		a cost smaller than a given bound. If it is connected to a node in a 
+		negative cycle, it's distance will be as small as we want it to be
+		(by looping in the cycle).
+
+		This can be seen at play in \texttt{UVA-10557}
+	\item If we modify slightly the main loop, iteration $i$ will be the 
+		result of considering paths of at most $i+1$ edges:
+		\begin{minted}{cpp}
+for (int i = 0; i < n - 1; ++i) {
+        for (auto e : edges) {
+            dists2[e.fi.se] = min(dists2[e.fi.se], dists[e.fi.fi] + e.se);
+        }
+	dists = dists2;
+}
+		\end{minted}
+		This can be seen at play in \texttt{UVA-11280}
+		
+
+\end{itemize}	
+
+\end{document}

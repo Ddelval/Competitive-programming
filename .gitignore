@@ -6,3 +6,10 @@ DerivedData/
 *.out
 *.json
 *.plist
+*.aux
+*.fls
+*.log
+*.toc
+*.synctex.gz
+*.fdb_latexmk
+*_minted-*
