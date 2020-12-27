@@ -14,6 +14,8 @@
 \usepackage{minted}
 \usepackage{booktabs}
 \usepackage{import}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta}
 \usepackage{hyperref}
 \usepackage{titlesec} % To configure subsections
 
@@ -92,6 +94,7 @@ fontsize=\small
     \end{center}
 \end{titlepage}
 
+\setcounter{tocdepth}{2}
 \tableofcontents 
 
 \chapter{Graphs}
@@ -161,4 +164,249 @@ for (int i = 0; i < n - 1; ++i) {
 
 \end{itemize}	
 
+\section{DFS}
+\subsection{Articulation points and bridges}
+These algorightms can be used in undirected graphs, and we
+will use the following definitions:
+\begin{itemize}
+	\def\itemsep{0 pt}
+	\item \textbf{Articulation point}. A node whose removal would increase the number
+		of connected components of the graph. That  is to say
+		that it \say{splits} a connected component.
+	\item \textbf{Bridge}. An edge whose removal increases the number of 
+		connected components in the graph.
+\end{itemize}
+We will use a modified version of DFS to solve this problem. We mainly introduce two new
+properties for every node:
+\begin{itemize}
+	\def\itemsep{0 pt}
+	\item \texttt{num}. Time at which the node was first explored by DFS
+	\item \texttt{low}. Earliest node that can be found in the DFS spanning 
+		tree that starts from this node
+\end{itemize}
+When we visit a node, for every edge, there are two options:
+\begin{itemize}
+\def \itemsep{0pt}
+	\item \textbf{Tree edge}. This edge point to a node that has not been 
+		discovered yet. As such we explore it (calling \texttt{dfs})
+		and, we update the value of \texttt{low} for the current
+		node. 
+
+		After the update, we can now process the child since we will
+		not visit it again and it's DFS tree has been fully explored
+
+	\item \textbf{Back edge}. This edge points to a node that has already
+		been visited. Therefore, it will have a relatively low 
+		\texttt{num} and we use it to update the \texttt{low}
+		value of the current node
+\end{itemize}
+\newpage
+\cppcode[firstline=20]{code/graph/articulationPts.cpp}
+\noindent \textbf{\boldmath Running time: $\mathcal{O}(V+E)$}
+\\ {\small (V = vertices, E = edges)}
+\subsubsection*{Explanation}
+
+The first graph that we will consider is the following:
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}
+	\begin{scope}[every node/.style = {circle, thick, draw}]
+		\node (A) at (0,0) {A};
+		\node (B) at (3,0) {B};
+		\node (C) at (6,0) {C};
+	\end{scope}
+	\begin{scope}[>={Stealth[black]},
+			every edge/.style={draw=black, very thick}]
+		\path [-] (A) edge  (B);
+		\path [-] (B) edge  (C);
+	\end{scope}
+\end{tikzpicture}
+\end{figure}
+After applying DFS on $A$ we get the following DFS spanning tree.
+Above every node, we have included \texttt{num / low}.
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}
+	\begin{scope}[every node/.style = {circle, thick, draw},
+		every label/.append style={font = \small, yshift = -0.5 em}]
+		\node[label={1/1}] (A) at (0,0) {A};
+		\node[label={2/2}](B) at (3,0) {B};
+		\node[label={3/3}](C) at (6,0) {C};
+	\end{scope}
+	\begin{scope}[>={Stealth[black]},
+			every edge/.style={draw=black, very thick}]
+		\path [->] (A) edge  (B);
+		\path [->] (B) edge  (C);
+	\end{scope}
+\end{tikzpicture}
+\end{figure}
+
+This is a rather simple graph and it's only articulation point is $B$. This is because
+it has a child whose \texttt{low} value is greater than or equal to $B$'s  \texttt{num}
+value. Therefore, there is no connection from that child (namely $C$) to a node explored
+before $B$ that does not go through $B$. 
+
+However, we can already see that the root has to be treated as a separate case. 
+The root will be an articulation point iff it has more than one child in its DFS tree. 
+It is important to note that the children of the DFS tree need not be the same as the 
+children of the root in the initial graph.
+
+Let's look at another example
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}
+	\begin{scope}[every node/.style = {circle, thick, draw},
+		every label/.append style={font = \small, yshift = -0.5 em}]
+		\node (A) at (0,0) {A};
+		\node (B) at (3,0) {B};
+		\node (C) at (6,0) {C};
+		\node (D) at (3,-2) {D};
+	\end{scope}
+	\begin{scope}[>={Stealth[black]},
+			every edge/.style={draw=black, very thick}]
+		\path [-] (A) edge  (B);
+		\path [-] (B) edge  (C);
+		\path [-] (C) edge  (D);
+		\path [-] (D) edge  (A);
+	\end{scope}
+\end{tikzpicture}
+\end{figure}
+
+As before, we show the DFS spanning tree:
+\begin{figure}[h!]
+\centering
+\begin{tikzpicture}
+	\begin{scope}[every node/.style = {circle, thick, draw},
+		every label/.append style={font = \small, yshift = -0.5 em}]
+		\node [label={1/1}] (A) at (0,0) {A};
+		\node [label={2/1}](B) at (3,0) {B};
+		\node [label={3/1}](C) at (6,0) {C};
+		\node [label={4/1}](D) at (3,-2) {D};
+	\end{scope}
+	\begin{scope}[>={Stealth[black]},
+			every edge/.style={draw=black, very thick}]
+		\path [->] (A) edge  (B);
+		\path [->] (B) edge  (C);
+		\path [->] (C) edge  (D);
+		\path [->] (D) edge  (A);
+	\end{scope}
+\end{tikzpicture}
+\end{figure}
+
+Now we have no articulation point since there is no node that has a child
+with a \texttt{low} greater than or equal  than the parent's \texttt{num}. 
+This difference is caused by the fact that now there is an edge that makes $C$
+accessible through a path that does not involve traversing $B$.
+
+In this case, we can see how the root has only one child in the spanning tree
+but two in the initial graph. This reflects the fact that those numbers need not
+coincide.
+
+Finally, the condition for a bridge is: \texttt{low[child]>num[parent]}. This is 
+equivalent to  stating that the child has no other way of reaching either the
+parent or a node that was explored before the parent
+
+\subsection{Trajan algorithm for strongly connected components}
+In a directed graph, we say that a subset of vertices comprises a strongly 
+connected component if every vertex is reachable from every other vertex in
+this subset.
+
+We will now present an algorithm that divides the graph into strongly
+connected parts that are as large as possible. It will use some of the 
+same concepts as in the previous section. 
+\subsubsection*{Explanation}
+The main idea is the following: if when we are done with a node, we have not been
+able to reach a node that was further back, this one is the root of a SCC. 
+
+Let's explain this reasoning with an example:
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}
+	\begin{scope}[every node/.style = {circle, thick, draw},
+		every label/.append style={font = \small, yshift = -0.5 em}]
+		\node (A) at (0,0) {A};
+		\node (B) at (3,0) {B};
+		\node (C) at (3,-2) {C};
+		\node (D) at (6,0) {D};
+		\node (E) at (9,0) {E};
+		\node (F) at (12,0) {F};
+		\node (G) at (9,-2) {G};
+		\node (H) at (12,-2) {H};
+	\end{scope}
+	\begin{scope}[>={Stealth[black]},
+			every edge/.style={draw=black, very thick}]
+		\path [-] (A) edge  (B);
+		\path [-] (B) edge  (C);
+		\path [-] (C) edge  (D);
+		\path [-] (B) edge  (D);
+		\path [-] (D) edge  (E);
+		\path [-] (E) edge  (F);
+		\path [-] (F) edge  (H);
+		\path [-] (H) edge  (G);
+		\path [-] (G) edge  (E);
+	\end{scope}
+\end{tikzpicture}
+\end{figure}
+And, after running DFS, we would get the following 
+spanning tree with three SCCs.
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}
+	\begin{scope}[every node/.style = {circle, thick, draw},
+		every label/.append style={font = \small}]
+		\node[label={0/0},draw=red] (A) at (0,0) {A};
+		\node[label={1/1},draw=red] (B) at (3,0) {B};
+		\node[label=below:{3/1}] (C) at (3,-2) {C};
+		\node[label={2/1}] (D) at (6,0) {D};
+		\node[label={4/4},draw=red] (E) at (9,0) {E};
+		\node[label={5/4}] (F) at (12,0) {F};
+		\node[label=below:{7/4}] (G) at (9,-2) {G};
+		\node[label=below:{6/4}] (H) at (12,-2) {H};
+	\end{scope}
+	\begin{scope}[>={Stealth[black]},
+			every edge/.style={draw=black, very thick}]
+		\path [->] (A) edge  (B);
+		\path [<-] (B) edge  (C);
+		\path [<-] (C) edge  (D);
+		\path [->] (B) edge  (D);
+		\path [->] (D) edge  (E);
+		\path [->] (E) edge  (F);
+		\path [->] (F) edge  (H);
+		\path [->] (H) edge  (G);
+		\path [->] (G) edge  (E);
+	\end{scope}
+\draw[rounded corners=15pt] (-1,-3.5) rectangle ++(2,5.3);
+\draw[rounded corners=15pt] (2,-3.5) rectangle ++(5,5.3);
+\draw[rounded corners=15pt] (8,-3.5) rectangle ++(5,5.3);
+\end{tikzpicture}
+\end{figure}
+
+Let's look  at the moment in which we close node $F$. As we can see the \texttt{low}
+value is lower than the \texttt{num}. Therefore, there is a connection from $F$ to
+another node that was visited before and it will be a part of the SCC \say{generated}
+by that node.
+
+However, when we close $E$, we can see that the \texttt{low} and the \texttt{num}
+are equal. As a result, there is no way to get to a node that has a number lower than
+E's through the spanning tree of $E$. Therefore, there is no way to have a bigger 
+SCC that contains $E$.
+
+To get the nodes that are part of the SCC, we need to get all the nodes in the stack before
+the one that \say{generates} the SCC ($g$). This is because the stack only contains the 
+nodes that belong to the spanning tree of $g$ and do not belong to any other SCC. 
+Therefore, they must belong to the one generated by $g$. 
+
+Furthermore, all those nodes will have the same \texttt{low} value since the \texttt{low}
+any node with a higher value must have been processed before. Therefore, $g$ is accessible
+from all those nodes and, clearly, all those nodes are accessible from $g$.
+Thus, they fulfill the definition of an SCC.
+
+
+
+\newpage
+\cppcode[firstline=20]{code/graph/trajanSCC.cpp}
+\noindent \textbf{\boldmath Running time: $\mathcal{O}(V+E)$}
+\\ {\small (V = vertices, E = edges)}
 \end{document}
