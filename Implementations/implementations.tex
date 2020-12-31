@@ -552,7 +552,8 @@ Now, returning to the initial graph, we have found the following SCCs:
 
 \end{tikzpicture}
 \end{figure}
-\subsection{Explanation}
+\vspace{-5 pt}
+\subsubsection*{Explanation}
 Let's look at why this algorithm works. 
 
 Firstly, we have to take into account that the SCCs of a graph $G$ are preserved when 
@@ -592,6 +593,7 @@ We have three options:
 		since, if they were to be connected bidirectionally, they would 
 		form a single SCC, not two.
 \end{itemize}
+\newpage
 Therefore, the correctness of this algorithm simply depends on exploring the SCCs in the 
 right order.
 
@@ -662,5 +664,9 @@ Therefore, there cannot be any edge from $s_1$ to another SCC.
 \noindent \textbf{\boldmath Running time: $\mathcal{O}(V+E)$}
 \\ {\small (V = vertices, E = edges)}
 
+\subsubsection*{Observations}
+\begin{itemize}
+	\item The SCCs of any graph form a DAG
+\end{itemize}
 
 \end{document}
