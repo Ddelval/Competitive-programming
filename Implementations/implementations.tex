@@ -45,7 +45,8 @@ samepage=true, %with this setting you can force the list to appear on the same p
 showspaces=false,
 showtabs =false,
 texcl=false,
-fontsize=\small
+fontsize=\small,
+breaklines=true
 }
 
 \setminted[cpp]{
@@ -65,7 +66,8 @@ samepage=true, %with this setting you can force the list to appear on the same p
 showspaces=false,
 showtabs =false,
 texcl=false,
-fontsize=\small
+fontsize=\small,
+breaklines=true
 }
 
 \begin{document}
@@ -109,7 +111,7 @@ on graphs without negative weights.
 \noindent \textbf{\boldmath Running time: $\mathcal{O}(V+E\log(E))$}
 \\ {\small(V = vertices, E = edges)}
 
-\subsection*{Observations}
+\subsection*{Remarks}
 \begin{itemize}
 	\item If we ignore the check in line 30, we can return the distances 
 		vector, which will contain the shortest distance from \texttt{dist}
@@ -138,7 +140,7 @@ iteration and the distance to a node decreases, we must have a negative cycle.
 \cppcode[firstline=20]{code/graph/bellman_ford.cpp}
 \noindent \textbf{\boldmath Running time: $\mathcal{O}(VE)$}
 \\ {\small(V = vertices, E = edges)}
-\subsection*{Observations}
+\subsection*{Remarks}
 \begin{itemize}
 	\item If we keep track of the distance that decrease when we check for
 		a negative cycle, we will get at least one node of 
@@ -337,15 +339,15 @@ Let's explain this reasoning with an example:
 	\end{scope}
 	\begin{scope}[>={Stealth[black]},
 			every edge/.style={draw=black, very thick}]
-		\path [-] (A) edge  (B);
-		\path [-] (B) edge  (C);
-		\path [-] (C) edge  (D);
-		\path [-] (B) edge  (D);
-		\path [-] (D) edge  (E);
-		\path [-] (E) edge  (F);
-		\path [-] (F) edge  (H);
-		\path [-] (H) edge  (G);
-		\path [-] (G) edge  (E);
+		\path [->] (A) edge  (B);
+		\path [<-] (B) edge  (C);
+		\path [<-] (C) edge  (D);
+		\path [->] (B) edge  (D);
+		\path [->] (D) edge  (E);
+		\path [->] (E) edge  (F);
+		\path [->] (F) edge  (H);
+		\path [->] (H) edge  (G);
+		\path [->] (G) edge  (E);
 	\end{scope}
 \end{tikzpicture}
 \end{figure}
@@ -664,9 +666,110 @@ Therefore, there cannot be any edge from $s_1$ to another SCC.
 \noindent \textbf{\boldmath Running time: $\mathcal{O}(V+E)$}
 \\ {\small (V = vertices, E = edges)}
 
-\subsubsection*{Observations}
+\subsubsection*{Remarks}
 \begin{itemize}
 	\item The SCCs of any graph form a DAG
 \end{itemize}
+
+\newpage
+\section{Kruskal's}
+Kruskal's algorithm finds a minimum spanning forest of the given graph. To do so, it
+uses UFDS to keep track of which nodes are already connected.
+\subsection{UFDS}
+UFDS (Union-find data structure) is a data structure that stores a partition of 
+the vertices into sets such that all vertices in the same set are connected.
+Each node $u$ will have two properties:
+\begin{itemize}
+	\setlength\itemsep{0pt}
+	\item \textit{Parent}. It is the representative of the partition that
+		contains $u$.
+	\item \textit{Rank}. It is an upper bound of the height of the \say{tree}
+		that starts on $u$. 
+\end{itemize}
+\cppcode[firstline=20]{code/graph/ufds.cpp}
+\noindent \textbf{\boldmath Running time: $\mathcal{O}(E\log V)$}
+\\ {\small (V = vertices, E = edges)}
+\subsubsection{Explanation}
+There are two main optimizations that are applied in this implementation:
+\begin{itemize}
+	\item \textit{Union by rank}. When we join two partitions, we have to choose
+		a node to represent the new partition. In order to choose between the 
+		two parents, we use their rank. 
+
+		Our goal is to minimize the height of the trees that start at every node.
+		Therefore, we pick the node with the highest rank as the parent. This 
+		choice ensures that the rank of both parents will not increase. 
+
+		However, if both parents have the same rank, we can choose either of 
+		them.
+	\item \textit{Path shortening}. The \texttt{find} function updates the value 
+		of the parent of each node so that it does not point to it's 
+		\say{immediate} parent but to the highest possible ancestor. This
+		difference increases the efficiency of subsequent executions of the 
+		\texttt{find} routine. 
+\end{itemize}
+
+\subsection{Kruskal's}
+Using UFDS, the implementation of Kruskal is trivial. We just edges that connect 
+vertices that are not connected already until all vertices are connected.
+\cppcode[firstline=20]{code/graph/kruskal.cpp}
+\noindent \textbf{\boldmath Running time: $\mathcal{O}(\max\{E,V\}\log(\max\{E,V\}) )$}
+\\ {\small (V = vertices, E = edges)}
+
+\newpage
+\section{Flows and cuts}
+In this section we will consider graphs as networks of pipes and the \say{weights}
+of the edges will be their capacity.
+
+\subsection{Edmonds-Karp's (Max Flow)}
+The first problem that we have to consider is how to find the maximum flow from one
+source node to a sink node. Edmonds-Karp's is an implementation of Ford-Fulkerson's 
+that solves this problem.
+
+This algorithm has some major caveats: it requires the use of an adjacency matrix
+and it is not as fast as other options.
+
+To improve its running time, this implementation uses both an adjacency matrix 
+and adjacency list. However, we have to be careful when creating the adjacency
+list since for every forward edge, we need a backward edge that will start with 
+a capacity of 0 but its capacity may increase. 
+
+Therefore, the code for adding edges would be the following:
+\begin{minted}{cpp}
+// Add a directed edge
+void addedgeUni(int orig, int dest, ll flow) {
+    adjList[orig].pb(dest);
+    adjMat[orig][dest] = flow;
+    adjList[dest].pb(orig);   //Add edge for residual flow
+}
+// Add a bidirectional edge
+void addEdgeBi(int orig, int dest, ll flow) {
+    adjList[orig].pb(dest);
+    adjList[dest].pb(orig);
+    adjMat[orig][dest] = flow;
+    adjMat[dest][orig] = flow;
+}
+\end{minted}
+\newpage
+\cppcode[firstline=20,lastline=63]{code/graph/edmonds-karp.cpp}
+\noindent \textbf{\boldmath Running time: $\mathcal{O}(VE^2)$}
+\\ {\small (V = vertices, E = edges)}
+\subsubsection{Remarks}
+\begin{itemize}
+	\item If we have multiple sources $s_1,\dots, s_n$ and multiple sinks 
+		$t_1,\dots t_n$, we can use the same algorithm. We just have to create a 
+		source $s$ that connects to $s_i$ with edges of infinite capacity and
+		a sink $t$ such that $s_i$ is connected to $t$ with edges of infinite
+		capacity.
+		
+	\item If we have vertex capacities, we can split the vertex $v$ into two vertices:
+		$v_{in}$ and $v_{out}$, connected with an edge that has the vertex 
+		capacity as a capacity. Then we connect the incoming edges to $v_{in}$ and 
+		the out-coming edges to $v_{out}$
+
+
+\end{itemize}
+
+
 
 \end{document}
