@@ -106,12 +106,19 @@ int iinf = INT_MAX / 10;
 // Judge constraints
 #endif
 
-double calcArea(pii a1, pii a2) {
+double calcAreaSegment(pii a1, pii a2) {
     if (a1.fi == a2.fi)
         return 0;
-    //a1.fi < a2.fi
 
     return (a2.fi - a1.fi) * (max(a1.se, a2.se) - abs(a1.se - a2.se) / 2.0);
+}
+double calcAreaPolygon(vector<pii> points){
+    double ans = 0;
+    for (int i = 1; i < points.size();++i){
+        ans += calcAreaSegment(points[i - 1], points[i]);
+    }
+    ans += calcAreaSegment(points.back(), points[0]);
+    return abs(ans);
 }
 
 int main() {
@@ -132,12 +139,7 @@ int main() {
             cin >> a >> b;
             points.pb({a, b});
         }
-        for (int z = 0; z < p - 1; ++z) {
-            ans2 += calcArea(points[z], points[z + 1]);
-        }
-        ans2 += calcArea(points[p - 1], points[0]);
-        //cout << "ans2 " << ans2 << endl;
-        ans += abs(ans2);
+        ans += calcAreaPolygon(points);
     }
     cout << ll(ans) << "\n";
 

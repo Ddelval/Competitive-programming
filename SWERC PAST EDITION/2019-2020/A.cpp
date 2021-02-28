@@ -35,7 +35,7 @@ inline int dist(pii p1, pii p2) {
 }
 
 ll dijkstra() {
-    vi distances(N + 2, iinf);
+    vi distances(N + 2, B+1);
     priority_queue<pair<int, pii>, vector<pair<int, pii>>, greater<pair<int, pii>>> q; //c02,node,dist
 
     distances[0] = 0;
@@ -51,7 +51,7 @@ ll dijkstra() {
         distances[a.se.fi] = a.se.se;
 
         for (auto b : adyList[a.se.fi]) {
-            if ((a.se.se + b.se.fi < distances[b.fi]) && a.se.se + b.se.fi <= B) {
+            if ((a.se.se + b.se.fi < distances[b.fi]) ) {
                 q.push({a.fi + b.se.se, {b.fi, a.se.se + b.se.fi}});
             }
         }

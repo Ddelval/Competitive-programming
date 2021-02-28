@@ -108,9 +108,8 @@ that does not contain negative edges.
 It chooses the best path greedily in each iteration and, therefore, it only works
 on graphs without negative weights. 
 \cppcode[firstline=20]{code/graph/dijkstra.cpp}
-\noindent \textbf{\boldmath Running time: $\mathcal{O}(V+E\log(E))$}
+\noindent \textbf{\boldmath Running time: $\mathcal{O}(E+V\log V)$}
 \\ {\small(V = vertices, E = edges)}
-
 \subsection*{Remarks}
 \begin{itemize}
 	\item If we ignore the check in line 30, we can return the distances 
@@ -126,7 +125,37 @@ on graphs without negative weights.
 	twice in some nodes) but we prune them in the main loop. Thus the 
 	running time is still acceptable.
 
+\item  However, pruning the branches with a higher cost can be quite complicated 
+	when we have to optimize several factors (see section \ref{graph:dijkstra:distances}).
+	Therefore, we will omit the check in line \texttt{33} if we think it might discard 
+	relevant options.
+
 \end{itemize}
+
+\newpage
+\subsection{Dijkstra with cost and distance}
+\label{graph:dijkstra:distances}
+In this problem we are going to define two values for each edge, cost and distance:
+\begin{itemize}
+	\setlength\itemsep{0 pt}
+	\item \textit{Cost}. This is the number that we want to minimize. It is the 
+		equivalent to the usual cost in a normal Dijkstra problem
+	\item \textit{Distance}. We define the distance of a path as the sum of the
+		distances of the edges in it. And the distance of the path from source
+		to destination cannot exceed a given limit (\texttt{B})
+\end{itemize}
+This problem can be solved with a slightly modified version of Dijkstra's:
+\cppcode[firstline=20]{code/graph/dijkstra_2.cpp}
+\noindent \textbf{\boldmath Running time: $\mathcal{O}\big(B\cdot(V+E\log E)\big)$}
+\\ {\small(V = vertices, E = edges, B = max\_distance)}
+
+In this algorithm, we will process each node at most \texttt{B} times. Furthermore, 
+if we process a node with a cost $c$ and a distance $d$, we know that this is the 
+best possible cost for that distance $d$ since all the nodes in the queue have a higher
+cost already. Therefore, we can close the node for that particular distance value (line 37).
+
+An example of this algorithm is \texttt{SWERC-19\_20-A}
+
 
 \section{Bellman Ford's}
 Shortest parth from \texttt{orig} to every other node. It is slower than Dijkstra but 
@@ -152,6 +181,7 @@ iteration and the distance to a node decreases, we must have a negative cycle.
 		(by looping in the cycle).
 
 		This can be seen at play in \texttt{UVA-10557}
+		\newpage
 	\item If we modify slightly the main loop, iteration $i$ will be the 
 		result of considering paths of at most $i+1$ edges:
 		\begin{minted}{cpp}
@@ -769,6 +799,166 @@ void addEdgeBi(int orig, int dest, ll flow) {
 
 
 \end{itemize}
+
+\chapter{Mathematics}
+
+\section{General calculations}
+\subsection{Binary exponentiation}
+Binary exponentiation calculates a power in logarithmic 
+time. Furthermore, it can be used for modular arithmetic:
+\cppcode[firstline=20,]{code/maths/binary_exp.cpp}
+\noindent \textbf{\boldmath Running time: $\mathcal{O}(\log(\mathrm{exp}))$}
+
+
+\newpage
+\section{Modular arithmetic}
+\subsection{Inverses}
+To calculate a modular inverse, we will use Fermat's little theorem:
+\[
+	a^{p-1}\equiv 1 \ \mathrm{mod} \ p  \ \implies \  a^{p-2}\equiv a^{-1} \ \mathrm{mod} p
+\]
+If we combine this fact with binary exponentiation, we can obtain the 
+modular inverse in logarithmic time:
+\begin{minted}{cpp}
+ll inverse(ll num) {
+    return power(num, mod - 2);
+}
+\end{minted}
+\noindent \textbf{\boldmath Running time: $\mathcal{O}(\log(\mathrm{mod}))$}
+
+\section{Catalan numbers}
+We define the nth Catalan number as:
+\[
+	C_n= \frac{1}{n+1}{2n\choose n} = \frac{1}{n+1}\frac{(2n)!}{n! \;n!}
+\]
+We can also define them recursively:
+\[
+	C_0 = 1 \qquad C_{n+1} = \sum_{i=0}^n\big (C_i \; C_{n-i}\big)
+\]
+They can be used to solve many different problems. For instance:
+\begin{itemize}
+	\item Number of different binary trees of $n$ nodes. We can look
+		at the specific case $n=3$. As we can see in the figure below,
+		$C_3=5$. Furthermore, we can clearly identify the recursive relationship:
+		\[
+			C_3= (\text{3 is root}) + (\text{2 is root}) + (\text{1 is root}) = C_2\cdot C_0 + 
+			C_1\cdot C_1 + C_0\cdot C_2
+		\]
+		\begin{figure}[h!]
+			\centering
+			\scalebox{0.5}{
+			\begin{tikzpicture}
+				\begin{scope}[every node/.style = {circle, thick, draw},
+					every label/.append style={font = \small}]
+					\node (A) at (0,0) {3};
+					\node (B) at (-1,-1) {2};
+					\node (C) at (-2,-2) {1};
+				\end{scope}
+				\begin{scope}[>={Stealth[black]},
+						every edge/.style={draw=black, very thick}]
+					\path [-] (A) edge (B);
+					\path [-] (B) edge (C);
+				\end{scope}
+			\end{tikzpicture}
+			\begin{tikzpicture}
+				\begin{scope}[every node/.style = {circle, thick, draw},
+					every label/.append style={font = \small}]
+					\node (A) at (0,0) {3};
+					\node (B) at (-1,-1) {1};
+					\node (C) at (-0.25,-2) {2};
+				\end{scope}
+				\begin{scope}[>={Stealth[black]},
+						every edge/.style={draw=black, very thick}]
+					\path [-] (A) edge (B);
+					\path [-] (B) edge (C);
+				\end{scope}
+			\end{tikzpicture}
+
+			\hspace*{60 pt}
+
+			\begin{tikzpicture}
+				\begin{scope}[every node/.style = {circle, thick, draw},
+					every label/.append style={font = \small}]
+					\node (A) at (0,0) {2};
+					\node (B) at (1,-1) {3};
+					\node (C) at (-1,-1) {1};
+				\end{scope}
+					\node (J) at (-1,-2) {};
+				\begin{scope}[>={Stealth[black]},
+						every edge/.style={draw=black, very thick}]
+					\path [-] (A) edge (B);
+					\path [-] (A) edge (C);
+				\end{scope}
+			\end{tikzpicture}
+			\hspace*{30 pt}
+			\begin{tikzpicture}
+				\begin{scope}[every node/.style = {circle, thick, draw},
+					every label/.append style={font = \small}]
+					\node (A) at (0,0) {1};
+					\node (B) at (1,-1) {2};
+					\node (C) at (2,-2) {3};
+				\end{scope}
+					\node (J) at (-1,-2) {};
+				\begin{scope}[>={Stealth[black]},
+						every edge/.style={draw=black, very thick}]
+					\path [-] (A) edge (B);
+					\path [-] (B) edge (C);
+				\end{scope}
+			\end{tikzpicture}
+			\begin{tikzpicture}
+				\begin{scope}[every node/.style = {circle, thick, draw},
+					every label/.append style={font = \small}]
+					\node (A) at (0,0) {1};
+					\node (B) at (1,-1) {3};
+					\node (C) at (0.25,-2) {2};
+				\end{scope}
+					\node (J) at (-1,-2) {};
+				\begin{scope}[>={Stealth[black]},
+						every edge/.style={draw=black, very thick}]
+					\path [-] (A) edge (B);
+					\path [-] (B) edge (C);
+				\end{scope}
+			\end{tikzpicture}
+	}
+	\end{figure}
+\end{itemize}
+
+
+\chapter{Geometry}
+
+\section{Area of polygon}
+
+\begin{wrapfigure}{r}{0.5\linewidth}
+	\centering
+	\resizebox{80 mm}{!}{\import{./Figures/}{geometry_area.pdf_tex}}
+	\vspace*{-40 pt}
+\end{wrapfigure}
+
+In this problem, we are given a polygon expressed as a list of vertices.
+We are tasked with calculating the area of the polygon.
+
+For now, we will assume that the points are ordered in a clock-wise fashion
+and we will consider three different scenarios for each segment:
+\begin{itemize}
+	\item $\Delta x=0$. It does not add any area to the polygon.
+	\item $\Delta x\ne 0$. It has an area associated with it that is equal
+		to the area between the segment and the $x$ axis
+		\begin{itemize}
+			\item $\Delta x > 0$. We consider this area positive
+				(green on the figure)
+			\item $\Delta x < 0$. We consider this area negative
+				(red on the figure)
+		\end{itemize}
+\end{itemize}
+
+Now we add all the areas associated with each segment and we get a total area.
+If the vertices were ordered in a counter-clock-wise fashion, this total
+area will be negative. Therefore, we will only consider the absolute
+value of the result.
+\cppcode[firstline=20,lastline=63]{code/geometry/polygon_area.cpp}
+\noindent \textbf{\boldmath Running time: $\mathcal{O}(n)$}
+\\ {\small (n = vertices)}
+
 
 
 
