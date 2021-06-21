@@ -1,7 +1,8 @@
-//  I.cpp
-//  Created by David del Val on 28/02/2021
+//  1534-A.cpp
+//  Created by David del Val on 19/06/2021
 //
 //
+//https://github.com/Ddelval/Competitive-programming/blob/master/template.cpp
 
 #include <bits/stdc++.h>
 
@@ -105,26 +106,70 @@ int iinf = INT_MAX / 10;
 // Judge constraints
 #endif
 
+const int lim = 50;
+char board[lim][lim];
+
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
-    int n;
-    cin >> n;
-    vl dat1, dat2;
 
-    dat1 = readVector<ll>(n);
-    dat2 = readVector<ll>(n);
-
-    ll ans = 0;
-    for (int i = 0; i < n; ++i) {
-        ll mi = inf;
-        for (int j = 0; j < n; ++j) {
-            mi = min(mi, abs(dat1[i] - dat2[j]));
+    int t;
+    cin >> t;
+    while (t--) {
+        int n, m;
+        cin >> n >> m;
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < m; ++j) {
+                cin >> board[i][j];
+            }
         }
-        ans = max(ans, mi);
+        bool correct1 = true;
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < m; ++j) {
+                if ((i + j) % 2 != 0) {
+                    correct1 &= (board[i][j] != 'W');
+                } else {
+                    correct1 &= (board[i][j] != 'R');
+                }
+            }
+        }
+        bool correct2 = true;
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < m; ++j) {
+                if ((i + j) % 2 != 0) {
+                    correct2 &= (board[i][j] != 'R');
+                } else {
+                    correct2 &= (board[i][j] != 'W');
+                }
+            }
+        }
+        if (!correct1 && !correct2) {
+            cout << "NO\n";
+            continue;
+        }
+        cout << "YES\n";
+        char c1 = 'R';
+        char c2 = 'W';
+        if (correct2) {
+            swap(c1, c2);
+        }
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < m; ++j) {
+                if ((i + j) % 2 != 0) {
+                    board[i][j] = c1;
+                } else {
+                    board[i][j] = c2;
+                }
+            }
+        }
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < m; ++j) {
+                cout << board[i][j];
+            }
+            cout << "\n";
+        }
     }
-    cout << ans << endl;
 
     return 0;
 }

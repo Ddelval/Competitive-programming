@@ -1,7 +1,8 @@
-//  I.cpp
-//  Created by David del Val on 28/02/2021
+//  1537-D.cpp
+//  Created by David del Val on 19/06/2021
 //
 //
+//https://github.com/Ddelval/Competitive-programming/blob/master/template.cpp
 
 #include <bits/stdc++.h>
 
@@ -109,22 +110,24 @@ int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
-    int n;
-    cin >> n;
-    vl dat1, dat2;
 
-    dat1 = readVector<ll>(n);
-    dat2 = readVector<ll>(n);
+    int t;
+    cin >> t;
+    while (t--) {
+        int n;
+        cin >> n;
+        bool power2 = (1ll << int(log2(n))) == n;
 
-    ll ans = 0;
-    for (int i = 0; i < n; ++i) {
-        ll mi = inf;
-        for (int j = 0; j < n; ++j) {
-            mi = min(mi, abs(dat1[i] - dat2[j]));
+        if (n == 1) {
+            cout << "Bob\n";
+        } else if (n % 2 == 0 && !power2) {
+            cout << "Alice\n";
+        } else if (power2 && int(log2(n)) % 2 == 0) {
+            cout << "Alice\n";
+        } else {
+            cout << "Bob\n";
         }
-        ans = max(ans, mi);
     }
-    cout << ans << endl;
 
     return 0;
 }

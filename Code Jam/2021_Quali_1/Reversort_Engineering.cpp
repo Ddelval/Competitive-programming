@@ -1,7 +1,8 @@
-//  I.cpp
-//  Created by David del Val on 28/02/2021
+//  Reversort_Engineering.cpp
+//  Created by David del Val on 26/03/2021
 //
 //
+//https://github.com/Ddelval/Competitive-programming/blob/master/template.cpp
 
 #include <bits/stdc++.h>
 
@@ -105,26 +106,55 @@ int iinf = INT_MAX / 10;
 // Judge constraints
 #endif
 
+ll revesortCost(vi data) {
+    int count = 0;
+    int n = data.size();
+    for (int i = 0; i < n - 1; ++i) {
+        auto it = min_element(data.begin() + i + 1, data.end());
+        if (it != data.end() && *it < data[i]) {
+            reverse(data.begin() + i, it + 1);
+            count += it - data.begin() - i + 1;
+        } else {
+            count++;
+        }
+        //cout << data << endl;
+    }
+    return count;
+}
+
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
-    int n;
-    cin >> n;
-    vl dat1, dat2;
 
-    dat1 = readVector<ll>(n);
-    dat2 = readVector<ll>(n);
-
-    ll ans = 0;
-    for (int i = 0; i < n; ++i) {
-        ll mi = inf;
-        for (int j = 0; j < n; ++j) {
-            mi = min(mi, abs(dat1[i] - dat2[j]));
+    int t;
+    cin >> t;
+    int z = 0;
+    while (t--) {
+        z++;
+        int c, n;
+        cin >> n >> c;
+        vi data;
+        int itcount = 1;
+        for (int i = 0; i < n; ++i) {
+            data.pb(i + 1);
+            itcount *= (i + 1);
         }
-        ans = max(ans, mi);
+        bool found = false;
+        for (int i = 0; i < itcount; ++i) {
+            if (revesortCost(data) == c) {
+                found = true;
+                break;
+            }
+            next_permutation(all(data));
+        }
+        cout << "Case #" << z<<": ";
+        if (found) {
+            cout << data << "\n";
+        } else {
+            cout << "IMPOSSIBLE\n";
+        }
     }
-    cout << ans << endl;
 
     return 0;
 }

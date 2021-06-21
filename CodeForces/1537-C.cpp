@@ -1,7 +1,8 @@
-//  I.cpp
-//  Created by David del Val on 28/02/2021
+//  1537-C.cpp
+//  Created by David del Val on 19/06/2021
 //
 //
+//https://github.com/Ddelval/Competitive-programming/blob/master/template.cpp
 
 #include <bits/stdc++.h>
 
@@ -109,22 +110,53 @@ int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
-    int n;
-    cin >> n;
-    vl dat1, dat2;
 
-    dat1 = readVector<ll>(n);
-    dat2 = readVector<ll>(n);
-
-    ll ans = 0;
-    for (int i = 0; i < n; ++i) {
-        ll mi = inf;
-        for (int j = 0; j < n; ++j) {
-            mi = min(mi, abs(dat1[i] - dat2[j]));
+    int t;
+    cin >> t;
+    while (t--) {
+        int n;
+        cin >> n;
+        vi data = readVector<int>(n);
+        sort(all(data));
+        if (n == 2) {
+            cout << data << "\n";
+            continue;
         }
-        ans = max(ans, mi);
+
+        int v1, v2;
+        int diff;
+        v1 = 0;
+        v2 = 1;
+        diff = data[v2] - data[v1];
+        for (int i = 1; i < n; ++i) {
+            if (data[i] - data[i - 1] < diff) {
+                v1 = i - 1;
+                v2 = i;
+                diff = data[v2] - data[v1];
+            }
+        }
+        if (data[n - 1] - data[n - 2] == diff) {
+            v1 = n - 2;
+            v2 = n - 1;
+        }
+        bool guard = false;
+        for (int i = v2; i < n; ++i) {
+            if (guard) {
+                cout << " ";
+            }
+            cout << data[i];
+            guard = true;
+        }
+        for (int i = 0; i <= v1; ++i) {
+            if (guard) {
+                cout << " ";
+            }
+            cout << data[i];
+            guard = true;
+        }
+
+        cout << "\n";
     }
-    cout << ans << endl;
 
     return 0;
 }

@@ -1,7 +1,8 @@
-//  I.cpp
-//  Created by David del Val on 28/02/2021
+//  AppendSort.cpp
+//  Created by David del Val on 10/04/2021
 //
 //
+//https://github.com/Ddelval/Competitive-programming/blob/master/template.cpp
 
 #include <bits/stdc++.h>
 
@@ -105,26 +106,88 @@ int iinf = INT_MAX / 10;
 // Judge constraints
 #endif
 
+double n9(int n) {
+    double res = 0;
+    for (int i = 0; i < n; ++i) {
+        res += 9 * pow(10, i);
+    }
+    return res;
+}
+
+ll ans;
+void comp_elem(double e1, double &e2) {
+    if (e2 > e1) {
+        return;
+    }
+    if (e2 == e1) {
+        e2 *= 10;
+        ans++;
+        return;
+    }
+    int dig1 = log10(e1);
+    int dig2 = log10(e2);
+
+    if (dig1 == dig2) {
+        e2 *= 10;
+        ans++;
+        return;
+    }
+    auto dd2 = e2;
+    double dif = dig1 - dig2;
+    dd2 *= pow(10, dif);
+    //cout << "dd2 " << dd2 << endl;
+    if (dd2 > e1) {
+        ans += dif;
+        e2 = dd2;
+        return;
+    }
+    // dd2 < e1
+    //cout << "dd2 " << dd2 << " dif " << dif << " n9 " << n9(dif) << endl;
+    if (dd2 + n9(dif) > e1) {
+        if (dif < 4) {
+            ll val = (ll)n9(dif);
+            while (dd2 + val - 1 > e1) {
+                val--;
+            }
+            e2 = dd2 + val;
+        } else {
+            e2 = dd2;
+        }
+        ans += dif;
+
+    } else {
+        // Impossible
+        ans += dif + 1;
+        e2 = dd2 * 10;
+        return;
+    }
+}
+
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
-    int n;
-    cin >> n;
-    vl dat1, dat2;
 
-    dat1 = readVector<ll>(n);
-    dat2 = readVector<ll>(n);
+    int t;
+    cin >> t;
+    int z = 1;
+    while (t--) {
+        ans = 0;
+        int n;
+        cin >> n;
+        vl data = readVector<ll>(n);
 
-    ll ans = 0;
-    for (int i = 0; i < n; ++i) {
-        ll mi = inf;
-        for (int j = 0; j < n; ++j) {
-            mi = min(mi, abs(dat1[i] - dat2[j]));
+        vector<double> elements;
+        for (auto a : data) {
+            elements.pb(a);
         }
-        ans = max(ans, mi);
+        for (int i = 1; i < n; ++i) {
+            comp_elem(elements[i - 1], elements[i]);
+        }
+        //cout << elements << endl;
+        cout << "Case #" << z << ": " << ans << "\n";
+        z++;
     }
-    cout << ans << endl;
 
     return 0;
 }

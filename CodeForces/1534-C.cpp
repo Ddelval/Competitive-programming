@@ -1,7 +1,8 @@
-//  I.cpp
-//  Created by David del Val on 28/02/2021
+//  1534-C.cpp
+//  Created by David del Val on 19/06/2021
 //
 //
+//https://github.com/Ddelval/Competitive-programming/blob/master/template.cpp
 
 #include <bits/stdc++.h>
 
@@ -105,26 +106,81 @@ int iinf = INT_MAX / 10;
 // Judge constraints
 #endif
 
+const int lim = 4 * 1e5;
+int parent[lim];
+int rankk[lim];
+
+void initialize(int n) {
+    for (int i = 0; i < n; ++i) {
+        parent[i] = i;
+        rankk[i] = 1;
+    }
+}
+
+int findParent(int node) {
+    if (node == parent[node]) {
+        return node;
+    }
+    return parent[node] = findParent(parent[node]);
+}
+
+void Union(int n1, int n2) {
+    int p1 = findParent(n1);
+    int p2 = findParent(n2);
+
+    if (p1 == p2) {
+        return;
+    }
+    if (rankk[p1] > rankk[p2]) {
+        parent[p2] = p1;
+    } else if (rankk[p1] < rankk[p2]) {
+        parent[p1] = p2;
+    } else {
+        parent[p1] = p2;
+        rankk[p2]++;
+    }
+}
+
+const ll mod = 7 + 1e9;
+ll binaryExp(int exp) {
+    if (exp == 0) {
+        return 1;
+    }
+    if (exp == 1) {
+        return 2;
+    }
+    ll res = binaryExp(exp / 2);
+    res = (res * res) % mod;
+    if (exp % 2) {
+        res = (res * 2) % mod;
+    }
+    return res;
+}
+
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
-    int n;
-    cin >> n;
-    vl dat1, dat2;
 
-    dat1 = readVector<ll>(n);
-    dat2 = readVector<ll>(n);
-
-    ll ans = 0;
-    for (int i = 0; i < n; ++i) {
-        ll mi = inf;
-        for (int j = 0; j < n; ++j) {
-            mi = min(mi, abs(dat1[i] - dat2[j]));
+    int t;
+    cin >> t;
+    while (t--) {
+        int n;
+        cin >> n;
+        vi data1 = readVector<int>(n);
+        vi data2 = readVector<int>(n);
+        initialize(n + 1);
+        for (int i = 0; i < n; ++i) {
+            Union(data1[i], data2[i]);
         }
-        ans = max(ans, mi);
+        int c = 0;
+        for (int i = 1; i <= n; ++i) {
+            if (parent[i] == i) {
+                c++;
+            }
+        }
+        cout << binaryExp(c) << "\n";
     }
-    cout << ans << endl;
 
     return 0;
 }

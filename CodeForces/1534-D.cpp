@@ -1,7 +1,8 @@
-//  I.cpp
-//  Created by David del Val on 28/02/2021
+//  1534-D.cpp
+//  Created by David del Val on 21/06/2021
 //
 //
+//https://github.com/Ddelval/Competitive-programming/blob/master/template.cpp
 
 #include <bits/stdc++.h>
 
@@ -109,22 +110,59 @@ int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
+
     int n;
     cin >> n;
-    vl dat1, dat2;
 
-    dat1 = readVector<ll>(n);
-    dat2 = readVector<ll>(n);
+    cout << "? " << 1 << "\n";
+    cout.flush();
 
-    ll ans = 0;
-    for (int i = 0; i < n; ++i) {
-        ll mi = inf;
-        for (int j = 0; j < n; ++j) {
-            mi = min(mi, abs(dat1[i] - dat2[j]));
+    vi from1 = readVector<int>(n);
+    int even, odd;
+    even = odd = 0;
+    for (auto a : from1) {
+        if (a && a % 2 == 0) {
+            even++;
         }
-        ans = max(ans, mi);
+        if (a && a % 2 == 1) {
+            odd++;
+        }
     }
-    cout << ans << endl;
+
+    int comp = 0;
+    if (odd < even) {
+        comp = 1;
+    }
+
+    int a;
+    vector<pii> results;
+    results.reserve(n - 1);
+    for (int i = 0; i < n; ++i) {
+        if (from1[i]) {
+            if (from1[i] % 2 == comp) {
+                cout << "? " << (i + 1) << "\n";
+                cout.flush();
+                for (int j = 0; j < n; ++j) {
+                    cin >> a;
+                    if (a == 1) {
+                        results.push_back({i + 1, j + 1});
+                    }
+                }
+            }
+        }
+    }
+    if (comp == 0) {
+        for (int j = 0; j < n; ++j) {
+            if (from1[j] == 1) {
+                results.push_back({1, j + 1});
+            }
+        }
+    }
+    cout << "!\n";
+    for (auto a : results) {
+        cout << a.fi << " " << a.se << "\n";
+    }
+    cout.flush();
 
     return 0;
 }

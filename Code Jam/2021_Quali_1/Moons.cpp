@@ -1,7 +1,8 @@
-//  I.cpp
-//  Created by David del Val on 28/02/2021
+//  Moons.cpp
+//  Created by David del Val on 26/03/2021
 //
 //
+//https://github.com/Ddelval/Competitive-programming/blob/master/template.cpp
 
 #include <bits/stdc++.h>
 
@@ -109,22 +110,34 @@ int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
-    int n;
-    cin >> n;
-    vl dat1, dat2;
 
-    dat1 = readVector<ll>(n);
-    dat2 = readVector<ll>(n);
+    int t;
+    int z = 0;
+    cin >> t;
+    while (t--) {
+        z++;
+        int x, y;
+        string moons;
+        cin >> x >> y >> moons;
 
-    ll ans = 0;
-    for (int i = 0; i < n; ++i) {
-        ll mi = inf;
-        for (int j = 0; j < n; ++j) {
-            mi = min(mi, abs(dat1[i] - dat2[j]));
+        ll cost = 0;
+        string m2;
+        for (char c : moons) {
+            if (m2.empty() || c != m2.back()) {
+                if (c != '?') {
+                    m2.pb(c);
+                }
+            }
         }
-        ans = max(ans, mi);
+        for (int i = 1; i < m2.length(); ++i) {
+            if (m2[i] == 'C' && m2[i - 1] == 'J') {
+                cost += y;
+            } else {
+                cost += x;
+            }
+        }
+        cout << "Case #" << z << ": " << cost << "\n";
     }
-    cout << ans << endl;
 
     return 0;
 }

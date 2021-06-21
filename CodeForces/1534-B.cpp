@@ -1,7 +1,8 @@
-//  I.cpp
-//  Created by David del Val on 28/02/2021
+//  1534-B.cpp
+//  Created by David del Val on 19/06/2021
 //
 //
+//https://github.com/Ddelval/Competitive-programming/blob/master/template.cpp
 
 #include <bits/stdc++.h>
 
@@ -109,22 +110,43 @@ int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
-    int n;
-    cin >> n;
-    vl dat1, dat2;
 
-    dat1 = readVector<ll>(n);
-    dat2 = readVector<ll>(n);
-
-    ll ans = 0;
-    for (int i = 0; i < n; ++i) {
-        ll mi = inf;
-        for (int j = 0; j < n; ++j) {
-            mi = min(mi, abs(dat1[i] - dat2[j]));
+    int t;
+    cin >> t;
+    while (t--) {
+        int n;
+        cin >> n;
+        vi data = readVector<int>(n);
+        ll score = 0;
+        if (n == 1) {
+            cout << data[0] << "\n";
+            continue;
         }
-        ans = max(ans, mi);
+        if (n > 1) {
+            if (data[0] > data[1]) {
+                score += data[0] - data[1];
+                data[0] = data[1];
+            }
+        }
+        for (int i = 1; i < n - 1; ++i) {
+            int diff = min(data[i] - data[i - 1], data[i] - data[i + 1]);
+            if (diff > 0) {
+                score += diff;
+                data[i] -= diff;
+            }
+        }
+        if (n > 1) {
+            if (data[n - 1] > data[n - 2]) {
+                score += data[n - 1] - data[n - 2];
+                data[n - 1] = data[n - 2];
+            }
+        }
+        for (int i = 1; i < n; ++i) {
+            score += abs(data[i] - data[i - 1]);
+        }
+        score += data[0] + data.back();
+        cout << score << "\n";
     }
-    cout << ans << endl;
 
     return 0;
 }

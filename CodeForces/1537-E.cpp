@@ -1,7 +1,8 @@
-//  I.cpp
-//  Created by David del Val on 28/02/2021
+//  1537-E.cpp
+//  Created by David del Val on 19/06/2021
 //
 //
+//https://github.com/Ddelval/Competitive-programming/blob/master/template.cpp
 
 #include <bits/stdc++.h>
 
@@ -109,22 +110,27 @@ int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
-    int n;
-    cin >> n;
-    vl dat1, dat2;
 
-    dat1 = readVector<ll>(n);
-    dat2 = readVector<ll>(n);
+    int n, k;
+    cin >> n >> k;
 
-    ll ans = 0;
-    for (int i = 0; i < n; ++i) {
-        ll mi = inf;
-        for (int j = 0; j < n; ++j) {
-            mi = min(mi, abs(dat1[i] - dat2[j]));
+    string s;
+    cin >> s;
+
+    char prev;
+    int selected = -1;
+    vector<string> opts;
+
+    for (int i = 1; i <= n; ++i) {
+        string s2 = s.substr(0, i);
+        string s3 = s2;
+        while (s3.length() < k) {
+            s3 += s3;
         }
-        ans = max(ans, mi);
+        opts.push_back(s3.substr(0, k));
     }
-    cout << ans << endl;
+    sort(all(opts));
+    cout << opts[0] << "\n";
 
     return 0;
 }

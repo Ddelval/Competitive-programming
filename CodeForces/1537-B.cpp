@@ -1,7 +1,8 @@
-//  I.cpp
-//  Created by David del Val on 28/02/2021
+//  1537-B.cpp
+//  Created by David del Val on 19/06/2021
 //
 //
+//https://github.com/Ddelval/Competitive-programming/blob/master/template.cpp
 
 #include <bits/stdc++.h>
 
@@ -105,26 +106,49 @@ int iinf = INT_MAX / 10;
 // Judge constraints
 #endif
 
+ll ans;
+pll iniPos;
+pll items[2];
+pll answer[2];
+void calculate() {
+    ll dist = abs(items[0].fi - iniPos.fi) + abs(items[0].se - iniPos.se);
+    dist += abs(items[0].fi - items[1].fi) + abs(items[0].se - items[1].se);
+    if (dist > ans) {
+        ans = dist;
+        answer[0] = items[0];
+        answer[1] = items[1];
+    }
+}
+void explore(int depth, vector<pll> &items, vector<bool> &visited) {
+    if (depth == 2) {
+        calculate();
+        return;
+    }
+    for (int i = 0; i < items.size(); ++i) {
+        if (!visited[i]) {
+            visited[i] = true;
+            ::items[depth] = items[i];
+            explore(depth + 1, items, visited);
+        }
+    }
+}
+
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
-    int n;
-    cin >> n;
-    vl dat1, dat2;
-
-    dat1 = readVector<ll>(n);
-    dat2 = readVector<ll>(n);
-
-    ll ans = 0;
-    for (int i = 0; i < n; ++i) {
-        ll mi = inf;
-        for (int j = 0; j < n; ++j) {
-            mi = min(mi, abs(dat1[i] - dat2[j]));
-        }
-        ans = max(ans, mi);
+    int t;
+    cin >> t;
+    while (t--) {
+        ll n, m, i, j;
+        cin >> n >> m >> i >> j;
+        vector<pll> corners = {{1, 1}, {1, m}, {n, 1}, {n, m}};
+        vector<bool> visited(4, false);
+        ans = 0;
+        explore(0, corners, visited);
+        cout << answer[0].fi << " " << answer[0].se << " ";
+        cout << answer[1].fi << " " << answer[1].se << "\n";
     }
-    cout << ans << endl;
 
     return 0;
 }

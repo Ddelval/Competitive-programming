@@ -1,7 +1,8 @@
-//  I.cpp
-//  Created by David del Val on 28/02/2021
+//  PrimeTime.cpp
+//  Created by David del Val on 10/04/2021
 //
 //
+//https://github.com/Ddelval/Competitive-programming/blob/master/template.cpp
 
 #include <bits/stdc++.h>
 
@@ -104,27 +105,93 @@ int iinf = INT_MAX / 10;
 #else
 // Judge constraints
 #endif
+vi g_primes;
+void calculatePrimes() {
+    int lim = 500;
+    for (int i = 2; i < lim; ++i) {
+        bool valid = true;
+        int l2 = sqrt(i);
+        for (auto p : g_primes) {
+            if (p > l2) {
+                break;
+            }
+            if (i % p == 0) {
+                valid = false;
+                break;
+            }
+        }
+        if (valid) {
+            g_primes.pb(i);
+        }
+    }
+    reverse(all(g_primes));
+}
+vector<pii> decompose(int n) {
+    vector<pii> res;
+    for (auto a : g_primes) {
+        int cnt = 0;
+        while (a <= n && n % a == 0) {
+            cnt++;
+            n /= a;
+        }
+        if (cnt) {
+            res.pb({a, cnt});
+        }
+        if (n == 1) {
+            break;
+        }
+    }
+    return res;
+}
 
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
-    int n;
-    cin >> n;
-    vl dat1, dat2;
 
-    dat1 = readVector<ll>(n);
-    dat2 = readVector<ll>(n);
-
-    ll ans = 0;
-    for (int i = 0; i < n; ++i) {
-        ll mi = inf;
-        for (int j = 0; j < n; ++j) {
-            mi = min(mi, abs(dat1[i] - dat2[j]));
+    int t;
+    calculatePrimes();
+    //cout << g_primes << endl;
+    cin >> t;
+    int z = 1;
+    while (t--) {
+        int m;
+        cin >> m;
+        vi primes;
+        map<int, int> pc;
+        ll sum = 0;
+        for (int i = 0; i < m; ++i) {
+            int p, n;
+            cin >> p >> n;
+            pc[p] = n;
+            sum += p * n;
         }
-        ans = max(ans, mi);
+
+        ll ans = 0;
+        //cout << "sum " << sum << endl;
+        //cout << pc << endl;
+
+        for (ll psum = 2; psum <=; --psum) {
+            auto r = decompose(psum);
+            //cout << psum << " " << r << endl;
+            int possible = true;
+            ll comp = 0;
+            ll prod = 1;
+            for (auto it : r) {
+                if (pc[it.fi] < it.se) {
+                    possible = false;
+                }
+                comp += it.fi * it.se;
+                prod *= pow(it.fi, it.se);
+            }
+            if ((sum - comp) == prod && possible) {
+                ans = prod;
+                break;
+            }
+        }
+        cout << "Case #" << z << ": " << ans << "\n";
+        z++;
     }
-    cout << ans << endl;
 
     return 0;
 }

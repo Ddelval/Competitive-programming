@@ -1,7 +1,8 @@
-//  I.cpp
-//  Created by David del Val on 28/02/2021
+//  a.cpp
+//  Created by David del Val on 25/04/2021
 //
 //
+//https://github.com/Ddelval/Competitive-programming/blob/master/template.cpp
 
 #include <bits/stdc++.h>
 
@@ -104,27 +105,38 @@ int iinf = INT_MAX / 10;
 #else
 // Judge constraints
 #endif
+const ll mult = 10e9;
+const ll cycle = 3600 * 12 * mult;
 
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
-    int n;
-    cin >> n;
-    vl dat1, dat2;
 
-    dat1 = readVector<ll>(n);
-    dat2 = readVector<ll>(n);
+    int t;
+    cin >> t;
+    while (t--) {
+        ll a, b, c;
+        cin >> a >> b >> c;
 
-    ll ans = 0;
-    for (int i = 0; i < n; ++i) {
-        ll mi = inf;
-        for (int j = 0; j < n; ++j) {
-            mi = min(mi, abs(dat1[i] - dat2[j]));
+        b -= a;
+        c -= a;
+        a = 0;
+        if (b < 0) {
+            b += cycle;
         }
-        ans = max(ans, mi);
+        if (c < 0) {
+            c += cycle;
+        }
+        cout << "t:" << t << endl;
+        for (int h = 0; h < 12; ++h) {
+            cout << (b - 12 * a + 12 * h * 3600 * mult) % 11 << endl;
+            ll cte = ((b - 12 * a + 12 * h * 3600 * mult) / 11 + cycle) % cycle;
+            cout << "cte:" << cte << " c:" << c << endl;
+            cout << "rm3 " << (((c + cte) * 60 + cycle) % (cycle) - (b + cte) % cycle) << endl;
+        }
+        cout << endl;
     }
-    cout << ans << endl;
 
     return 0;
 }
