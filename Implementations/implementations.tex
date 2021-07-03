@@ -197,6 +197,58 @@ for (int i = 0; i < n - 1; ++i) {
 
 \end{itemize}	
 
+\section{Warshall's}
+Warshall's algorithm solves the APSP (All pairs shortest path) using DP.
+Each iteration of the outer loop tries to add a node (the $k$-th node in
+particular) to the path between all pairs of nodes. 
+We can think of the comparison as: 
+\begin{center}
+		\textit{ Is the path from $i$ to $j$ shorter if we first 
+		move from $i$ to $k$ and, then, from $k$ to $j$? }
+\end{center}
+It is important to note that we must use an adjacency matrix in this
+implementation.
+\cppcode[firstline=20]{code/graph/basicWarshall.cpp}
+\noindent \textbf{\boldmath Running time: $\mathcal{O}(V^3)$}
+\\ {\small (V = vertices, E = edges)}
+\subsubsection*{Obtaining the path}
+To get the explicit path, we will store the last vertex in the 
+path that the algorithm found to go from $i$ to $j$. That is to say,
+after  a given iteration the optimal path from $i$ to $j$ is:
+\begin{figure}[h!]
+		\centering
+\begin{tikzpicture}
+	\begin{scope}[every node/.style = {circle, thick, draw}]
+		\node (A) at (0,0) {$i$};
+		\node (C) at (5,0) {$j$};
+	\end{scope}
+	\begin{scope}[every node/.style = {scale=0.75, circle,   draw}]
+		\node (B1) at (1,0) {$a_1$};
+		\node (B2) at (2,0) {$a_2$};
+		\node (E2) at (4,0) {$a_{l}$};
+	\end{scope}
+	\begin{scope}[every node/.style = { circle   }]
+		\node (D) at (3,0) {$\dots$};
+	\end{scope}
+	\begin{scope}[>={Stealth[black]},
+			every edge/.style={draw=black, very thick}]
+		\path [-] (A) edge  (B1);
+		\path [-] (B1) edge  (B2);
+		\path [-] (B2) edge  (D);
+		\path [-] (D) edge  (E2);
+		\path [-] (E2) edge  (C);
+	\end{scope}
+\end{tikzpicture}
+\end{figure}
+Then we should store that the last node in the path that goes from $i$
+to $j$ is $a_j$. 
+The code to do so is the following:
+\cppcode[firstline=20]{code/graph/pathWarshall.cpp}
+\newpage
+
+
+
+
 \section{DFS}
 \subsection{Articulation points and bridges}
 These algorightms can be used in undirected graphs, and we
