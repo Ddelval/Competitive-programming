@@ -1,5 +1,5 @@
-//  template.cpp
-//  Created by David del Val on 05/07/2021
+//  1542-D.cpp
+//  Created by David del Val on 04/07/2021
 //
 //
 //https://github.com/Ddelval/Competitive-programming/blob/master/template.cpp
@@ -22,7 +22,7 @@ typedef vector<pii> vii;
 typedef vector<pll> vll;
 
 template <typename T, typename Q>
-inline ostream& operator<<(ostream& o, pair<T, Q> p);
+inline ostream &operator<<(ostream &o, pair<T, Q> p);
 
 // ====================================================== //
 // ===================  Container IO  =================== //
@@ -38,12 +38,12 @@ struct subs_succeeded<subs_fail> : std::false_type {};
 
 template <typename T>
 struct get_iter_res {
-   private:
+private:
     template <typename X>
-    static auto check(X const& x) -> decltype(x.begin());
+    static auto check(X const &x) -> decltype(x.begin());
     static subs_fail check(...);
 
-   public:
+public:
     using type = decltype(check(std::declval<T>()));
 };
 
@@ -101,17 +101,17 @@ inline pii operator+(pii a, pii b) {
 }
 
 template <typename T, typename Q>
-inline ostream& operator<<(ostream& o, pair<T, Q> p) {
+inline ostream &operator<<(ostream &o, pair<T, Q> p) {
     o << "(" << p.fi << "," << p.se << ")";
     return o;
 }
 
 //gcd(0, n) = n
 inline long long _gcd(long long a, long long b) {
-    while (b) b %= a ^= b ^= a ^= b;
+    while (b)
+        b %= a ^= b ^= a ^= b;
     return a;
 }
-
 
 ll inf = LLONG_MAX / 10;
 int iinf = INT_MAX / 10;
@@ -122,12 +122,83 @@ int iinf = INT_MAX / 10;
 #else
 // Judge constraints
 #endif
-
+const int lim = 510;
+const ll mod = 998244353;
+ll dp[lim][lim];
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
 
+    int n;
+    cin >> n;
+    vector<ll> data;
+    string s;
+    ll a;
+    while (cin >> s) {
+        if (s == "-") {
+            data.pb(-1);
+        } else {
+            cin >> a;
+            data.pb(a);
+        }
+    }
+    ll ans = 0;
+    //cout << data << endl;
+    for (int I = 0; I < n; ++I) {
+        ll X = data[I];
+        if (X < 0) {
+            continue;
+        }
+
+        for (int i = 0; i < lim; ++i) {
+            for (int j = 0; j < lim; ++j) {
+                dp[i][j] = 0;
+            }
+        }
+        dp[0][0] = 1;
+        for (int i = 1; i <= n; ++i) {
+            for (int j = 0; j < n; ++j) {
+                if (i - 1 != I) {
+                    dp[i][j] += dp[i - 1][j];
+                    dp[i][j] %= mod;
+                }
+                if (data[i - 1] < 0) {
+                    // -
+                    if (i - 1 < I || j > 0) {
+                        dp[i][max(j - 1, 0)] += dp[i - 1][j];
+                        dp[i][max(j - 1, 0)] %= mod;
+                    }
+                } else {
+                    // +
+                    if (data[i - 1] < X || (data[i - 1] == X && i - 1 > I)) {
+                        dp[i][j + 1] += dp[i - 1][j];
+                        dp[i][j + 1] %= mod;
+                    } else {
+                        dp[i][j] += dp[i - 1][j];
+                        dp[i][j] %= mod;
+                    }
+                }
+            }
+        }
+        /**
+        for (int i = 0; i <= n; ++i) {
+            for (int j = 0; j < n; ++j) {
+                cout << dp[i][j] << " ";
+            }
+            cout << endl;
+        }
+        cout << endl;
+        */
+        ll accum = 0;
+        for (int i = 0; i < n; ++i) {
+            accum += dp[n][i];
+            accum %= mod;
+        }
+        ans += (X * accum) % mod;
+        ans %= mod;
+    }
+    cout << ans << "\n";
 
     return 0;
 }

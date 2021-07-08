@@ -1,5 +1,5 @@
-//  template.cpp
-//  Created by David del Val on 05/07/2021
+//  D2.cpp
+//  Created by David del Val on 07/07/2021
 //
 //
 //https://github.com/Ddelval/Competitive-programming/blob/master/template.cpp
@@ -22,7 +22,7 @@ typedef vector<pii> vii;
 typedef vector<pll> vll;
 
 template <typename T, typename Q>
-inline ostream& operator<<(ostream& o, pair<T, Q> p);
+inline ostream &operator<<(ostream &o, pair<T, Q> p);
 
 // ====================================================== //
 // ===================  Container IO  =================== //
@@ -38,12 +38,12 @@ struct subs_succeeded<subs_fail> : std::false_type {};
 
 template <typename T>
 struct get_iter_res {
-   private:
+private:
     template <typename X>
-    static auto check(X const& x) -> decltype(x.begin());
+    static auto check(X const &x) -> decltype(x.begin());
     static subs_fail check(...);
 
-   public:
+public:
     using type = decltype(check(std::declval<T>()));
 };
 
@@ -101,17 +101,17 @@ inline pii operator+(pii a, pii b) {
 }
 
 template <typename T, typename Q>
-inline ostream& operator<<(ostream& o, pair<T, Q> p) {
+inline ostream &operator<<(ostream &o, pair<T, Q> p) {
     o << "(" << p.fi << "," << p.se << ")";
     return o;
 }
 
 //gcd(0, n) = n
 inline long long _gcd(long long a, long long b) {
-    while (b) b %= a ^= b ^= a ^= b;
+    while (b)
+        b %= a ^= b ^= a ^= b;
     return a;
 }
-
 
 ll inf = LLONG_MAX / 10;
 int iinf = INT_MAX / 10;
@@ -123,11 +123,81 @@ int iinf = INT_MAX / 10;
 // Judge constraints
 #endif
 
+vi factorIntoBase(ll a, int base) {
+
+    vi res;
+    while (a > 0) {
+        res.pb(a % base);
+        a /= base;
+    }
+    reverse(all(res));
+    return res;
+}
+ll fromBase(vi &data, int base) {
+    ll exp = 1;
+    ll ans = 0;
+    for (int i = 0; i < data.size(); ++i) {
+        ans += data[i] * exp;
+        exp *= base;
+    }
+    return ans;
+}
+vi mergeVec(vi &dataNeg, vi &dataPos, int base) {
+    int n = max(dataNeg.size(), dataPos.size());
+    vi res;
+    res.reserve(n);
+    for (int i = 0; i < n; ++i) {
+        int val = 0;
+        if (i < dataNeg.size()) {
+            val -= dataNeg[int(dataNeg.size()) - 1 - i];
+        }
+        if (i < dataPos.size()) {
+            val += dataPos[int(dataPos.size()) - 1 - i];
+        }
+        val = (val % base + base) % base;
+        res.pb(val);
+    }
+    return res;
+}
+
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
 
+    int t;
+    cin >> t;
+    while (t--) {
+        int n, k;
+        cin >> n >> k;
+
+        ll r;
+        bool done = false;
+        vi fprev = {0};
+        for (ll w = 0; w < n; ++w) {
+            if (w) {
+                vi fnext = factorIntoBase(w, k);
+                vi fres = mergeVec(fprev, fnext, k);
+                //cout << w << " - " << fprev << " - " << fnext << " - " << fres << endl;
+                fprev = fnext;
+                cout << fromBase(fres, k) << "\n";
+            } else {
+                cout << "0\n";
+            }
+            cout.flush();
+            cin >> r;
+            if (r == 1) {
+                done = true;
+                break;
+            }
+            if (r == -1) {
+                return 0;
+            }
+        }
+        if (!done) {
+            return 0;
+        }
+    }
 
     return 0;
 }

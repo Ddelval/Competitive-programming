@@ -1,5 +1,5 @@
-//  template.cpp
-//  Created by David del Val on 05/07/2021
+//  1539-D.cpp
+//  Created by David del Val on 06/07/2021
 //
 //
 //https://github.com/Ddelval/Competitive-programming/blob/master/template.cpp
@@ -22,7 +22,7 @@ typedef vector<pii> vii;
 typedef vector<pll> vll;
 
 template <typename T, typename Q>
-inline ostream& operator<<(ostream& o, pair<T, Q> p);
+inline ostream &operator<<(ostream &o, pair<T, Q> p);
 
 // ====================================================== //
 // ===================  Container IO  =================== //
@@ -38,12 +38,12 @@ struct subs_succeeded<subs_fail> : std::false_type {};
 
 template <typename T>
 struct get_iter_res {
-   private:
+private:
     template <typename X>
-    static auto check(X const& x) -> decltype(x.begin());
+    static auto check(X const &x) -> decltype(x.begin());
     static subs_fail check(...);
 
-   public:
+public:
     using type = decltype(check(std::declval<T>()));
 };
 
@@ -101,17 +101,17 @@ inline pii operator+(pii a, pii b) {
 }
 
 template <typename T, typename Q>
-inline ostream& operator<<(ostream& o, pair<T, Q> p) {
+inline ostream &operator<<(ostream &o, pair<T, Q> p) {
     o << "(" << p.fi << "," << p.se << ")";
     return o;
 }
 
 //gcd(0, n) = n
 inline long long _gcd(long long a, long long b) {
-    while (b) b %= a ^= b ^= a ^= b;
+    while (b)
+        b %= a ^= b ^= a ^= b;
     return a;
 }
-
 
 ll inf = LLONG_MAX / 10;
 int iinf = INT_MAX / 10;
@@ -127,7 +127,59 @@ int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
+    int n;
+    cin >> n;
+    ll a, b;
+    vll data;
+    data.reserve(n);
+    for (int i = 0; i < n; ++i) {
+        cin >> a >> b;
+        data.pb({a, b});
+    }
+    sort(all(data), [](pll &a, pll &b) {
+        if (a.se != b.se) {
+            return a.se < b.se;
+        }
+        return a.fi > b.fi;
+    });
+    ll cheapIndex = 0;
+    ll prod1 = 0;
+    ll prod2 = 0;
+    ll productsTaken = 0;
+    //cout << data << endl;
+    for (int i = n - 1; i >= 0; --i) {
+        if (data[i].fi == 0 || cheapIndex > i) {
+            break;
+        }
+        /*
+        cout << "Check"
+             << " " << (cheapIndex <= i) << " " << data[cheapIndex].first << " " << (data[cheapIndex].second <= productsTaken) << endl;
+             */
+        // Get the product at price 1
+        while (cheapIndex <= i && data[cheapIndex].first && data[cheapIndex].second <= productsTaken) {
+            //cout << "Taken product " << cheapIndex << ": " << data[cheapIndex] << " with " << productsTaken << " products taken" << endl;
+            productsTaken += data[cheapIndex].first;
+            prod1 += data[cheapIndex].first;
+            data[cheapIndex].first = 0;
+            cheapIndex++;
+        }
+        if (cheapIndex > i) {
+            break;
+        }
+        if (data[cheapIndex].second - productsTaken < data[i].fi) {
+            //cout << "Taken part of product " << i << ": " << data[i] << "; " << data[cheapIndex].second - productsTaken << " units" << endl;
+            data[i].fi -= data[cheapIndex].second - productsTaken;
+            prod2 += data[cheapIndex].second - productsTaken;
+            productsTaken += data[cheapIndex].second - productsTaken;
+            i++; // Do not advance i
 
+        } else {
+            //cout << "Paying full price for product " << i << ": " << data[i] << endl;
+            prod2 += data[i].fi;
+            productsTaken += data[i].fi;
+        }
+    }
+    cout << prod1 + 2 * prod2 << "\n";
 
     return 0;
 }

@@ -1,4 +1,4 @@
-//  template.cpp
+//  0514-D.cpp
 //  Created by David del Val on 05/07/2021
 //
 //
@@ -22,7 +22,7 @@ typedef vector<pii> vii;
 typedef vector<pll> vll;
 
 template <typename T, typename Q>
-inline ostream& operator<<(ostream& o, pair<T, Q> p);
+inline ostream &operator<<(ostream &o, pair<T, Q> p);
 
 // ====================================================== //
 // ===================  Container IO  =================== //
@@ -38,12 +38,12 @@ struct subs_succeeded<subs_fail> : std::false_type {};
 
 template <typename T>
 struct get_iter_res {
-   private:
+private:
     template <typename X>
-    static auto check(X const& x) -> decltype(x.begin());
+    static auto check(X const &x) -> decltype(x.begin());
     static subs_fail check(...);
 
-   public:
+public:
     using type = decltype(check(std::declval<T>()));
 };
 
@@ -101,17 +101,17 @@ inline pii operator+(pii a, pii b) {
 }
 
 template <typename T, typename Q>
-inline ostream& operator<<(ostream& o, pair<T, Q> p) {
+inline ostream &operator<<(ostream &o, pair<T, Q> p) {
     o << "(" << p.fi << "," << p.se << ")";
     return o;
 }
 
 //gcd(0, n) = n
 inline long long _gcd(long long a, long long b) {
-    while (b) b %= a ^= b ^= a ^= b;
+    while (b)
+        b %= a ^= b ^= a ^= b;
     return a;
 }
-
 
 ll inf = LLONG_MAX / 10;
 int iinf = INT_MAX / 10;
@@ -123,11 +123,83 @@ int iinf = INT_MAX / 10;
 // Judge constraints
 #endif
 
+class SparseTable {
+private:
+    vl logs;
+    vector<vl> table;
+    std::function<ll(ll, ll)> f;
+
+public:
+    SparseTable(vl &data, std::function<ll(ll, ll)> f) : f(f) {
+        int n = data.size();
+        table.pb(data);
+        for (int j = 1; (1ll << j) <= n; ++j) {
+            vl nextRow(n);
+            for (int i = 0; i + (1ll << j) <= n; ++i) {
+                int otherIndex = i + (1ll << (j - 1));
+                nextRow[i] = f(table.back()[i], table.back()[otherIndex]);
+            }
+            table.push_back(std::move(nextRow));
+        }
+
+        logs = vl(n + 1, 0);
+        for (int i = 2; i <= n; ++i) {
+            logs[i] = logs[i / 2] + 1;
+        }
+    }
+
+    ll valueInRange(int left, int right) {
+        ll j = logs[right - left + 1];
+        ll intervalSize = 1ll << j;
+        return f(table[j][left], table[j][right - intervalSize + 1]);
+    }
+};
+
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
 
+    int n, m, k;
+    cin >> n >> m >> k;
+    ll a;
+    vector<vl> drones(m);
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < m; ++j) {
+            cin >> a;
+            drones[j].pb(a);
+        }
+    }
+    vector<SparseTable> tables;
+    for (int j = 0; j < m; ++j) {
+        tables.push_back(SparseTable(drones[j], [](ll a, ll b) { return max(a, b); }));
+    }
+    vi sol(m, 0);
+    ll ans = 0;
+    int right = 0;
+    for (int left = 0; left < n; ++left) {
+        while (right < left) {
+            right++;
+        }
+        while (right < n) {
+            ll shots = 0;
+            for (auto &a : tables) {
+                shots += a.valueInRange(left, right);
+            }
+            if (shots > k) {
+                break;
+            }
+            if (right - left + 1 > ans) {
+                for (int i = 0; i < m; ++i) {
+                    sol[i] = tables[i].valueInRange(left, right);
+                }
+                ans = right - left + 1;
+            }
+            right++;
+        }
+    }
+
+    cout << sol << endl;
 
     return 0;
 }

@@ -1,4 +1,4 @@
-//  template.cpp
+//  0514-C.cpp
 //  Created by David del Val on 05/07/2021
 //
 //
@@ -22,7 +22,7 @@ typedef vector<pii> vii;
 typedef vector<pll> vll;
 
 template <typename T, typename Q>
-inline ostream& operator<<(ostream& o, pair<T, Q> p);
+inline ostream &operator<<(ostream &o, pair<T, Q> p);
 
 // ====================================================== //
 // ===================  Container IO  =================== //
@@ -38,12 +38,12 @@ struct subs_succeeded<subs_fail> : std::false_type {};
 
 template <typename T>
 struct get_iter_res {
-   private:
+private:
     template <typename X>
-    static auto check(X const& x) -> decltype(x.begin());
+    static auto check(X const &x) -> decltype(x.begin());
     static subs_fail check(...);
 
-   public:
+public:
     using type = decltype(check(std::declval<T>()));
 };
 
@@ -101,17 +101,17 @@ inline pii operator+(pii a, pii b) {
 }
 
 template <typename T, typename Q>
-inline ostream& operator<<(ostream& o, pair<T, Q> p) {
+inline ostream &operator<<(ostream &o, pair<T, Q> p) {
     o << "(" << p.fi << "," << p.se << ")";
     return o;
 }
 
 //gcd(0, n) = n
 inline long long _gcd(long long a, long long b) {
-    while (b) b %= a ^= b ^= a ^= b;
+    while (b)
+        b %= a ^= b ^= a ^= b;
     return a;
 }
-
 
 ll inf = LLONG_MAX / 10;
 int iinf = INT_MAX / 10;
@@ -123,11 +123,69 @@ int iinf = INT_MAX / 10;
 // Judge constraints
 #endif
 
+struct node {
+    char ch;
+    int ending = 0;
+    node *next[3] = {nullptr, nullptr, nullptr};
+};
+
+node *root;
+
+void insert(node *n, string &s, int index) {
+    if (index >= s.length()) {
+        n->ending++;
+        return;
+    }
+    if (n->next[s[index] - 'a'] == nullptr) {
+        n->next[s[index] - 'a'] = new node;
+        n->next[s[index] - 'a']->ch = s[index];
+    }
+    insert(n->next[s[index] - 'a'], s, index + 1);
+}
+bool query(node *n, string &s, int index, bool toIgnore) {
+    if (index == s.length()) {
+        return n->ending != 0 && toIgnore == false;
+    }
+    int nextIndex = s[index] - 'a';
+    if (toIgnore) {
+        for (int i = 0; i < 3; ++i) {
+            if (n->next[i] != nullptr) {
+                if (query(n->next[i], s, index + 1, i == nextIndex)) {
+                    return true;
+                }
+            }
+        }
+    } else {
+        if (n->next[nextIndex] != nullptr) {
+            if (query(n->next[nextIndex], s, index + 1, toIgnore)) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
 
+    root = new node;
+
+    int n, m;
+    cin >> n >> m;
+    string s;
+    for (int i = 0; i < n; ++i) {
+        cin >> s;
+        insert(root, s, 0);
+    }
+    for (int i = 0; i < m; ++i) {
+        cin >> s;
+        if (query(root, s, 0, true)) {
+            cout << "YES\n";
+        } else {
+            cout << "NO\n";
+        }
+    }
 
     return 0;
 }
