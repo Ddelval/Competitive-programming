@@ -299,7 +299,7 @@ Now, if we want to calculate the maximum between indices 2 and 7 we will:
 \cppcode[firstline=20]{code/SparseTable.cpp}
 \newpage
 
-\subsection{Sparse Table with $\mathcal{O}(n)$ memory}
+\subsection{Sparse Table {\scriptsize(sort of)} with \boldmath$\mathcal{O}(n)$ memory}
 
 This variant of the sparse table is only capable of answering very
 specific queries. In particular, the operation must meet the following
@@ -314,15 +314,82 @@ Therefore, this data structure will mostly only be used for querying the
 maximum or the minimum over a range. On the other hand, we obtain a data 
 structure that uses significantly less memory and can be built in
 considerably less time, albeit with slower queries.
+\subsection*{Explanation}
+With that goal in mind, we will group the elements of the array in blocks.
+These blocks should be of size $\log (n)$. However, since $n$ will never
+be larger than $2^{30}$, we can set their size to 30. Now we we will build 
+two data structures:
+\begin{itemize}
+		\setlength{\itemsep}{2pt}
+		\item A Sparse Table where each element is a block of the array. 
+				In order to simplify this task, in the Sparse Table we will
+				store the index of the result of applying the operation to the 
+				range instead of the result itself. 
 
-\cppcode[firstline=20]{code/Linear_RMQ.cpp}
-With that goal in mind, we will group the 
+				Therefore, the elements in the first row of the table will be the 
+				index of the result of applying the operation to each block of the array while
+				the elements in the following layers will represent applying the
+				operation to 2, 4, 8 \dots blocks.
 
+		\item A structure that stores the result for every range of 30 contiguous 
+				elements in the array.
+\end{itemize}
+
+If we have these two data structures we can split the (large) query into three subqueries
+that will most likely overlap. In particular, we will split the range $[l, r]$ into:
+\begin{itemize}
+		\setlength{\itemsep}{0pt}
+		\item A range of size 30 starting at $l$.
+		\item The blocks that are fully contained within the interval.
+		\item A range of size 30 that ends at $r$.
+\end{itemize}
+The middle range will be processed using the Sparse Table of blocks while the other 
+two must be calculated using the new data structure.
 
 \begin{figure}[h!]
 		\centering
-		\resizebox{\textwidth}{!}{\subimport{figures/}{Optimized_Sparse.pdf_tex}}
+		\resizebox{0.75\textwidth}{!}{\subimport{figures/}{Optimized_Sparse.pdf_tex}}
 \end{figure}
+\newpage
+In order to answer the small queries, we will use a bitmask for every position. That
+is to say, a vector of $n$ integers where each of them is a bitmask for that position.
+Let's look at the bitmask of position $r$. The bit $r-k, \ (k<30)$ will 
+be one iff that element  is the result in the range $[r-k, r]$.  
+For instance, at position $6$ of this example array the bitmask would be:
+\begin{figure}[h!]
+\centering
+\begin{tikzpicture}
+		\begin{scope}[]
+				\foreach \m/\c/ \v in{
+						0/1/1,
+						1/4/0,
+						2/2/1,
+						3/6/0,
+						4/7/0,
+						5/4/1,
+						6/5/1
+				}{
+				\pgfmathtruncatemacro{\om}{\m}
+				\pgfmathsetmacro{\sm}{0.5*\m}
+				\pgfmathsetmacro{\em}{0.5+\sm}
+				\node[draw, fit={(\sm,0)(\em,0.5)}, inner sep = 0 pt, label = center: \c](A){};
+				\node[fit={(\sm,0.6)(\em,0.8)}, inner sep = 0 pt, label = center: \scalebox{0.7}{\om}](A){};
+				\node[fit={(\sm,-1)(\em,0)}, inner sep = 0 pt, label = center: \scalebox{0.9}{\v}](A){};
+				}
+		\end{scope}
+		\node[anchor=east] (a) at (-0.5,0.25){\texttt{array:}};
+		\node[anchor=east] (a) at (-0.5,-0.5){\texttt{mask:}};
+\end{tikzpicture}
+\end{figure}
+This bitmask approach is particularly useful because the vector of bitmasks can be built in linear time. 
+If we look at the code below (\texttt{build\_mask()}), the \texttt{while} loop 
+will only be executed at most once for every element while 
+the \texttt{for} loop iterates through all elements exactly once.
+
+\cppcode[firstline=20]{code/Linear_RMQ.cpp}
+
+
+
 
 \newpage
 \section{Fenwick tree (BIT)}
