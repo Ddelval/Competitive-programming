@@ -12,8 +12,8 @@
    viewBox="0 0 66.449837 69.60881"
    version="1.1"
    id="svg8"
-   inkscape:version="1.0.1 (c497b03c, 2020-09-10)"
-   sodipodi:docname="LCA to RMQ.svg">
+   sodipodi:docname="LCA_to_RMQ.svg"
+   inkscape:version="1.0.1 (c497b03c, 2020-09-10)">
   <defs
      id="defs2" />
   <sodipodi:namedview
@@ -23,9 +23,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.9594119"
-     inkscape:cx="248.556"
-     inkscape:cy="230.32918"
+     inkscape:zoom="4.599947"
+     inkscape:cx="213.91687"
+     inkscape:cy="119.98931"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      inkscape:document-rotation="0"
@@ -54,16 +54,17 @@
      transform="translate(-21.416697,-21.23778)">
     <g
        id="g871"
-       transform="translate(-4.1219181)">
+       transform="translate(-4.1219181)"
+       style="stroke-width:0.3;stroke-miterlimit:4;stroke-dasharray:none">
       <circle
-         style="fill:none;stroke:#000000;stroke-width:0.661855;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;paint-order:markers fill stroke;stop-color:#000000"
+         style="fill:none;stroke:#000000;stroke-width:0.3;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;paint-order:markers fill stroke;stop-color:#000000"
          id="path841-8"
          cx="39.962048"
          cy="42.065315"
          r="3.6438811" />
       <text
          xml:space="preserve"
-         style="font-size:2.82223px;line-height:1.25;font-family:'CMU Sans Serif';-inkscape-font-specification:'CMU Sans Serif';text-align:center;text-anchor:middle;stroke-width:0.264583"
+         style="font-size:2.82222999999999979px;line-height:1.25;font-family:'CMU Sans Serif';-inkscape-font-specification:'CMU Sans Serif';text-align:center;text-anchor:middle;stroke-width:0.3;stroke-miterlimit:4;stroke-dasharray:none"
          x="39.931042"
          y="43.500885"
          id="text845-1"><tspan
@@ -71,23 +72,13 @@
            id="tspan843-4"
            x="39.931042"
            y="43.500885"
-           style="font-size:4.23333px;stroke-width:0.264583">2</tspan></text>
+           style="font-size:4.23332999999999959px;stroke-width:0.3;stroke-miterlimit:4;stroke-dasharray:none">2</tspan></text>
     </g>
-    <text
-       xml:space="preserve"
-       style="font-size:2.82223px;line-height:1.25;font-family:'CMU Sans Serif';-inkscape-font-specification:'CMU Sans Serif';text-align:center;text-anchor:middle;white-space:pre;inline-size:0.617412;stroke-width:0.264583"
-       x="66.148552"
-       y="30.555107"
-       id="text837"><tspan
-         style="visibility:hidden"
-         x="66.148552"
-         y="30.555107"><tspan
-           style="stroke-width:0.264583">1</tspan></tspan></text>
     <g
        id="g876"
        transform="translate(-1.241821)">
       <circle
-         style="fill:none;stroke:#000000;stroke-width:0.661856;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;paint-order:markers fill stroke;stop-color:#000000"
+         style="fill:none;stroke:#000000;stroke-width:0.3;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;paint-order:markers fill stroke;stop-color:#000000"
          id="path841"
          cx="55.672882"
          cy="25.212589"
@@ -106,16 +97,17 @@
     </g>
     <g
        id="g871-0"
-       transform="translate(-13.417384,20.742549)">
+       transform="translate(-13.417384,20.742549)"
+       style="stroke-width:0.3;stroke-miterlimit:4;stroke-dasharray:none">
       <circle
-         style="fill:none;stroke:#000000;stroke-width:0.661855;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;paint-order:markers fill stroke;stop-color:#000000"
+         style="fill:none;stroke:#000000;stroke-width:0.3;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;paint-order:markers fill stroke;stop-color:#000000"
          id="path841-8-4"
          cx="39.962048"
          cy="42.065315"
          r="3.6438811" />
       <text
          xml:space="preserve"
-         style="font-size:2.82223px;line-height:1.25;font-family:'CMU Sans Serif';-inkscape-font-specification:'CMU Sans Serif';text-align:center;text-anchor:middle;stroke-width:0.264583"
+         style="font-size:2.82222999999999979px;line-height:1.25;font-family:'CMU Sans Serif';-inkscape-font-specification:'CMU Sans Serif';text-align:center;text-anchor:middle;stroke-width:0.3;stroke-miterlimit:4;stroke-dasharray:none"
          x="39.931042"
          y="43.500885"
          id="text845-1-6"><tspan
@@ -123,20 +115,21 @@
            id="tspan843-4-0"
            x="39.931042"
            y="43.500885"
-           style="font-size:4.23333px;stroke-width:0.264583">4</tspan></text>
+           style="font-size:4.23332999999999959px;stroke-width:0.3;stroke-miterlimit:4;stroke-dasharray:none">4</tspan></text>
     </g>
     <g
        id="g871-3"
-       transform="translate(5.1735499,20.887602)">
+       transform="translate(5.1735499,20.887602)"
+       style="stroke-width:0.3;stroke-miterlimit:4;stroke-dasharray:none">
       <circle
-         style="fill:none;stroke:#000000;stroke-width:0.661855;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;paint-order:markers fill stroke;stop-color:#000000"
+         style="fill:none;stroke:#000000;stroke-width:0.3;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;paint-order:markers fill stroke;stop-color:#000000"
          id="path841-8-2"
          cx="39.962048"
          cy="42.065315"
          r="3.6438811" />
       <text
          xml:space="preserve"
-         style="font-size:2.82223px;line-height:1.25;font-family:'CMU Sans Serif';-inkscape-font-specification:'CMU Sans Serif';text-align:center;text-anchor:middle;stroke-width:0.264583"
+         style="font-size:2.82222999999999979px;line-height:1.25;font-family:'CMU Sans Serif';-inkscape-font-specification:'CMU Sans Serif';text-align:center;text-anchor:middle;stroke-width:0.3;stroke-miterlimit:4;stroke-dasharray:none"
          x="39.931042"
          y="43.500885"
          id="text845-1-69"><tspan
@@ -144,20 +137,21 @@
            id="tspan843-4-4"
            x="39.931042"
            y="43.500885"
-           style="font-size:4.23333px;stroke-width:0.264583">5</tspan></text>
+           style="font-size:4.23332999999999959px;stroke-width:0.3;stroke-miterlimit:4;stroke-dasharray:none">5</tspan></text>
     </g>
     <g
        id="g871-1"
-       transform="translate(33.059948,0.36262994)">
+       transform="translate(33.059948,0.36262994)"
+       style="stroke-width:0.3;stroke-miterlimit:4;stroke-dasharray:none">
       <circle
-         style="fill:none;stroke:#000000;stroke-width:0.661855;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;paint-order:markers fill stroke;stop-color:#000000"
+         style="fill:none;stroke:#000000;stroke-width:0.3;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;paint-order:markers fill stroke;stop-color:#000000"
          id="path841-8-3"
          cx="39.962048"
          cy="42.065315"
          r="3.6438811" />
       <text
          xml:space="preserve"
-         style="font-size:2.82223px;line-height:1.25;font-family:'CMU Sans Serif';-inkscape-font-specification:'CMU Sans Serif';text-align:center;text-anchor:middle;stroke-width:0.264583"
+         style="font-size:2.82222999999999979px;line-height:1.25;font-family:'CMU Sans Serif';-inkscape-font-specification:'CMU Sans Serif';text-align:center;text-anchor:middle;stroke-width:0.3;stroke-miterlimit:4;stroke-dasharray:none"
          x="39.931042"
          y="43.500885"
          id="text845-1-7"><tspan
@@ -165,20 +159,21 @@
            id="tspan843-4-8"
            x="39.931042"
            y="43.500885"
-           style="font-size:4.23333px;stroke-width:0.264583">3</tspan></text>
+           style="font-size:4.23332999999999959px;stroke-width:0.3;stroke-miterlimit:4;stroke-dasharray:none">3</tspan></text>
     </g>
     <g
        id="g871-8"
-       transform="translate(23.764482,20.815075)">
+       transform="translate(23.764482,20.815075)"
+       style="stroke-width:0.3;stroke-miterlimit:4;stroke-dasharray:none">
       <circle
-         style="fill:none;stroke:#000000;stroke-width:0.661855;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;paint-order:markers fill stroke;stop-color:#000000"
+         style="fill:none;stroke:#000000;stroke-width:0.3;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;paint-order:markers fill stroke;stop-color:#000000"
          id="path841-8-38"
          cx="39.962048"
          cy="42.065315"
          r="3.6438811" />
       <text
          xml:space="preserve"
-         style="font-size:2.82223px;line-height:1.25;font-family:'CMU Sans Serif';-inkscape-font-specification:'CMU Sans Serif';text-align:center;text-anchor:middle;stroke-width:0.264583"
+         style="font-size:2.82222999999999979px;line-height:1.25;font-family:'CMU Sans Serif';-inkscape-font-specification:'CMU Sans Serif';text-align:center;text-anchor:middle;stroke-width:0.3;stroke-miterlimit:4;stroke-dasharray:none"
          x="39.931042"
          y="43.500885"
          id="text845-1-1"><tspan
@@ -186,20 +181,21 @@
            id="tspan843-4-5"
            x="39.931042"
            y="43.500885"
-           style="font-size:4.23333px;stroke-width:0.264583">6</tspan></text>
+           style="font-size:4.23332999999999959px;stroke-width:0.3;stroke-miterlimit:4;stroke-dasharray:none">6</tspan></text>
     </g>
     <g
        id="g871-35"
-       transform="translate(23.764482,41.271453)">
+       transform="translate(23.764482,41.271453)"
+       style="stroke-width:0.3;stroke-miterlimit:4;stroke-dasharray:none">
       <circle
-         style="fill:none;stroke:#000000;stroke-width:0.661855;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;paint-order:markers fill stroke;stop-color:#000000"
+         style="fill:none;stroke:#000000;stroke-width:0.3;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;paint-order:markers fill stroke;stop-color:#000000"
          id="path841-8-43"
          cx="39.962048"
          cy="42.065315"
          r="3.6438811" />
       <text
          xml:space="preserve"
-         style="font-size:2.82223px;line-height:1.25;font-family:'CMU Sans Serif';-inkscape-font-specification:'CMU Sans Serif';text-align:center;text-anchor:middle;stroke-width:0.264583"
+         style="font-size:2.82222999999999979px;line-height:1.25;font-family:'CMU Sans Serif';-inkscape-font-specification:'CMU Sans Serif';text-align:center;text-anchor:middle;stroke-width:0.3;stroke-miterlimit:4;stroke-dasharray:none"
          x="39.931042"
          y="43.500885"
          id="text845-1-65"><tspan
@@ -207,20 +203,21 @@
            id="tspan843-4-9"
            x="39.931042"
            y="43.500885"
-           style="font-size:4.23333px;stroke-width:0.264583">8</tspan></text>
+           style="font-size:4.23332999999999959px;stroke-width:0.3;stroke-miterlimit:4;stroke-dasharray:none">8</tspan></text>
     </g>
     <g
        id="g871-5"
-       transform="translate(42.355419,20.815075)">
+       transform="translate(42.355419,20.815075)"
+       style="stroke-width:0.3;stroke-miterlimit:4;stroke-dasharray:none">
       <circle
-         style="fill:none;stroke:#000000;stroke-width:0.661855;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;paint-order:markers fill stroke;stop-color:#000000"
+         style="fill:none;stroke:#000000;stroke-width:0.3;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;paint-order:markers fill stroke;stop-color:#000000"
          id="path841-8-49"
          cx="39.962048"
          cy="42.065315"
          r="3.6438811" />
       <text
          xml:space="preserve"
-         style="font-size:2.82223px;line-height:1.25;font-family:'CMU Sans Serif';-inkscape-font-specification:'CMU Sans Serif';text-align:center;text-anchor:middle;stroke-width:0.264583"
+         style="font-size:2.82222999999999979px;line-height:1.25;font-family:'CMU Sans Serif';-inkscape-font-specification:'CMU Sans Serif';text-align:center;text-anchor:middle;stroke-width:0.3;stroke-miterlimit:4;stroke-dasharray:none"
          x="39.931042"
          y="43.500885"
          id="text845-1-17"><tspan
@@ -228,10 +225,10 @@
            id="tspan843-4-55"
            x="39.931042"
            y="43.500885"
-           style="font-size:4.23333px;stroke-width:0.264583">7</tspan></text>
+           style="font-size:4.23332999999999959px;stroke-width:0.3;stroke-miterlimit:4;stroke-dasharray:none">7</tspan></text>
     </g>
     <path
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.34;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
        d="M 34.349993,45.39051 28.0348,59.48267"
        id="path974"
        inkscape:connector-type="polyline"
@@ -239,7 +236,7 @@
        inkscape:connection-start="#g871"
        inkscape:connection-end="#g871-0" />
     <path
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.34;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
        d="M 37.321647,45.394394 43.65408,59.623838"
        id="path976"
        inkscape:connector-type="polyline"
@@ -247,7 +244,7 @@
        inkscape:connection-start="#g871"
        inkscape:connection-end="#g871-3" />
     <path
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.37;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
        d="M 51.731333,27.659899 38.539857,39.618005"
        id="path978"
        inkscape:connector-type="polyline"
@@ -255,7 +252,7 @@
        inkscape:connection-start="#g876"
        inkscape:connection-end="#g871" />
     <path
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.34;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
        d="M 57.104666,27.688369 70.348391,39.952166"
        id="path980"
        inkscape:connector-type="polyline"
@@ -263,7 +260,7 @@
        inkscape:connection-start="#g876"
        inkscape:connection-end="#g871-1" />
     <path
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.34;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
        d="M 71.514315,45.745234 65.23421,59.563101"
        id="path982"
        inkscape:connector-type="polyline"
@@ -271,7 +268,7 @@
        inkscape:connection-start="#g871-1"
        inkscape:connection-end="#g871-8" />
     <path
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.34;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
        d="m 74.529676,45.745234 6.28011,13.817868"
        id="path984"
        inkscape:connector-type="polyline"
@@ -279,7 +276,7 @@
        inkscape:connection-start="#g871-1"
        inkscape:connection-end="#g871-5" />
     <path
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.34;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
        d="M 63.72653,66.524271 V 79.692887"
        id="path986"
        inkscape:connector-type="polyline"
@@ -295,8 +292,8 @@
     <circle
        style="fill:#808080;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;paint-order:markers fill stroke;stop-color:#000000"
        id="path990-5"
-       cx="29.515059"
-       cy="37.724228"
+       cx="30.090246"
+       cy="38.874603"
        r="1.3049263" />
     <circle
        style="fill:#808080;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;paint-order:markers fill stroke;stop-color:#000000"
@@ -379,11 +376,11 @@
     <path
        id="path1089"
        style="fill:none;stroke:#808080;stroke-width:0.3;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;paint-order:markers fill stroke;stop-color:#000000"
-       d="m 61.355305,24.92869 c 0,0 5.699403,2.626681 17.197327,13.182966 11.497925,10.556284 11.375747,30.56772 4.063922,31.371493 -7.949975,0.873924 -5.2226,-20.70245 -9.763324,-20.468289 -1.990054,0.102625 -3.817652,6.925463 -3.320521,13.926366 0,0 7.235762,26.762411 -5.600283,26.712851 -12.836045,-0.04956 -6.442802,-26.663291 -6.442802,-26.663291 3.008055,-6.699657 6.133914,-7.273567 9.019923,-20.319608 0.34242,-4.230061 -5.419637,-11.336797 -12.142205,-11.002325 -3.64751,0.112428 -9.287138,4.384642 -10.935813,10.18762 -0.698972,3.489065 15.88056,27.084314 1.661326,28.611813 C 37.842772,71.247125 39.269381,49.395071 35.797585,49.522794 33.131713,49.366347 33.476548,70.535824 25.786963,70.369166 18.080309,70.202138 21.905529,43.265898 29.438652,37.764736 35.44226,33.269652 41.392853,28.403462 47.57762,25.17649"
-       sodipodi:nodetypes="ccsscsccccscscc" />
+       d="m 61.355305,24.92869 c 0,0 5.699403,2.626681 17.197327,13.182966 11.497925,10.556284 11.375747,30.56772 4.063922,31.371493 -7.949975,0.873924 -5.2226,-20.70245 -9.763324,-20.468289 -1.990054,0.102625 -3.817652,6.925463 -3.320521,13.926366 0,0 7.235762,26.762411 -5.600283,26.712851 -12.836045,-0.04956 -6.442802,-26.663291 -6.442802,-26.663291 3.008055,-6.699657 6.133914,-7.273567 9.019923,-20.319608 0.983322,-3.60134 -6.180601,-11.400211 -12.142205,-11.002325 -3.64751,0.112428 -9.287138,4.384642 -10.935813,10.18762 -0.698972,3.489065 15.88056,27.084314 1.661326,28.611813 C 37.842772,71.247125 39.269381,49.395071 35.797585,49.522794 33.131713,49.366347 33.476548,70.535824 25.786963,70.369166 18.080309,70.202138 23.268955,45.46596 30.128878,39.145187 36.209877,33.542117 41.392853,28.403462 47.57762,25.17649"
+       sodipodi:nodetypes="ccsscsccccscssc" />
     <path
        style="fill:#808080;stroke:none;stroke-width:0.529556;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;paint-order:stroke fill markers;stop-color:#000000"
-       d="m 42.137066,27.436161 c 0.312578,0.403985 0.604304,0.859305 0.893482,1.382062 -0.550038,0.220126 -1.259301,0.221291 -2.177941,0.428161 0.594167,-0.895965 0.827133,-1.400894 1.284459,-1.810223 z"
+       d="m 42.291246,27.480565 c 0.34507,0.376611 0.673626,0.806112 1.005247,1.303029 -0.529842,0.265075 -1.236555,0.325179 -2.134825,0.607676 0.517653,-0.942243 0.707851,-1.464786 1.129578,-1.910705 z"
        id="path1130"
        sodipodi:nodetypes="cccc" />
     <path
@@ -400,5 +397,19 @@
        sodipodi:nodetypes="cccc"
        inkscape:transform-center-y="0.42283174"
        inkscape:transform-center-x="0.21918662" />
+    <path
+       style="fill:#808080;stroke:none;stroke-width:0.529556;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;paint-order:stroke fill markers;stop-color:#000000"
+       d="m 63.101066,50.866099 c 0.495149,0.125444 1.005521,0.304163 1.555455,0.537554 -0.297438,0.512376 -0.85522,0.950477 -1.45108,1.679618 -0.0844,-1.071758 -0.212184,-1.612958 -0.104375,-2.217172 z"
+       id="path1130-6-6"
+       sodipodi:nodetypes="cccc"
+       inkscape:transform-center-x="-0.63256506"
+       inkscape:transform-center-y="-1.069507" />
+    <path
+       style="fill:#808080;stroke:none;stroke-width:0.529556;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;paint-order:stroke fill markers;stop-color:#000000"
+       d="m 86.38721,48.425809 c -0.455367,0.231409 -0.957256,0.432723 -1.524912,0.61891 -0.113246,-0.581527 0.01841,-1.278464 -0.0128,-2.219591 0.768874,0.751412 1.221251,1.074802 1.537714,1.600681 z"
+       id="path1130-6-6-7"
+       sodipodi:nodetypes="cccc"
+       inkscape:transform-center-x="-0.74127288"
+       inkscape:transform-center-y="1.0671185" />
   </g>
 </svg>
