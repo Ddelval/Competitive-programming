@@ -1,3 +1,5 @@
+%! TeX program = lualatex
+
 \documentclass[12pt]{report}
 \usepackage[usenames,dvipsnames]{xcolor}
 \usepackage{tcolorbox}
@@ -11,11 +13,14 @@
 \usepackage{wrapfig}
 \usepackage{diagbox} %diagonal cells
 \usepackage{dirtytalk}
+\usepackage{caption}
+\usepackage{subcaption}
 \usepackage{minted}
 \usepackage{booktabs}
 \usepackage{import}
 \usepackage{tikz}
 \usepackage{pgfplots}
+\usepackage{multicol}
 \usetikzlibrary{arrows.meta}
 \usetikzlibrary{fit}
 \usepackage{hyperref}
@@ -30,6 +35,10 @@
 
 
 \definecolor{mintedbackground}{rgb}{0.95,0.95,0.95}
+
+% Font ligatures
+\usepackage{fontspec}
+\setmonofont[Contextuals={Alternate},Scale=0.8]{Fira Code}
 
 \newmintedfile[cppcode]{cpp}{
 bgcolor=mintedbackground,
@@ -80,12 +89,13 @@ breaklines=true
         \vspace*{1cm}
  
         \Huge
-        \textbf{CP implementations}
+        \textbf{Competitive Programming Algorithms}
  
 
  
         \vspace{1.5cm}
  
+		\Large
         \textbf{David del Val}
  
         \vfill
@@ -102,23 +112,145 @@ breaklines=true
 
 \setcounter{tocdepth}{2}
 \tableofcontents 
-\chapter{Data structures}
+\chapter{Basic range queries }
+
+\section{Types of range queries}
+Depending on the type of function whose value we have to calculate over
+the given range:
+\begin{itemize}
+		\item \textit{Idempotent functions}. These functions fulfill the 
+				following condition $f(f(x))=f(x)$. For instance, the maximum
+				and minimum of a list of values are idempotent. 
+				Furthermore, since the GCD and LCM can be seen as 
+				the \say{maximum} and the \say{minimum} of the exponents in the
+				prime factorization, it is only natural that they fulfill the same 
+				property.
+
+				The most important property of these functions for range queries
+				is that we can evaluate the elements of the range several times 
+				without affecting the result. For instance:
+				\[
+						\min(a_l,\dots ,a_r)= \min \left (
+								\min (a_l, \dots,  a_k), \min (a_{k},\dots, a_r)
+						\right ) \quad l < k <r
+				\]
+				even though the union of the intervals includes $a_k$ twice.
+				This is the property in which sparse tables are based.
+
+
+		\item  \textit{Reversible functions}. Functions that have an inverse
+				also have advantages in range queries. That is because we
+				can easily remove elements from any range to obtain a smaller
+				one. In these cases we can obtain the final range by adding
+				and subtracting ranges that have been precalculated.
+
+				For instance, the addition, subtraction and xor operations have 
+				an inverse (subtraction, addition and xor respectively). 
+
+\end{itemize}
+
+\newpage
+There are also other problems that can be transformed into a range query easily.
+
+\subsection{LCA using RMQ}
+To use this algorithm we need a rooted tree with undirected edges where the 
+nodes are labeled in a particular order. Specifically, nodes at a greater
+depth have to be labeled with a greater value. Furthermore, the algorithm
+could be extended to process a forest (instead of a single tree) but 
+this version cannot process forests.
+
+We can traverse the tree using dfs and store in an array each node that we 
+encounter. If we also keep track of the time at which each node was found
+for the first time, the LCA can be converted into calculating the minimum
+in an array of length $E+V$.
+
+\begin{figure}[h!]
+		\centering
+		\resizebox{70 mm}{!}{\import{./figures/}{LCA_to_RMQ.pdf_tex}}
+\end{figure}
+After running a DFS in the tree, we would get the following array of 
+values and discovery times:
+\begin{figure}[h!]
+		\centering
+		\begin{subfigure}{0.55\textwidth}
+		\centering
+\begin{tikzpicture}
+		\begin{scope}[shift={(-6,0)}]
+				\foreach \m/\c in{
+						0/1,
+						1/2,
+						2/4,
+						3/2,
+						4/5,
+						5/2,
+						6/1,
+						7/3,
+						8/6,
+						9/8,
+						10/6,
+						11/3,
+						12/7,
+						13/3,
+						14/1
+				}{
+				\pgfmathtruncatemacro{\om}{\m}
+				\pgfmathsetmacro{\sm}{0.5*\m}
+				\pgfmathsetmacro{\em}{0.5+\sm}
+				\node[draw, fit={(\sm,0)(\em,0.5)}, inner sep = 0 pt, label = center: \c](A){};
+				\node[fit={(\sm,0.6)(\em,0.8)}, inner sep = 0 pt, label = center: \scalebox{0.7}{\om}](A){};
+				}
+		\end{scope}
+\end{tikzpicture}
+		\end{subfigure}
+		\begin{subfigure}{0.4\textwidth}
+		\centering
+		\scalebox{0.9}{
+				\begin{tabular}{c|c||c|c}
+						\footnotesize{ \textbf{Node}} & \footnotesize{\textbf{Time}}&
+						\footnotesize{\textbf{Node}} & \footnotesize{\textbf{Time}}\\
+						\hline \hline
+						1 & 0 &5 & 4\\
+						2 & 1 &6 & 8\\
+						3 & 7 &7 & 12\\
+						4 & 2 &8 & 9\\
+				\end{tabular}
+		}
+		\end{subfigure}
+
+\end{figure}
+
+Now if we want to get the LCA between nodes 5 and 6, we have to obtain the minimum
+value in the range [4, 8]. As we can see, the result is obviously 1.
+
+If we compare this approach to binary lifting, we observe that we have a considerably
+more expensive precalculation phase but, afterwards, answering any queries takes
+constant time instead of logarithmic time. In particular, the complexities for this 
+method are:
+\begin{itemize}
+		\setlength{\itemsep}{1pt}
+		\item Precomputate the values: $\mathcal{O}(E\log(E))$
+		\item Calculate the LCA of a node: $\mathcal{O}(1)$
+		\item Memory usage: $\mathcal{O}(E\log(E))$
+\end{itemize}
+Where $E=\text{edges}$.
+
+\newpage
+
 
 \section{Sparse table}
 The sparse table is a data structure that calculates the value of 
-a function over a range of inmutable elements with the following complexity:
+a function over a range of immutable elements with the following complexity:
 \begin{itemize}
 		\setlength{\itemsep}{2 pt}
 		\item \tbf{$\mathcal O(n\log n)$} to build the data structure
-		\item \tbf{$\mathcal O(1)$} to answer queries on a range if
-				the function is idempotent
-		\item \tbf{$\mathcal O(\log n)$} to answer queries on a
-				range if the function is not idempotent
+		\item \tbf{$\mathcal O(1)$} to answer queries on a range. 
 		\item \tbf{$\mathcal O(n\log n)$} memory
 \end{itemize}
-Therefore the sparse table should only be used for idempotent function since
-in other scenarios a BIT or a Segment Tree will have a similar performance while
-allowing the elements to be modified.
+Furthermore, the function must be \textbf{idempotent}. This allows the use of
+overlapped intervals in the calculations. A Sparse Table can be adapted to 
+answer queries with more general functions. However, it would lose the constant
+time query capabilities and would be no more efficient than a segment tree or a BIT.
+
 
 On the other hand, the data structure is rather simple and its implementation 
 is considerable shorter than any other alternatives. 
@@ -279,9 +411,35 @@ Now, if we want to calculate the maximum between indices 2 and 7 we will:
 \cppcode[firstline=20]{code/data_structures/SparseTable.cpp}
 \newpage
 
+\subsection{Sparse Table with $\mathcal{O}(n)$ memory}
+
+This variant of the sparse table is only capable of answering very
+specific queries. In particular, the operation must meet the following
+constraints:
+\begin{itemize}
+		\setlength{\itemsep}{2pt}
+		\item It is idempotent (as in a normal Sparse Table)
+		\item The result of the operation over a range is an element
+				in that range
+\end{itemize}
+Therefore, this data structure will mostly only be used for querying the
+maximum or the minimum over a range. On the other hand, we obtain a data 
+structure that uses significantly less memory and can be built in
+considerably less time, albeit with slower queries.
+
+\cppcode[firstline=20]{code/data_structures/Linear_RMQ.cpp}
+With that goal in mind, we will group the 
+
+
+\begin{figure}[h!]
+		\centering
+		\resizebox{\textwidth}{!}{\import{./figures/}{Optimized_Sparse.pdf_tex}}
+\end{figure}
+
+\newpage
 \section{Fenwick tree (BIT)}
 A Fenwick tree or binary indexed tree (BIT) can be used to calculate the value
-of a reversible function $F$ over a range of values. Given an array of elements
+of a \textbf{reversible} function $F$ over a range of values. Given an array of elements
 $A$ of size $N$:
 \begin{itemize}
 		\setlength{\itemsep}{2pt}

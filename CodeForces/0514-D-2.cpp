@@ -122,44 +122,97 @@ int iinf = INT_MAX / 10;
 #else
 // Judge constraints
 #endif
-
-class SparseTable {
-private:
-    vl logs;
-    vector<vl> table;
+class rmq {
+    vl data;
+    int n, rowSize;
+    vi mask, sparseTable;
+    static const int blockSize = 30;
     std::function<ll(ll, ll)> f;
 
 public:
-    SparseTable(vl &data, std::function<ll(ll, ll)> f) : f(f) {
-        int n = data.size();
-        table.pb(data);
-        for (int j = 1; (1ll << j) <= n; ++j) {
-            vl nextRow(n);
-            for (int i = 0; i + (1ll << j) <= n; ++i) {
-                int otherIndex = i + (1ll << (j - 1));
-                nextRow[i] = f(table.back()[i], table.back()[otherIndex]);
-            }
-            table.push_back(std::move(nextRow));
+    rmq(const vl &v, decltype(f) function) : data(v), n(v.size()), mask(n),
+                                             sparseTable(n), f(function) {
+        rowSize = n / blockSize;
+        build_mask();
+        build_sparse_table();
+    }
+
+    ll query(int l, int r) {
+        // Small query
+        if (r - l + 1 <= blockSize) {
+            return data[small_query_index(r, r - l + 1)];
         }
 
-        /*
-        logs = vl(n + 1, 0);
-        for (int i = 2; i <= n; ++i) {
-            logs[i] = logs[i / 2] + 1;
+        // Get the result for the endpoints
+        int ans = op(small_query_index(l + blockSize - 1), small_query_index(r));
+
+        // Query the sparse table
+        int x = l / blockSize + 1, y = r / blockSize - 1;
+
+        if (x <= y) {
+            // Row to query
+            int j = msb_index(y - x + 1);
+
+            ans = op(ans, op(sparseTable[rowSize * j + x],
+                             sparseTable[rowSize * j + y - (1 << j) + 1]));
         }
-        */
+        return data[ans];
+    }
+
+private:
+    int &SparseTable(int power, int elem) {
+        return sparseTable[rowSize * power + elem];
+    }
+    static int lsb(int x) {
+        return x & -x;
     }
     static int msb_index(int x) {
         return __builtin_clz(1) - __builtin_clz(x);
     }
-    ll valueInRange(int left, int right) {
-        //ll j = logs[right - left + 1];
-        int j = msb_index(right - left + 1);
-        ll intervalSize = 1ll << j;
-        return f(table[j][left], table[j][right - intervalSize + 1]);
+
+    // Get the index that contains the answer for the small
+    // query
+    int small_query_index(int r, int size = blockSize) {
+        int dist_from_r = msb_index(mask[r] & ((1 << size) - 1));
+
+        return r - dist_from_r;
+    }
+
+    // Return the index that contins the result of the operation
+    int op(int index1, int index2) {
+        return f(data[index1], data[index2]) == data[index1] ? index1 : index2;
+    }
+    void build_mask() {
+        int current_mask = 0;
+        // We use this mask so that we only keep track of the at most
+        // the size of the block bits
+        int discard_mask = (1 << blockSize) - 1;
+        for (int i = 0; i < n; ++i) {
+            current_mask = (current_mask << 1) & discard_mask;
+
+            while (current_mask > 0 && op(i, i - msb_index(lsb(current_mask))) == i) {
+                // Current value is smaller than the value represented by the
+                //last 1 in curr_mask, so that bit should be off
+                current_mask ^= lsb(current_mask);
+            }
+            current_mask |= 1;
+            mask[i] = current_mask;
+        }
+    }
+    void build_sparse_table() {
+        // Fill first row
+        for (int i = 0; i < rowSize; ++i) {
+            sparseTable[i] = small_query_index(blockSize * (i + 1) - 1);
+        }
+        for (int j = 1; (1 << j) <= rowSize; ++j) {
+            for (int i = 0; i + (1 << j) <= rowSize; ++i) {
+                int previousStep = 1 << (j - 1);
+                sparseTable[rowSize * j + i] = op(sparseTable[rowSize * (j - 1) + i],
+                                                  sparseTable[rowSize * (j - 1) + i + previousStep]);
+            }
+        }
     }
 };
-
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
@@ -175,9 +228,9 @@ int main() {
             drones[j].pb(a);
         }
     }
-    vector<SparseTable> tables;
+    vector<rmq> tables;
     for (int j = 0; j < m; ++j) {
-        tables.push_back(SparseTable(drones[j], [](ll a, ll b) { return max(a, b); }));
+        tables.push_back(rmq(drones[j], [](ll a, ll b) { return max(a, b); }));
     }
     vi sol(m, 0);
     ll ans = 0;
@@ -189,14 +242,14 @@ int main() {
         while (right < n) {
             ll shots = 0;
             for (auto &a : tables) {
-                shots += a.valueInRange(left, right);
+                shots += a.query(left, right);
             }
             if (shots > k) {
                 break;
             }
             if (right - left + 1 > ans) {
                 for (int i = 0; i < m; ++i) {
-                    sol[i] = tables[i].valueInRange(left, right);
+                    sol[i] = tables[i].query(left, right);
                 }
                 ans = right - left + 1;
             }
