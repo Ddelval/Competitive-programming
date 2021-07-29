@@ -40,24 +40,6 @@
 \setmonofont[Contextuals={Alternate},Scale=0.8]{Fira Code}
 
 \newmintedfile[cppcode]{cpp}{
-bgcolor=mintedbackground,
-linenos=true,
-numberblanklines=true,
-numbersep=5pt,
-gobble=0,
-frame=leftline,
-framerule=0.4pt,
-framesep=2mm,
-funcnamehighlighting=true,
-tabsize=4,
-obeytabs=false,
-mathescape=false
-samepage=true, %with this setting you can force the list to appear on the same page
-showspaces=false,
-showtabs =false,
-texcl=false,
-fontsize=\small,
-breaklines=true
 }
 
 \setminted[cpp]{
@@ -73,17 +55,15 @@ funcnamehighlighting=true,
 tabsize=4,
 obeytabs=false,
 mathescape=false
-samepage=true, %with this setting you can force the list to appear on the same page
 showspaces=false,
 showtabs =false,
-texcl=false,
 fontsize=\small,
 breaklines=true
 }
 
-\RequirePackage{xpatch}
 
-%%%% Minted and import
+%%%%%%%%% Minted and import
+\RequirePackage{xpatch}
 \makeatletter
 % fix for first kind
 \xpatchcmd\inputminted
@@ -101,3 +81,29 @@ breaklines=true
   \fi
 }
 \makeatother
+
+%%%%%%%%%%%%%%%% Bold headers
+\RequirePackage{sectsty}
+\allsectionsfont{\boldmath}
+%%%%%%%%%%%%%%%% Tikz elements
+% Array
+\tikzset{
+		pics/array_rep/.style 2 args={
+				code = {
+
+				\pgfmathsetmacro{\m}{0}
+				\pgfplotsforeachungrouped \c in{
+						#2
+				}{
+				\pgfmathtruncatemacro{\om}{\m}
+				\pgfmathsetmacro{\sm}{0.5*\m}
+				\pgfmathsetmacro{\em}{0.5+\sm}
+				\node[draw, fit={(\sm,0)(\em,0.5)}, inner sep = 0 pt, label = center: \c](A){};
+				\node[fit={(\sm,0.6)(\em,0.8)}, inner sep = 0 pt, label = center: \scalebox{0.7}{\om}](A){};
+				\pgfmathsetmacro{\m}{\m+1}
+				}
+		\node[anchor=east] (a) at (-0.2,0.25){\large \texttt{#1}};
+		}
+
+		}
+}

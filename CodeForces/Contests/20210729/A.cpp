@@ -1,7 +1,8 @@
-//  10305__Ordering Tasks.cpp
-//  Created by David del Val on 14/01/2021
+//  A.cpp
+//  Created by David del Val on 29/07/2021
 //
 //
+// https://github.com/Ddelval/Competitive-programming/blob/master/template.cpp
 
 #include <bits/stdc++.h>
 
@@ -44,13 +45,26 @@ public:
 
 template <typename T>
 struct Has_iterator : subs_succeeded<typename get_iter_res<T>::type> {};
+template <> struct Has_iterator<string> : subs_fail {};
+
+constexpr const char *sep1 = " ";
+constexpr const char *sep2 = "\n";
+template <typename T> struct get_termination {
+    static constexpr const char *get() { return sep1; }
+};
+template <typename U, typename S> struct get_termination<vector<U, S>> {
+    static constexpr const char *get() { return sep2; }
+};
 
 template <typename T>
 Enable_if<Has_iterator<T>::value, ostream &> operator<<(ostream &o, T val) {
     bool first = true;
     for (auto it = val.begin(); it != val.end(); ++it) {
-        if (!first)
-            o << " ";
+        if (!first) {
+            constexpr const char *terminator =
+                get_termination<typename T::value_type>::get();
+            o << terminator;
+        }
         first = false;
         o << *it;
     }
@@ -75,7 +89,7 @@ inline pii operator+(pii a, pii b) { return {a.fi + b.fi, a.se + b.se}; }
 
 template <typename T, typename Q>
 inline ostream &operator<<(ostream &o, pair<T, Q> p) {
-    o << p.fi << " " << p.se;
+    o << "(" << p.fi << "," << p.se << ")";
     return o;
 }
 
@@ -87,6 +101,7 @@ inline long long _gcd(long long a, long long b) {
 }
 
 ll inf = LLONG_MAX / 10;
+int iinf = INT_MAX / 10;
 
 #ifdef _LOCAL_
 // Local constraints
@@ -95,88 +110,27 @@ ll inf = LLONG_MAX / 10;
 // Judge constraints
 #endif
 
-vi topoSort;
-vi visited;
-vector<vi> adyList;
-void dfs(int node) {
-    if (visited[node]) {
-        return;
-    }
-    visited[node] = true;
-    for (auto a : adyList[node]) {
-        dfs(a);
-    }
-    topoSort.push_back(node);
-}
-void topologicalSort() {
-    int n = adyList.size();
-
-    visited = vi(n, 0);
-    topoSort.clear();
-
-    for (int i = 0; i < n; ++i) {
-        if (!visited[i]) {
-            dfs(i);
-        }
-    }
-    reverse(all(topoSort));
-}
-
-void kahnTopoSort() {
-    int n = adyList.size();
-    topoSort.clear();
-
-    vi noIncoming;
-    vi hasincoming(n, 0);
-    for (auto a : adyList) {
-        for (auto b : a) {
-            hasincoming[b]++;
-        }
-    }
-    for (int i = 0; i < n; ++i) {
-        if (!hasincoming[i]) {
-            noIncoming.push_back(i);
-        }
-    }
-    while (noIncoming.size() != 0) {
-        int curr = noIncoming.back();
-        noIncoming.pop_back();
-        topoSort.push_back(curr);
-        for (auto a : adyList[curr]) {
-            hasincoming[a]--;
-            if (!hasincoming[a]) {
-                noIncoming.push_back(a);
-            }
-        }
-    }
-    for (auto a : hasincoming) {
-        if (a != 0) {
-            cout << "graph has at least one cycle";
-        }
-    }
-}
-
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
-    int n, m;
-    while (cin >> n >> m && n) {
-        int a, b;
-        adyList = vector<vi>(n, vi());
-        for (int i = 0; i < m; ++i) {
-            cin >> a >> b;
-            a--;
-            b--;
-            adyList[a].pb(b);
-        }
-        kahnTopoSort();
-        // topologicalSort(); // 80ms
 
-        for (auto &a : topoSort) {
-            a++;
+    int t;
+    cin >> t;
+    while (t--) {
+        int n;
+        cin >> n;
+        ll prev = -1;
+        ll a;
+        ll ans = -1;
+        for (int i = 0; i < n; ++i) {
+            cin >> a;
+            if (i) {
+                ans = max(ans, prev * a);
+            }
+            prev = a;
         }
-        cout << topoSort << endl;
+        cout << ans << "\n";
     }
 
     return 0;

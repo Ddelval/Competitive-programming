@@ -743,10 +743,98 @@ void addEdgeBi(int orig, int dest, ll flow) {
 		a sink $t$ such that $s_i$ is connected to $t$ with edges of infinite
 		capacity.
 		
-	\item If we have vertex capacities, we can split the vertex $v$ into two vertices:
-		$v_{in}$ and $v_{out}$, connected with an edge that has the vertex 
-		capacity as a capacity. Then we connect the incoming edges to $v_{in}$ and 
-		the out-coming edges to $v_{out}$
+	\item If we have vertex capacities, we can split the vertex $v$ into two 
+			vertices: $v_{in}$ and $v_{out}$, connected with an edge that has 
+			the vertex capacity as a capacity. 
+			Then we connect the incoming edges to $v_{in}$ and the out-coming 
+			edges to $v_{out}$
 
 
 \end{itemize}
+\section{Directed Acyclic Graphs (DAG)}
+\subsection{Topological sort}
+A topological sort of a directed graph is a linear ordering of its vertices
+such that for every directed edge u $\rightarrow$ v, u comes before v in the
+ordering.
+A topological sorting is possible if and only if the graph has no directed
+cycles, that is, it has to be a DAG. As an example:
+
+\begin{figure}[h!]
+\centering
+\begin{subfigure}[]{0.6\textwidth}
+\begin{center}
+\begin{tikzpicture}
+	\begin{scope}[every node/.style = {circle, thick, draw},
+		every label/.append style={font = \small}]
+		\node (A) at (0,0) {0};
+		\node (B) at (2,0) {1};
+		\node (C) at (2,-2) {2};
+		\node (D) at (4,0) {3};
+		\node (E) at (6,0) {4};
+		\node (F) at (8,0) {5};
+		\node (G) at (6,-2) {6};
+		\node (H) at (8,-2) {7};
+	\end{scope}
+	\begin{scope}[>={Stealth[black]},
+			every edge/.style={draw=black, very thick}]
+		\path [->] (A) edge (B);
+		\path [->] (A) edge (C);
+		\path [->] (C) edge (D);
+		\path [->] (B) edge (D);
+		\path [->] (D) edge (E);
+		\path [->] (C) edge [bend right=10] (F);
+		\path [->] (H) edge (G);
+	\end{scope}
+\end{tikzpicture}
+		
+\end{center}
+\end{subfigure}
+\begin{subfigure}[]{0.35\textwidth}
+\begin{center}
+	\begin{tikzpicture}	
+		\draw (0,0) pic[]{array_rep={}{0, 1, 2, 3, 4, 5, 7, 6}};
+	\end{tikzpicture}
+\end{center}
+\end{subfigure}
+
+
+\end{figure}
+
+Regarding the algorithm to obtain the topological sorting, there 
+are two alternatives:
+\begin{itemize}
+		\setlength{\itemsep}{0pt}
+		\item A modified version of DFS 
+		\item Kahn's algorithm
+\end{itemize}
+\newpage
+\subsubsection*{Using DFS}
+The key observation is:
+\begin{center}
+		\itshape
+		When DFS closes a node, all nodes that are accessed from
+		that node are already closed
+\end{center}
+Therefore if we order the vertices regarding the DFS closing time, we can be 
+sure that if there exists an edge u $\rightarrow$ v, v will be placed before
+u since it must have been closed before v was closed. Now we should
+realize that to get the topological sorting, we only need to reverse
+this ordering.
+\cppcode[firstline=20]{code/topoSort1.cpp}
+%\noindent \textbf{\boldmath Running time: $\mathcal{O}(E+V)$}
+\\ {\small(V = vertices, E = edges)}
+\clearpage
+\subsubsection*{Kahn's algorithm}
+Kahn's algorithm is a very simple algorithm. It simply keeps track of the in-degree
+of every vertex and only adds to the topological sort list vertices that do not have
+any incident edges.
+
+Furthermore, this algorithm can be easily adapted to store all possible topological 
+orderings by using a recursive function and running through all possibilities 
+at each step
+\cppcode[firstline=20]{code/topoSort1.cpp}
+\noindent \textbf{\boldmath Running time: $\mathcal{O}(E+V)$}
+\\ {\small(V = vertices, E = edges)}
+
+
+
