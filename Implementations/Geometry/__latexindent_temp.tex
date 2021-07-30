@@ -1,0 +1,38 @@
+%! TEX root = ../implementations.tex
+\chapter{Geometry}
+
+\section{Area of polygon}
+
+\begin{wrapfigure}{r}{0.5\linewidth}
+	\centering
+	\resizebox{80 mm}{!}{\subimport{Figures/}{geometry_area.pdf_tex}}
+	\vspace*{-40 pt}
+\end{wrapfigure}
+
+In this problem, we are given a polygon expressed as a list of vertices.
+We are tasked with calculating the area of the polygon.
+
+For now, we will assume that the points are ordered in a clock-wise fashion
+and we will consider three different scenarios for each segment:
+\begin{itemize}
+	\item $\Delta x=0$. It does not add any area to the polygon.
+	\item $\Delta x\ne 0$. It has an area associated with it that is equal
+		to the area between the segment and the $x$ axis
+		\begin{itemize}
+			\item $\Delta x > 0$. We consider this area positive
+				(green on the figure)
+			\item $\Delta x < 0$. We consider this area negative
+				(red on the figure)
+		\end{itemize}
+\end{itemize}
+
+Now we add all the areas associated with each segment and we get a total area.
+If the vertices were ordered in a counter-clock-wise fashion, this total
+area will be negative. Therefore, we will only consider the absolute
+value of the result.
+\cppcode[firstline=20,lastline=63]{code/geometry/polygon_area.cpp}
+\noindent \textbf{\boldmath Running time: $\mathcal{O}(n)$}
+\\ {\small (n = vertices)}
+
+
+

@@ -1,5 +1,5 @@
-//  template.cpp
-//  Created by David del Val on 05/07/2021
+//  1536-D.cpp
+//  Created by David del Val on 02/07/2021
 //
 //
 //https://github.com/Ddelval/Competitive-programming/blob/master/template.cpp
@@ -22,7 +22,7 @@ typedef vector<pii> vii;
 typedef vector<pll> vll;
 
 template <typename T, typename Q>
-inline ostream& operator<<(ostream& o, pair<T, Q> p);
+inline ostream &operator<<(ostream &o, pair<T, Q> p);
 
 // ====================================================== //
 // ===================  Container IO  =================== //
@@ -38,12 +38,12 @@ struct subs_succeeded<subs_fail> : std::false_type {};
 
 template <typename T>
 struct get_iter_res {
-   private:
+private:
     template <typename X>
-    static auto check(X const& x) -> decltype(x.begin());
+    static auto check(X const &x) -> decltype(x.begin());
     static subs_fail check(...);
 
-   public:
+public:
     using type = decltype(check(std::declval<T>()));
 };
 
@@ -101,17 +101,17 @@ inline pii operator+(pii a, pii b) {
 }
 
 template <typename T, typename Q>
-inline ostream& operator<<(ostream& o, pair<T, Q> p) {
+inline ostream &operator<<(ostream &o, pair<T, Q> p) {
     o << "(" << p.fi << "," << p.se << ")";
     return o;
 }
 
 //gcd(0, n) = n
 inline long long _gcd(long long a, long long b) {
-    while (b) b %= a ^= b ^= a ^= b;
+    while (b)
+        b %= a ^= b ^= a ^= b;
     return a;
 }
-
 
 ll inf = LLONG_MAX / 10;
 int iinf = INT_MAX / 10;
@@ -128,6 +128,37 @@ int main() {
     cin.tie(0);
     cout.tie(0);
 
+    int t;
+    cin >> t;
+    while (t--) {
+        int n;
+        cin >> n;
+        vi b = readVector<int>(n);
+        set<int> elems;
+        elems.insert(b[0]);
+        bool ok = true;
+        for (int i = 1; i < n; ++i) {
+            if (b[i - 1] != b[i]) {
+                auto it = elems.upper_bound(b[i - 1]);
+                if (it != elems.end() && (*it < b[i])) {
+                    ok = false;
+                    break;
+                }
+
+                it = elems.lower_bound(b[i - 1]);
+                if (it != elems.begin() && (*(--it) > b[i])) {
+                    ok = false;
+                    break;
+                }
+            }
+            elems.insert(b[i]);
+        }
+        if (ok) {
+            cout << "YES\n";
+        } else {
+            cout << "NO\n";
+        }
+    }
 
     return 0;
 }

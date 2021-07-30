@@ -1,5 +1,5 @@
-//  template.cpp
-//  Created by David del Val on 05/07/2021
+//  C.cpp
+//  Created by David del Val on 07/07/2021
 //
 //
 //https://github.com/Ddelval/Competitive-programming/blob/master/template.cpp
@@ -22,7 +22,7 @@ typedef vector<pii> vii;
 typedef vector<pll> vll;
 
 template <typename T, typename Q>
-inline ostream& operator<<(ostream& o, pair<T, Q> p);
+inline ostream &operator<<(ostream &o, pair<T, Q> p);
 
 // ====================================================== //
 // ===================  Container IO  =================== //
@@ -38,12 +38,12 @@ struct subs_succeeded<subs_fail> : std::false_type {};
 
 template <typename T>
 struct get_iter_res {
-   private:
+private:
     template <typename X>
-    static auto check(X const& x) -> decltype(x.begin());
+    static auto check(X const &x) -> decltype(x.begin());
     static subs_fail check(...);
 
-   public:
+public:
     using type = decltype(check(std::declval<T>()));
 };
 
@@ -101,17 +101,17 @@ inline pii operator+(pii a, pii b) {
 }
 
 template <typename T, typename Q>
-inline ostream& operator<<(ostream& o, pair<T, Q> p) {
+inline ostream &operator<<(ostream &o, pair<T, Q> p) {
     o << "(" << p.fi << "," << p.se << ")";
     return o;
 }
 
 //gcd(0, n) = n
 inline long long _gcd(long long a, long long b) {
-    while (b) b %= a ^= b ^= a ^= b;
+    while (b)
+        b %= a ^= b ^= a ^= b;
     return a;
 }
-
 
 ll inf = LLONG_MAX / 10;
 int iinf = INT_MAX / 10;
@@ -122,12 +122,57 @@ int iinf = INT_MAX / 10;
 #else
 // Judge constraints
 #endif
+#define double long double
+double expected;
+double v;
+
+double explore(double c, double m, double p, double factor, int times = 1) {
+    //cout << c << " " << m << " " << p << " " << factor << " " << factor * p << endl;
+    if (c < 1e-6) {
+        c = 0;
+    }
+    if (m < 1e-6) {
+        m = 0;
+    }
+    if (c == 0 && m == 0) {
+        return factor * times * p;
+    }
+    double par1, par2;
+    par1 = par2 = 0;
+
+    if (c) {
+        double red1 = v;
+        if (v > c) {
+            red1 = c;
+        }
+
+        par1 = explore(c - red1, m ? m + red1 / 2 : 0, m ? p + red1 / 2 : p + red1, c, times + 1);
+    }
+    if (m) {
+        double red2 = v;
+        if (v > m) {
+            red2 = m;
+        }
+        par2 = explore(c ? c + red2 / 2 : 0, m - red2, c ? p + red2 / 2 : p + red2, m, times + 1);
+    }
+    return factor * (times * p + par1 + par2);
+}
 
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
 
+    int t;
+    cin >> t;
+    while (t--) {
+        double c, m, p;
+        cin >> c >> m >> p >> v;
+
+        expected = 0;
+        expected = explore(c, m, p, 1);
+        cout << fixed << setprecision(12) << expected << "\n";
+    }
 
     return 0;
 }

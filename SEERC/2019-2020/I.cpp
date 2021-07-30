@@ -111,21 +111,20 @@ int main() {
     cout.tie(0);
     int n;
     cin >> n;
-    vi dat1, dat2;
+    vl dat1, dat2;
 
-    dat1 = readVector<int>(n);
-    dat2 = readVector<int>(n);
+    dat1 = readVector<ll>(n);
+    dat2 = readVector<ll>(n);
 
-    sort(all(dat1));
-    sort(all(dat2));
-
-    int mdif1 = iinf;
-    int mdif2 = iinf;
+    ll ans = 0;
     for (int i = 0; i < n; ++i) {
-        mdif1 = min(abs(dat1[0] - dat2[i]), mdif1);
-        mdif2 = min(abs(dat1[n - 1] - dat2[i]), mdif2);
+        ll mi = inf;
+        for (int j = 0; j < n; ++j) {
+            mi = min(mi, abs(dat1[i] - dat2[j]));
+        }
+        ans = max(ans, mi);
     }
-    cout << max(mdif1, mdif2) << endl;
+    cout << ans << endl;
 
     return 0;
 }

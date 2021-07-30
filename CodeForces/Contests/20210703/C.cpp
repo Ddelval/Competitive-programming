@@ -1,5 +1,5 @@
-//  template.cpp
-//  Created by David del Val on 05/07/2021
+//  C.cpp
+//  Created by David del Val on 03/07/2021
 //
 //
 //https://github.com/Ddelval/Competitive-programming/blob/master/template.cpp
@@ -22,7 +22,7 @@ typedef vector<pii> vii;
 typedef vector<pll> vll;
 
 template <typename T, typename Q>
-inline ostream& operator<<(ostream& o, pair<T, Q> p);
+inline ostream &operator<<(ostream &o, pair<T, Q> p);
 
 // ====================================================== //
 // ===================  Container IO  =================== //
@@ -38,12 +38,12 @@ struct subs_succeeded<subs_fail> : std::false_type {};
 
 template <typename T>
 struct get_iter_res {
-   private:
+private:
     template <typename X>
-    static auto check(X const& x) -> decltype(x.begin());
+    static auto check(X const &x) -> decltype(x.begin());
     static subs_fail check(...);
 
-   public:
+public:
     using type = decltype(check(std::declval<T>()));
 };
 
@@ -101,17 +101,17 @@ inline pii operator+(pii a, pii b) {
 }
 
 template <typename T, typename Q>
-inline ostream& operator<<(ostream& o, pair<T, Q> p) {
+inline ostream &operator<<(ostream &o, pair<T, Q> p) {
     o << "(" << p.fi << "," << p.se << ")";
     return o;
 }
 
 //gcd(0, n) = n
 inline long long _gcd(long long a, long long b) {
-    while (b) b %= a ^= b ^= a ^= b;
+    while (b)
+        b %= a ^= b ^= a ^= b;
     return a;
 }
-
 
 ll inf = LLONG_MAX / 10;
 int iinf = INT_MAX / 10;
@@ -122,12 +122,47 @@ int iinf = INT_MAX / 10;
 #else
 // Judge constraints
 #endif
-
+const ll mod = 1e9 + 7;
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
+    /**
+    map<int, int> maa;
+    for (int i = 1; i <= 100000; ++i) {
+        for (int j = 2; j < 1000; ++j) {
+            if (i % j != 0) {
+                maa[j]++;
+                break;
+            }
+        }
+    }
+    cout << maa << endl;
+    */
 
+    vector<int> toConsider = {2, 3, 4, 5, 7, 8, 9, 11, 13, 16, 17, 19, 23, 25, 27, 29, 31, 32, 37, 41, 43};
+    int t;
+    cin >> t;
+    while (t--) {
+        ll n;
+        cin >> n;
+        ll ans = 0;
+        ll from = 1;
+        for (ll i : toConsider) {
+            ll tot = n / from;
+            ll dd = _gcd(from, i);
+            from *= i;
+            from /= dd;
+            ll deduct = n / from;
+            //cout << i << " " << tot - deduct << " " << endl;
+            ans += i * (tot - deduct) % mod;
+            ans %= mod;
+            if (from > n) {
+                break;
+            }
+        }
+        cout << ans << "\n";
+    }
 
     return 0;
 }

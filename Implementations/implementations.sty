@@ -1,0 +1,109 @@
+\ProvidesPackage{implementations}
+
+\RequirePackage[usenames,dvipsnames]{xcolor}
+%\RequirePackage{tcolorbox}
+\RequirePackage[margin=1in]{geometry} 
+\RequirePackage{amsmath,amsthm,amssymb}
+\RequirePackage[english]{babel}
+\RequirePackage[T1]{fontenc} %escribe lo del teclado
+\RequirePackage[utf8]{inputenc} %Reconoce algunos símbolos
+\RequirePackage{graphicx}
+\RequirePackage{multirow}
+\RequirePackage{wrapfig}
+\RequirePackage{diagbox} %diagonal cells
+\RequirePackage{dirtytalk}
+\RequirePackage{caption}
+\RequirePackage{subcaption}
+\RequirePackage{minted}
+\RequirePackage{booktabs}
+\RequirePackage{import}
+\RequirePackage{tikz}
+\RequirePackage{pgfplots}
+\RequirePackage{multicol}
+\usetikzlibrary{arrows.meta}
+\usetikzlibrary{fit}
+\RequirePackage{hyperref}
+\RequirePackage{titlesec} % To configure subsections
+
+\titleformat*{\subsection}{\normalsize\bfseries}
+\setcounter{tocdepth}{1} % Only sections
+\definecolor{bg}{RGB}{240,240,240}
+\newcolumntype{Z}{>{\ttfamily}{c}<{}}
+
+\newcommand{\tbf}[1]{\textbf{\boldmath #1}}
+
+
+\definecolor{mintedbackground}{rgb}{0.95,0.95,0.95}
+
+% Font ligatures
+\RequirePackage{fontspec}
+\setmonofont[Contextuals={Alternate},Scale=0.8]{Fira Code}
+
+\newmintedfile[cppcode]{cpp}{
+}
+
+\setminted[cpp]{
+bgcolor=mintedbackground,
+linenos=true,
+numberblanklines=true,
+numbersep=5pt,
+gobble=0,
+frame=leftline,
+framerule=0.4pt,
+framesep=2mm,
+funcnamehighlighting=true,
+tabsize=4,
+obeytabs=false,
+mathescape=false
+showspaces=false,
+showtabs =false,
+fontsize=\small,
+breaklines=true
+}
+
+
+%%%%%%%%% Minted and import
+\RequirePackage{xpatch}
+\makeatletter
+% fix for first kind
+\xpatchcmd\inputminted
+  {#3}
+  {\import@path #3}
+  {}{\fail}
+
+% fix for second kind
+\xpretocmd\minted@pygmentize
+  {\restore@IfFileExists} % direct \let\IfFileExists\im@@IfFileExists works too
+  {}{\fail}
+\def\restore@IfFileExists{%
+  \ifx\IfFileExists\@iffileonpath
+    \let\IfFileExists\im@@IfFileExists
+  \fi
+}
+\makeatother
+
+%%%%%%%%%%%%%%%% Bold headers
+\RequirePackage{sectsty}
+\allsectionsfont{\boldmath}
+%%%%%%%%%%%%%%%% Tikz elements
+% Array
+\tikzset{
+		pics/array_rep/.style 2 args={
+				code = {
+
+				\pgfmathsetmacro{\m}{0}
+				\pgfplotsforeachungrouped \c in{
+						#2
+				}{
+				\pgfmathtruncatemacro{\om}{\m}
+				\pgfmathsetmacro{\sm}{0.5*\m}
+				\pgfmathsetmacro{\em}{0.5+\sm}
+				\node[draw, fit={(\sm,0)(\em,0.5)}, inner sep = 0 pt, label = center: \c](A){};
+				\node[fit={(\sm,0.6)(\em,0.8)}, inner sep = 0 pt, label = center: \scalebox{0.7}{\om}](A){};
+				\pgfmathsetmacro{\m}{\m+1}
+				}
+		\node[anchor=east] (a) at (-0.2,0.25){\large \texttt{#1}};
+		}
+
+		}
+}

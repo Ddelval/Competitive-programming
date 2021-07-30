@@ -1,5 +1,5 @@
-//  template.cpp
-//  Created by David del Val on 05/07/2021
+//  Reversort.cpp
+//  Created by David del Val on 26/03/2021
 //
 //
 //https://github.com/Ddelval/Competitive-programming/blob/master/template.cpp
@@ -22,7 +22,7 @@ typedef vector<pii> vii;
 typedef vector<pll> vll;
 
 template <typename T, typename Q>
-inline ostream& operator<<(ostream& o, pair<T, Q> p);
+inline ostream &operator<<(ostream &o, pair<T, Q> p);
 
 // ====================================================== //
 // ===================  Container IO  =================== //
@@ -38,12 +38,12 @@ struct subs_succeeded<subs_fail> : std::false_type {};
 
 template <typename T>
 struct get_iter_res {
-   private:
+private:
     template <typename X>
-    static auto check(X const& x) -> decltype(x.begin());
+    static auto check(X const &x) -> decltype(x.begin());
     static subs_fail check(...);
 
-   public:
+public:
     using type = decltype(check(std::declval<T>()));
 };
 
@@ -52,29 +52,12 @@ struct Has_iterator : subs_succeeded<typename get_iter_res<T>::type> {};
 template <>
 struct Has_iterator<string> : subs_fail {};
 
-constexpr const char *sep1 = " ";
-constexpr const char *sep2 = "\n";
-template <typename T>
-struct get_termination {
-    static constexpr const char *get() {
-        return sep1;
-    }
-};
-template <typename U, typename S>
-struct get_termination<vector<U, S>> {
-    static constexpr const char *get() {
-        return sep2;
-    }
-};
-
 template <typename T>
 Enable_if<Has_iterator<T>::value, ostream &> operator<<(ostream &o, T val) {
     bool first = true;
     for (auto it = val.begin(); it != val.end(); ++it) {
-        if (!first) {
-            constexpr const char *terminator = get_termination<typename T::value_type>::get();
-            o << terminator;
-        }
+        if (!first)
+            o << " ";
         first = false;
         o << *it;
     }
@@ -101,17 +84,17 @@ inline pii operator+(pii a, pii b) {
 }
 
 template <typename T, typename Q>
-inline ostream& operator<<(ostream& o, pair<T, Q> p) {
+inline ostream &operator<<(ostream &o, pair<T, Q> p) {
     o << "(" << p.fi << "," << p.se << ")";
     return o;
 }
 
 //gcd(0, n) = n
 inline long long _gcd(long long a, long long b) {
-    while (b) b %= a ^= b ^= a ^= b;
+    while (b)
+        b %= a ^= b ^= a ^= b;
     return a;
 }
-
 
 ll inf = LLONG_MAX / 10;
 int iinf = INT_MAX / 10;
@@ -128,6 +111,29 @@ int main() {
     cin.tie(0);
     cout.tie(0);
 
+    int t;
+    cin >> t;
+    int z = 0;
+    while (t--) {
+        z++;
+        int n;
+        cin >> n;
+        vi data = readVector<int>(n);
+        int count = 0;
+
+        for (int i = 0; i < n-1; ++i) {
+            auto it = min_element(data.begin() + i + 1, data.end());
+            if (it != data.end() && *it < data[i]) {
+                reverse(data.begin()+i, it + 1);
+                count+= it-data.begin()-i+1;
+            }
+            else{
+                count++;
+            }
+            //cout << data << endl;
+        }
+        cout << "Case #" << z << ": " << count << "\n";
+    }
 
     return 0;
 }

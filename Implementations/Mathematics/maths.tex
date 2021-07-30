@@ -1,0 +1,210 @@
+%! TEX root = ../implementations.tex
+\chapter{Mathematics}
+
+\section{General calculations}
+\subsection{Binary exponentiation}
+Binary exponentiation calculates a power in logarithmic 
+time. Furthermore, it can be used for modular arithmetic:
+\cppcode[firstline=20,]{code/binary_exp.cpp}
+\noindent \textbf{\boldmath Running time: $\mathcal{O}(\log(\mathrm{exp}))$}
+
+
+\newpage
+\section{Modular arithmetic}
+\subsection{Inverses}
+To calculate a modular inverse, we will use Fermat's little theorem:
+\[
+	a^{p-1}\equiv 1 \ \mathrm{mod} \ p  \ \implies \  a^{p-2}\equiv a^{-1} \ \mathrm{mod} p
+\]
+If we combine this fact with binary exponentiation, we can obtain the 
+modular inverse in logarithmic time:
+\begin{minted}{cpp}
+ll inverse(ll num) {
+    return power(num, mod - 2);
+}
+\end{minted}
+\noindent \textbf{\boldmath Running time: $\mathcal{O}(\log(\mathrm{mod}))$}
+
+\section{Catalan numbers}
+We define the nth Catalan number as:
+\[
+	C_n= \frac{1}{n+1}{2n\choose n} = \frac{1}{n+1}\frac{(2n)!}{n! \;n!}
+\]
+We can also define them recursively:
+\[
+	C_0 = 1 \qquad C_{n+1} = \sum_{i=0}^n\big (C_i \; C_{n-i}\big)
+\]
+They can be used to solve many different problems. For instance:
+\begin{itemize}
+	\item Number of different binary trees of $n$ nodes. We can look
+		at the specific case $n=3$. As we can see in the figure below,
+		$C_3=5$. Furthermore, we can clearly identify the recursive relationship:
+		\[
+			C_3= (\text{3 is root}) + (\text{2 is root}) + (\text{1 is root}) = C_2\cdot C_0 + 
+			C_1\cdot C_1 + C_0\cdot C_2
+		\]
+
+		\begin{figure}[h!]
+			\centering
+			\scalebox{0.5}{
+			\begin{tikzpicture}
+				\begin{scope}[every node/.style = {circle, thick, draw},
+					every label/.append style={font = \small}]
+					\node (A) at (0,0) {3};
+					\node (B) at (-1,-1) {2};
+					\node (C) at (-2,-2) {1};
+				\end{scope}
+				\begin{scope}[>={Stealth[black]},
+						every edge/.style={draw=black, very thick}]
+					\path [-] (A) edge (B);
+					\path [-] (B) edge (C);
+				\end{scope}
+			\end{tikzpicture}
+			\begin{tikzpicture}
+				\begin{scope}[every node/.style = {circle, thick, draw},
+					every label/.append style={font = \small}]
+					\node (A) at (0,0) {3};
+					\node (B) at (-1,-1) {1};
+					\node (C) at (-0.25,-2) {2};
+				\end{scope}
+				\begin{scope}[>={Stealth[black]},
+						every edge/.style={draw=black, very thick}]
+					\path [-] (A) edge (B);
+					\path [-] (B) edge (C);
+				\end{scope}
+			\end{tikzpicture}
+
+			\hspace*{60 pt}
+
+			\begin{tikzpicture}
+				\begin{scope}[every node/.style = {circle, thick, draw},
+					every label/.append style={font = \small}]
+					\node (A) at (0,0) {2};
+					\node (B) at (1,-1) {3};
+					\node (C) at (-1,-1) {1};
+				\end{scope}
+					\node (J) at (-1,-2) {};
+				\begin{scope}[>={Stealth[black]},
+						every edge/.style={draw=black, very thick}]
+					\path [-] (A) edge (B);
+					\path [-] (A) edge (C);
+				\end{scope}
+			\end{tikzpicture}
+			\hspace*{30 pt}
+			\begin{tikzpicture}
+				\begin{scope}[every node/.style = {circle, thick, draw},
+					every label/.append style={font = \small}]
+					\node (A) at (0,0) {1};
+					\node (B) at (1,-1) {2};
+					\node (C) at (2,-2) {3};
+				\end{scope}
+					\node (J) at (-1,-2) {};
+				\begin{scope}[>={Stealth[black]},
+						every edge/.style={draw=black, very thick}]
+					\path [-] (A) edge (B);
+					\path [-] (B) edge (C);
+				\end{scope}
+			\end{tikzpicture}
+			\begin{tikzpicture}
+				\begin{scope}[every node/.style = {circle, thick, draw},
+					every label/.append style={font = \small}]
+					\node (A) at (0,0) {1};
+					\node (B) at (1,-1) {3};
+					\node (C) at (0.25,-2) {2};
+				\end{scope}
+					\node (J) at (-1,-2) {};
+				\begin{scope}[>={Stealth[black]},
+						every edge/.style={draw=black, very thick}]
+					\path [-] (A) edge (B);
+					\path [-] (B) edge (C);
+				\end{scope}
+			\end{tikzpicture}
+	}
+	\end{figure}
+	\item Number of expressions that contain $n$ pairs of parenthesis correctly
+			paired. For instance, for $n=3$, there only $C_3=5$ valid 
+			arrangements are:
+			\[
+					()()()\quad ()(()) \quad (())() \quad ((())) \quad (()())
+			\]
+			\newpage
+	\item Number of different ways of arranging $n+1$ factors in parenthesis
+			In the case of $n=3$, we can use the factors $a, b, c, d$. Then,
+			we will have the following options:
+			\[
+					(ab)(cd) \quad a(b(cd)) \quad ((ab)c)d \quad (a(bc))d \quad
+					a((bc)d)
+			\]
+	\item Number of ways to split a convex polygon of $n+2$ sides 
+			into triangles. 
+
+			\begin{figure}[h!]
+					\centering
+			\resizebox{80 mm}{!}{\subimport{figures/}{cat1.pdf_tex}}
+			\end{figure}
+
+	\item Number of paths from the bottom-left corner to the top-right corner
+			of a $n\times n$ grid moving only up or right at every point and
+			while not reaching the diagonal.
+			\begin{figure}[h!]
+					\centering
+			\resizebox{80 mm}{!}{\subimport{figures/}{cat2.pdf_tex}}
+			\end{figure}
+			
+\end{itemize}
+\newpage
+\section{Permutations}
+\subsection{Converting one permutation into another }
+In this problem we are given two permutations of the same size 
+and we are tasked with converting one of them into the other. 
+In order to do so, we will swap the elements at two positions
+in the permutation zero or more times. 
+
+\begin{figure}[h!]
+\centering
+\begin{tikzpicture}
+		\draw (0,0) pic[]{array_rep={A =}{1,2,3,4,5,5,6}};
+		\draw (0,-1.25) pic[]{array_rep={B =}{1,3,2,4,5,5,6}};
+\end{tikzpicture}
+
+\end{figure}
+In this case, the most efficient way is to swap positions 1 and 2 
+of permutation B to get permutation A. From these examples, we can 
+deduce the following observations:
+\begin{itemize}
+		\item One swap will fix at most two numbers out of
+				place.
+		\item We will need at most $n-1$ swaps to change one
+				permutation into the other. Note that
+				we can \say{skip} the swap that corresponds
+				to the last element since, at that point, by
+				the Pigeon Principle, all elements must be in 
+				the correct position.
+\end{itemize}
+
+To solve the problem, we shall change the representation 
+to a graph where the edge \texttt{a \nolinebreak$\rightarrow$ \nolinebreak b} 
+represents that there exists \texttt{j} such that \texttt{A[j]=a, B[j]=b}.
+When draw these edges, we notice that all edges form cycles (possibly of 
+length 1).
+Furthermore, the cost of fixing all the positions that comprise each
+cycle will be the length of the cycle  minus 1.
+
+Finally, since the graph is made out of cycles,  
+we know that in this graph connectivity and strong connectivity 
+are equivalent and we can ignore the direction of the edges. 
+This reduces the problem to counting the number of connected components
+and the result is:
+\[
+		\text{\# Swaps} = n- \text{\# Components}
+\]
+This can be simply implemented using UFDS:
+\cppcode[firstline=55,]{code/perm_inv.cpp}
+
+
+
+
+
+
+
+

@@ -1,5 +1,5 @@
-//  template.cpp
-//  Created by David del Val on 05/07/2021
+//  C.cpp
+//  Created by David del Val on 29/07/2021
 //
 //
 //https://github.com/Ddelval/Competitive-programming/blob/master/template.cpp
@@ -128,6 +128,15 @@ int main() {
     cin.tie(0);
     cout.tie(0);
 
+    int t;
+    cin >> t;
+    while(t--){
+        int n, m;
+        cin >> n >> m;
+        for (int i = 0; i <= m;++i){
+            cout << (n ^ i) << endl;
+        }
+    }
 
     return 0;
 }

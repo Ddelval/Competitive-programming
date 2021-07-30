@@ -1,5 +1,5 @@
-//  template.cpp
-//  Created by David del Val on 05/07/2021
+//  1553-A.cpp
+//  Created by David del Val on 28/07/2021
 //
 //
 //https://github.com/Ddelval/Competitive-programming/blob/master/template.cpp
@@ -128,6 +128,17 @@ int main() {
     cin.tie(0);
     cout.tie(0);
 
+    int t;
+    cin >> t;
+    while(t--){
+        int n;
+        cin >> n;
+        int ans = n / 10;
+        if(n%10==9){
+            ans++;
+        }
+        cout << ans << "\n";
+    }
 
     return 0;
 }

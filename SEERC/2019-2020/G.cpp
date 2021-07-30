@@ -177,7 +177,7 @@ bool calculateHeight(int z) {
                     board2[i][j] = 1;
                     if (rem > 0) {
                         rem--;
-                        continue;
+                        break;
                     }
                     front[j] = 0;
                     break;

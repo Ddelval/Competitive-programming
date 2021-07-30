@@ -1,5 +1,5 @@
-//  template.cpp
-//  Created by David del Val on 05/07/2021
+//  AppendSort.cpp
+//  Created by David del Val on 10/04/2021
 //
 //
 //https://github.com/Ddelval/Competitive-programming/blob/master/template.cpp
@@ -22,7 +22,7 @@ typedef vector<pii> vii;
 typedef vector<pll> vll;
 
 template <typename T, typename Q>
-inline ostream& operator<<(ostream& o, pair<T, Q> p);
+inline ostream &operator<<(ostream &o, pair<T, Q> p);
 
 // ====================================================== //
 // ===================  Container IO  =================== //
@@ -38,12 +38,12 @@ struct subs_succeeded<subs_fail> : std::false_type {};
 
 template <typename T>
 struct get_iter_res {
-   private:
+private:
     template <typename X>
-    static auto check(X const& x) -> decltype(x.begin());
+    static auto check(X const &x) -> decltype(x.begin());
     static subs_fail check(...);
 
-   public:
+public:
     using type = decltype(check(std::declval<T>()));
 };
 
@@ -52,29 +52,12 @@ struct Has_iterator : subs_succeeded<typename get_iter_res<T>::type> {};
 template <>
 struct Has_iterator<string> : subs_fail {};
 
-constexpr const char *sep1 = " ";
-constexpr const char *sep2 = "\n";
-template <typename T>
-struct get_termination {
-    static constexpr const char *get() {
-        return sep1;
-    }
-};
-template <typename U, typename S>
-struct get_termination<vector<U, S>> {
-    static constexpr const char *get() {
-        return sep2;
-    }
-};
-
 template <typename T>
 Enable_if<Has_iterator<T>::value, ostream &> operator<<(ostream &o, T val) {
     bool first = true;
     for (auto it = val.begin(); it != val.end(); ++it) {
-        if (!first) {
-            constexpr const char *terminator = get_termination<typename T::value_type>::get();
-            o << terminator;
-        }
+        if (!first)
+            o << " ";
         first = false;
         o << *it;
     }
@@ -101,17 +84,17 @@ inline pii operator+(pii a, pii b) {
 }
 
 template <typename T, typename Q>
-inline ostream& operator<<(ostream& o, pair<T, Q> p) {
+inline ostream &operator<<(ostream &o, pair<T, Q> p) {
     o << "(" << p.fi << "," << p.se << ")";
     return o;
 }
 
 //gcd(0, n) = n
 inline long long _gcd(long long a, long long b) {
-    while (b) b %= a ^= b ^= a ^= b;
+    while (b)
+        b %= a ^= b ^= a ^= b;
     return a;
 }
-
 
 ll inf = LLONG_MAX / 10;
 int iinf = INT_MAX / 10;
@@ -123,11 +106,88 @@ int iinf = INT_MAX / 10;
 // Judge constraints
 #endif
 
+double n9(int n) {
+    double res = 0;
+    for (int i = 0; i < n; ++i) {
+        res += 9 * pow(10, i);
+    }
+    return res;
+}
+
+ll ans;
+void comp_elem(double e1, double &e2) {
+    if (e2 > e1) {
+        return;
+    }
+    if (e2 == e1) {
+        e2 *= 10;
+        ans++;
+        return;
+    }
+    int dig1 = log10(e1);
+    int dig2 = log10(e2);
+
+    if (dig1 == dig2) {
+        e2 *= 10;
+        ans++;
+        return;
+    }
+    auto dd2 = e2;
+    double dif = dig1 - dig2;
+    dd2 *= pow(10, dif);
+    //cout << "dd2 " << dd2 << endl;
+    if (dd2 > e1) {
+        ans += dif;
+        e2 = dd2;
+        return;
+    }
+    // dd2 < e1
+    //cout << "dd2 " << dd2 << " dif " << dif << " n9 " << n9(dif) << endl;
+    if (dd2 + n9(dif) > e1) {
+        if (dif < 4) {
+            ll val = (ll)n9(dif);
+            while (dd2 + val - 1 > e1) {
+                val--;
+            }
+            e2 = dd2 + val;
+        } else {
+            e2 = dd2;
+        }
+        ans += dif;
+
+    } else {
+        // Impossible
+        ans += dif + 1;
+        e2 = dd2 * 10;
+        return;
+    }
+}
+
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
 
+    int t;
+    cin >> t;
+    int z = 1;
+    while (t--) {
+        ans = 0;
+        int n;
+        cin >> n;
+        vl data = readVector<ll>(n);
+
+        vector<double> elements;
+        for (auto a : data) {
+            elements.pb(a);
+        }
+        for (int i = 1; i < n; ++i) {
+            comp_elem(elements[i - 1], elements[i]);
+        }
+        //cout << elements << endl;
+        cout << "Case #" << z << ": " << ans << "\n";
+        z++;
+    }
 
     return 0;
 }

@@ -1,5 +1,5 @@
-//  template.cpp
-//  Created by David del Val on 05/07/2021
+//  1537-B.cpp
+//  Created by David del Val on 19/06/2021
 //
 //
 //https://github.com/Ddelval/Competitive-programming/blob/master/template.cpp
@@ -22,7 +22,7 @@ typedef vector<pii> vii;
 typedef vector<pll> vll;
 
 template <typename T, typename Q>
-inline ostream& operator<<(ostream& o, pair<T, Q> p);
+inline ostream &operator<<(ostream &o, pair<T, Q> p);
 
 // ====================================================== //
 // ===================  Container IO  =================== //
@@ -38,12 +38,12 @@ struct subs_succeeded<subs_fail> : std::false_type {};
 
 template <typename T>
 struct get_iter_res {
-   private:
+private:
     template <typename X>
-    static auto check(X const& x) -> decltype(x.begin());
+    static auto check(X const &x) -> decltype(x.begin());
     static subs_fail check(...);
 
-   public:
+public:
     using type = decltype(check(std::declval<T>()));
 };
 
@@ -52,29 +52,12 @@ struct Has_iterator : subs_succeeded<typename get_iter_res<T>::type> {};
 template <>
 struct Has_iterator<string> : subs_fail {};
 
-constexpr const char *sep1 = " ";
-constexpr const char *sep2 = "\n";
-template <typename T>
-struct get_termination {
-    static constexpr const char *get() {
-        return sep1;
-    }
-};
-template <typename U, typename S>
-struct get_termination<vector<U, S>> {
-    static constexpr const char *get() {
-        return sep2;
-    }
-};
-
 template <typename T>
 Enable_if<Has_iterator<T>::value, ostream &> operator<<(ostream &o, T val) {
     bool first = true;
     for (auto it = val.begin(); it != val.end(); ++it) {
-        if (!first) {
-            constexpr const char *terminator = get_termination<typename T::value_type>::get();
-            o << terminator;
-        }
+        if (!first)
+            o << " ";
         first = false;
         o << *it;
     }
@@ -101,17 +84,17 @@ inline pii operator+(pii a, pii b) {
 }
 
 template <typename T, typename Q>
-inline ostream& operator<<(ostream& o, pair<T, Q> p) {
+inline ostream &operator<<(ostream &o, pair<T, Q> p) {
     o << "(" << p.fi << "," << p.se << ")";
     return o;
 }
 
 //gcd(0, n) = n
 inline long long _gcd(long long a, long long b) {
-    while (b) b %= a ^= b ^= a ^= b;
+    while (b)
+        b %= a ^= b ^= a ^= b;
     return a;
 }
-
 
 ll inf = LLONG_MAX / 10;
 int iinf = INT_MAX / 10;
@@ -123,11 +106,49 @@ int iinf = INT_MAX / 10;
 // Judge constraints
 #endif
 
+ll ans;
+pll iniPos;
+pll items[2];
+pll answer[2];
+void calculate() {
+    ll dist = abs(items[0].fi - iniPos.fi) + abs(items[0].se - iniPos.se);
+    dist += abs(items[0].fi - items[1].fi) + abs(items[0].se - items[1].se);
+    if (dist > ans) {
+        ans = dist;
+        answer[0] = items[0];
+        answer[1] = items[1];
+    }
+}
+void explore(int depth, vector<pll> &items, vector<bool> &visited) {
+    if (depth == 2) {
+        calculate();
+        return;
+    }
+    for (int i = 0; i < items.size(); ++i) {
+        if (!visited[i]) {
+            visited[i] = true;
+            ::items[depth] = items[i];
+            explore(depth + 1, items, visited);
+        }
+    }
+}
+
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
-
+    int t;
+    cin >> t;
+    while (t--) {
+        ll n, m, i, j;
+        cin >> n >> m >> i >> j;
+        vector<pll> corners = {{1, 1}, {1, m}, {n, 1}, {n, m}};
+        vector<bool> visited(4, false);
+        ans = 0;
+        explore(0, corners, visited);
+        cout << answer[0].fi << " " << answer[0].se << " ";
+        cout << answer[1].fi << " " << answer[1].se << "\n";
+    }
 
     return 0;
 }
