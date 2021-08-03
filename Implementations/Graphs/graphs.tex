@@ -821,7 +821,7 @@ u since it must have been closed before v was closed. Now we should
 realize that to get the topological sorting, we only need to reverse
 this ordering.
 \cppcode[firstline=20]{code/topoSort1.cpp}
-%\noindent \textbf{\boldmath Running time: $\mathcal{O}(E+V)$}
+\noindent \textbf{\boldmath Running time: $\mathcal{O}(E+V)$}
 \\ {\small(V = vertices, E = edges)}
 \clearpage
 \subsubsection*{Kahn's algorithm}
@@ -835,6 +835,307 @@ at each step
 \cppcode[firstline=20]{code/topoSort1.cpp}
 \noindent \textbf{\boldmath Running time: $\mathcal{O}(E+V)$}
 \\ {\small(V = vertices, E = edges)}
+
+
+\newpage
+\section{Bipartite Graphs}
+A graph is bipartite if its  vertices can be split into two different so that
+no two nodes in the same set are connected by an edge.
+\subsubsection*{Definitions}
+It is important to note that in this section a path 
+(unless specified otherwise) will be a simple path (not containing repeated
+vertices or edges).
+\begin{itemize}
+		\setlength{\itemsep}{2pt}
+		\item \textit{Matching}. Set of pairwise non-adjacent edges in a graph.
+				That is to say, no more than one edge from the set should be
+				incident to any vertex of the graph.
+		\item \textit{Saturated} (a vertex with respect to some matching). A
+				saturated vertex is a vertex that is an endpoint of an edge
+				contained in the matching.
+		\item \textit{Alternating path }(with respect to some matching). Path
+				in which the edges alternately belong / do not belong to the 
+				matching.
+		\item \textit{Augmenting path }(with respect to some matching $M$). 
+				Alternating path whose initial and final vertices are 
+				unsaturated (they do not belong to the matching).
+				That is to say, if we represent the edges already
+				included in $M$ as $I$ and the new ones as $U$, it
+				follows this pattern:
+				\[
+					 U - I - U - \dots - U - I - U
+			 	\]
+				We can also notice that there will be 
+				$\left\lfloor \frac{|P|}2 \right \rfloor$ edges already
+				included and 
+				$\left\lceil \frac{|P|}2 \right \rceil$ new edges.
+		\item \textit{Independent set}. Set of vertices in which no
+				two vertices represent an edge in the original graph.
+		\item \textit{Vertex coverage}. Set of vertices $C$ that fulfills
+				the following property: Every vertex of $G$ is incident on,
+				at least, one vertex of $C$.
+\end{itemize}
+From these definitions, we can derive the following features in a bipartite
+graph:
+\begin{itemize}
+		\item \textit{Maximum cardinality bipartite matching (MCBM)}. 
+				Matching that contains the maximum number of edges.
+		\item \textit{Maximum independent set (MIS)}. Independent set that
+				fulfills that if any other vertex was to be added to it, there
+				would be an edge between two of the vertices of the set.
+		\item \textit{Minimum vertex coverage (MVC)}. Vertex coverage with the 
+				minimum number of vertices.
+\end{itemize}
+Furthermore, it can be proved that even though these \say{sets} may not be
+unique, their cardinality is. Additionally, they are closely related among 
+them:
+\[
+		\mathrm{|MIS| = |V| - |MCBM| }
+		\qquad 
+		\qquad 
+		\mathrm{|MCBM| = |MVC|}
+\]
+\newpage
+\subsubsection*{Example}
+\begin{wrapfigure}{r}{0.4\textwidth}
+		\vspace{-30pt}
+\centering
+\begin{tikzpicture}
+	\begin{scope}[every node/.style = {circle, thick, draw},
+		every label/.append style={font = \small}]
+		\node (A) at (0,0) {1};
+		\node (B) at (0,-2) {2};
+		\node (C) at (3,0) {3};
+		\node (D) at (3,-2) {4};
+		\node (E) at (3,-4) {5};
+	\end{scope}
+	\begin{scope}[>={Stealth[black]},
+			every edge/.style={draw=black, very thick}]
+		\path [-] (A) edge[draw=red] (C);
+		\path [-] (A) edge (D);
+		\path [-] (A) edge (E);
+		\path [-] (B) edge (C);
+		\path [-] (B) edge [draw=red](D);
+		\path [-] (B) edge (E);
+	\end{scope}
+	\path [draw=black,dashed, rounded corners=10pt] (2,-5) rectangle (4, 1);
+	\path [draw=black,dashed, rounded corners=10pt] (-1,-3) rectangle (1, 1);
+	\node [anchor=south] at (0,1) {MVC};
+	\node [anchor=south] at (3,1) {MIS};
+\end{tikzpicture}
+\vspace{-40pt}
+\end{wrapfigure}
+In this example we have a bipartite graph where nodes 1 and 2 belong to the 
+first set of vertices and nodes 3, 4 and 5 to the second set.
+\begin{itemize}
+		\item Since there are only two vertices in the first
+				set, the MCBM has to be at most two. We have found
+				a matching of size two (in red), so that must be
+				the solution.
+		\item The MIS has to be one of the two sets of vertices since all
+				vertices from one set are connected to all vertices from the
+				second set. We pick the maximum one. 
+		\item Finally, the MVC has to be the smallest set for the same reasons.
+\end{itemize}
+Finally, we can also notice how the MCBM is not unique even though its cardinality is 
+unique.
+\subsection*{Berge's lemma}
+\textit{A matching $M$ is maximum $\iff$ there is no augmenting path relative to the
+		matching $M$}
+\subsubsection{Proof}
+We can prove it by contradiction:
+\begin{itemize}
+		\item [$\implies$]
+
+				Let there be an augmenting path $P$ relative to $M$. This path will
+				necessarily be of odd length (it has one more edge not in $M$ than
+				in $M$). We can now create a new matching 
+				$M'=M\oplus P=(M\setminus P) \cup (P\setminus M)$.
+
+				Now we have to see that this matching is valid. In order for it not to
+				be valid, there must be a vertex such that two edges in $M'$ are
+				adjacent to. Furthermore, one of those edges must belong to 
+				$P\setminus M$ while the other one belongs to $M$. However, the second
+				one must then also belong to $P$ ($P$ alternates edges) and will not
+				be in $M\setminus P$. Therefore, it cannot  be in $M'$ and we reached
+				a contradiction
+
+				Finally, we can see that there are $|M|+1$ edges in $M'$ since:
+				\begin{itemize}
+						\setlength{\itemsep}{0pt}
+						\item By subtracting $P$ from $M$ we delete 
+								$\left \lfloor\frac {|P|}2\right\rfloor $ edges
+						\item By adding $P\setminus M$, we add 
+								$\left \lceil\frac {|P|}2\right\rceil $ edges
+
+				\end{itemize}
+				Therefore, $M$ could not be a maximum matching
+		\item [$\impliedby$]
+				Let there be a matching $M'$  of greater cardinality than $M$.
+				We can consider the subgraph $Q=M\oplus M'$. Any vertex in 
+				this subgraph has a maximum degree of 2, which means that all
+				connected components in it are either:
+				\begin{itemize}
+						\setlength{\itemsep}{0pt}
+						\item An isolated vertex
+						\item a (simple)path whose edges are alternate from $M$ 
+								and $M'$
+						\item A cycle of even length whose edges are 
+								alternate from $M$ and $M'$
+				\end{itemize}
+				However, since there are more edges from $M'$ than from $M$, 
+				there must be at least one component with more edges from $M'$
+				than from $M$. Since such path must be alternating, it will
+				have initial and final vertices unsaturated by $M$, making
+				it an augmenting path for $M$.
+\end{itemize}
+\hfill $\qedsymbol$
+\subsection{Algorithms to find MCBM}
+\subsubsection{Reduce to Max-Flow}
+The bipartite matching problem can be easily reduced to a max-flow problem.
+We only have to:
+\begin{itemize}
+		\setlength{\itemsep}{0pt}
+		\item Make the edges between the two components directed from the 
+				first component to the second (all edges must go in the 
+				same direction)
+		\item Connect the source to all nodes in the first component.
+		\item Connect the nodes in the second component to the sink.
+		\item Set the capacities of all edges to 1.
+\end{itemize}
+
+\noindent
+For instance:
+\begin{figure}[h!]
+\centering
+\begin{subfigure}[b]{0.45\textwidth}
+\centering
+\begin{tikzpicture}
+	\begin{scope}[every node/.style = {circle, thick, draw},
+		every label/.append style={font = \small}]
+		\node (A) at (0,0) {1};
+		\node (B) at (0,-2) {2};
+		\node (C) at (0,-4) {3};
+		\node (D) at (3,0) {4};
+		\node (E) at (3,-2) {5};
+		\node (F) at (3,-4) {6};
+	\end{scope}
+	\begin{scope}[>={Stealth[black]},
+			every edge/.style={draw=black, very thick}]
+		\path [-] (A) edge (D);
+		\path [-] (A) edge (E);
+		\path [-] (A) edge (F);
+		\path [-] (B) edge (D);
+		\path [-] (B) edge (E);
+		\path [-] (B) edge (F);
+		\path [-] (C) edge (F);
+	\end{scope}
+	\node[anchor = south] at (1.5,0.5) {\small \bfseries Original graph:};
+\end{tikzpicture}
+\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.5\textwidth}
+\centering
+\begin{tikzpicture}
+	\begin{scope}[every node/.style = {circle, thick, draw},
+		every label/.append style={font = \small}]
+		\node (A) at (0,0) {1};
+		\node (B) at (0,-2) {2};
+		\node (C) at (0,-4) {3};
+		\node (D) at (3,0) {4};
+		\node (E) at (3,-2) {5};
+		\node (F) at (3,-4) {6};
+		\node (Sc) at (-2, -2){S};
+		\node (Sk) at (5, -2){T};
+	\end{scope}
+	\begin{scope}[>={Stealth[black]},
+			every edge/.style={draw=black, very thick}]
+		\path [->] (A) edge (D);
+		\path [->] (A) edge (E);
+		\path [->] (A) edge (F);
+		\path [->] (B) edge (D);
+		\path [->] (B) edge (E);
+		\path [->] (B) edge (F);
+		\path [->] (C) edge (F);
+		\path [->] (Sc) edge (A);
+		\path [->] (Sc) edge (B);
+		\path [->] (Sc) edge (C);
+		\path [->] (E) edge (Sk);
+		\path [->] (F) edge (Sk);
+		\path [->] (D) edge (Sk);
+	\end{scope}
+	\node[anchor = south] at (1.5,0.5) {\small \bfseries New graph:};
+\end{tikzpicture}
+\end{subfigure}
+\end{figure}
+
+After this process, we can run the normal max-flow algorithm and the maximum
+flow between the source and the sink will be the result. This will have a 
+time complexity of {\boldmath $\mathcal{O}(VE^2)$} using Edmonds-Karp's
+or {\boldmath $\mathcal{O}(V^2E)$} using Dinic's
+
+\newpage
+\subsubsection{Kuhn's Algorithm}
+On a high level, the algorithm implements the following pseudocode 
+(where M is the matching):
+\begin{minted}[escapeinside=||,mathescape]{text}
+M <- |$\varnothing$|
+while (able to find augmenting path P){
+	M <- P |$\oplus$| M
+}
+\end{minted}
+This is a direct application of Berge's lemma; however, if we were to 
+implement it naïvely, we could end up with a time complexity of 
+$\mathcal{O}(V^2E)$ since there will be at most $V$ augmenting paths
+and to find each of them, we would need to check for paths that start 
+on each node and then run DFS to find the actual path.
+To make it faster, it can be implemented using the following 
+pseudocode (where $n_1$ is the size of the first set in the graph):
+\begin{minted}[escapeinside=||, mathescape]{text}
+M <- |$\varnothing$|
+for (i = 0 ... n1){
+	P <- augmenting path that starts on i
+	if(P != |$\varnothing$|){
+		M <- P |$\oplus$| M
+	}
+}
+\end{minted}
+To understand why this implementation should work, it is necessarily to
+make a few observation:
+\begin{itemize}
+		\setlength{\itemsep}{2pt}
+		\item The augmenting path found in each iteration starts on a 
+				vertex in the first set, then traverses some number
+				of vertices that are already saturated and it ends
+				on a vertex of the second set that is not saturated.
+		\item When we update M with the new P, no vertices that were
+				saturated before will be unsaturated now.  Since
+				all saturated vertices in P are connected by two 
+				adjacent edges, one of them will still be present 
+				in P $\oplus$ M since it could not be present on M before.
+		\item If there is no augmenting path that starts from i in the 
+				current iteration, it will be impossible to find one 
+				in a some future iteration. This is because no vertex 
+				can go from being saturated to being unsaturated in this
+				process.
+\end{itemize}
+With all of this in mind, we can obtain a c++ implementation that runs on 
+$\mathcal{O}(EV)$. Furthermore, if we make sure that the first set of the
+bipartite graph is the one with less elements, the runtime will be faster
+since the iterations of the outer loop will decrease.
+
+As we can see, the search for an augmenting path from a node will try
+all options to pair that node to a node in the second set. For each one
+of them, if they are already matched to some node in the first set, 
+it will try to create an augmenting path from there. The algorithm will
+stop when it finds an unsaturated vertex or runs out of vertex to check.
+\newpage
+\cppcode[firstline=20]{code/bipartite_Kuhn.cpp}
+\noindent \textbf{\boldmath Running time: $\mathcal{O}(EV)$}
+\\ {\small(V = vertices, E = edges)}
+
+
+
 
 
 

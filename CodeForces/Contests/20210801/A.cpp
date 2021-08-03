@@ -1,8 +1,8 @@
-//  template.cpp
-//  Created by David del Val on 05/07/2021
+//  A.cpp
+//  Created by David del Val on 01/08/2021
 //
 //
-// https://github.com/Ddelval/Competitive-programming/blob/master/template.cpp
+//https://github.com/Ddelval/Competitive-programming/blob/master/template.cpp
 
 #include <bits/stdc++.h>
 
@@ -122,6 +122,13 @@ int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
+    int t;
+    cin >> t;
+    while(t--){
+        ll p;
+        cin >> p;
+        cout << 2 << " " << p - 1 << "\n";
+    }
 
     return 0;
 }

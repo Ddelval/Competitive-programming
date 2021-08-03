@@ -1,5 +1,5 @@
-//  template.cpp
-//  Created by David del Val on 05/07/2021
+//  11991__Easy Problem from Rujia Liu?.cpp
+//  Created by David del Val on 03/08/2021
 //
 //
 // https://github.com/Ddelval/Competitive-programming/blob/master/template.cpp
@@ -122,6 +122,25 @@ int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
+
+    int n, m;
+    while (cin >> n >> m) {
+        map<int, vi> elems;
+        int a;
+        for (int i = 0; i < n; ++i) {
+            cin >> a;
+            elems[a].pb(i);
+        }
+        int k, v;
+        for (int i = 0; i < m; ++i) {
+            cin >> k >> v;
+            if (elems.count(v) && elems[v].size() >= k) {
+                cout << elems[v][k - 1] + 1 << "\n";
+            } else {
+                cout << "0\n";
+            }
+        }
+    }
 
     return 0;
 }

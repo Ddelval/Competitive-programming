@@ -1,5 +1,5 @@
-//  template.cpp
-//  Created by David del Val on 05/07/2021
+//  1530-B.cpp
+//  Created by David del Val on 31/07/2021
 //
 //
 // https://github.com/Ddelval/Competitive-programming/blob/master/template.cpp
@@ -12,14 +12,6 @@ using namespace std;
 #define all(x) (x).begin(), (x).end()
 #define fi first
 #define se second
-
-#ifdef DEBUG
-#define db(x) x
-#define echo(x) cout << #x << ": " << x << endl;
-#else
-#define db(x)
-#define echo(x)
-#endif
 
 typedef long long ll;
 typedef vector<int> vi;
@@ -122,6 +114,52 @@ int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
+
+    int t;
+    cin >> t;
+    while (t--) {
+        int h, w;
+        cin >> h >> w;
+        vector<int> top(w), right(h - 2), bot(w), left(h - 2);
+        top[0] = bot[0] = bot.back() = top.back() = 1;
+        int cchar = 0;
+        for (int i = 1; i < w - 2; ++i) {
+            top[i] = (cchar);
+            cchar = 1 - cchar;
+        }
+        cchar = 0;
+        for (int i = 0; i < h - 3; ++i) {
+            right[i] = (cchar);
+            cchar = 1 - cchar;
+        }
+        cchar = 0;
+        for (int i = 1; i < w - 2; ++i) {
+            bot[w - 1 - i] = (cchar);
+            cchar = 1 - cchar;
+        }
+        cchar = 0;
+        for (int i = 0; i < h - 3; ++i) {
+            left[h - 3 - i] = (cchar);
+            cchar = 1 - cchar;
+        }
+
+        for (int i = 0; i < w; ++i) {
+            cout << char('0' + char(top[i]));
+        }
+        cout << "\n";
+        for (int j = 0; j < h - 2; ++j) {
+            cout << char('0' + (left[j]));
+            for (int i = 0; i < w - 2; ++i) {
+                cout << "0";
+            }
+            cout << char('0' + char(right[j]));
+            cout << "\n";
+        }
+        for (int i = 0; i < w; ++i) {
+            cout << char('0' + char(bot[i]));
+        }
+        cout << "\n\n";
+    }
 
     return 0;
 }

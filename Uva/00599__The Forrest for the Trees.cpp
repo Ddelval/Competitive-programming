@@ -1,5 +1,5 @@
-//  template.cpp
-//  Created by David del Val on 05/07/2021
+//  00599__The Forrest for the Trees.cpp
+//  Created by David del Val on 03/08/2021
 //
 //
 // https://github.com/Ddelval/Competitive-programming/blob/master/template.cpp
@@ -117,11 +117,88 @@ int iinf = INT_MAX / 10;
 #else
 // Judge constraints
 #endif
+namespace UFDS {
+const int lim = 200000;
+int parent[lim];
+int rankk[lim];
+
+void initialize(int n) {
+    for (int i = 0; i < n; ++i) {
+        rankk[i] = 0;
+        parent[i] = i;
+    }
+}
+int find(int x) {
+    if (parent[x] == x)
+        return x;
+    else
+        return parent[x] = find(parent[x]);
+}
+
+void Union(int a, int b) {
+    int pa = find(a);
+    int pb = find(b);
+    if (pa == pb) {
+        return;
+    }
+    if (rankk[pa] > rankk[pb]) {
+        parent[pb] = pa;
+    } else if (rankk[pa] < rankk[pb]) {
+        parent[pa] = pb;
+    } else {
+        parent[pa] = pb;
+        rankk[pb]++;
+    }
+}
+} // namespace UFDS
 
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
+
+    int t;
+    cin >> t;
+    string s;
+    getline(cin, s);
+    while (t--) {
+        vector<string> edges;
+        while (getline(cin, s), s.find("*") == string::npos) {
+            edges.pb(s);
+        }
+        getline(cin, s);
+        int index = 0;
+        map<char, int> translate;
+        for (auto c : s) {
+            if (c >= 'A' && c <= 'Z') {
+                if (!translate.count(c)) {
+                    translate[c] = index++;
+                }
+            }
+        }
+        UFDS::initialize(index);
+        for (string a : edges) {
+            int i1 = translate[a[1]];
+            int i2 = translate[a[3]];
+            UFDS::Union(i1, i2);
+        }
+        map<int, int> occurr;
+        for (int i = 0; i < index; ++i) {
+            occurr[UFDS::find(i)]++;
+        }
+        int acorns;
+        int trees;
+        acorns = trees = 0;
+        for (auto a : occurr) {
+            if (a.se == 1) {
+                acorns++;
+            } else {
+                trees++;
+            }
+        }
+        cout << "There are " << trees << " tree(s) and " << acorns
+             << " acorn(s).\n";
+    }
 
     return 0;
 }

@@ -1,5 +1,5 @@
-//  template.cpp
-//  Created by David del Val on 05/07/2021
+//  1554-D.cpp
+//  Created by David del Val on 31/07/2021
 //
 //
 // https://github.com/Ddelval/Competitive-programming/blob/master/template.cpp
@@ -12,14 +12,6 @@ using namespace std;
 #define all(x) (x).begin(), (x).end()
 #define fi first
 #define se second
-
-#ifdef DEBUG
-#define db(x) x
-#define echo(x) cout << #x << ": " << x << endl;
-#else
-#define db(x)
-#define echo(x)
-#endif
 
 typedef long long ll;
 typedef vector<int> vi;
@@ -122,6 +114,29 @@ int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
+    int t;
+    cin >> t;
+    while (t--) {
+        int n;
+        cin >> n;
+        if (n == 1) {
+            cout << "a\n";
+            continue;
+        }
+        int k = n / 2;
+        int rem = n - (k + k - 1);
+        string s;
+        for (int i = 0; i < k; ++i) {
+            s += 'a';
+        }
+        for (int i = 0; i < rem; ++i) {
+            s += 'b' + i;
+        }
+        for (int i = 0; i < k - 1; ++i) {
+            s += 'a';
+        }
+        cout << s << "\n";
+    }
 
     return 0;
 }

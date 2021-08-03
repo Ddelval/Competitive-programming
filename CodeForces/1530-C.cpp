@@ -1,5 +1,5 @@
-//  template.cpp
-//  Created by David del Val on 05/07/2021
+//  1530-C.cpp
+//  Created by David del Val on 31/07/2021
 //
 //
 // https://github.com/Ddelval/Competitive-programming/blob/master/template.cpp
@@ -117,11 +117,59 @@ int iinf = INT_MAX / 10;
 #else
 // Judge constraints
 #endif
+bool test(vi &presum1, vi &presum2, int n, int k) {
+    int consider = k - k / 4;
+    int added = k - n;
+    int take1 = min(consider - added, n);
+    int take2 = min(n, consider);
+    echo(consider);
+    echo(added);
+    echo(take1);
+    echo(take2);
+    int scoreDif = presum1[take1] + 100 * (consider - take1) - presum2[take2];
+    echo(scoreDif);
+    return scoreDif >= 0;
+}
 
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
+
+    int t;
+    cin >> t;
+    while (t--) {
+        int n;
+        cin >> n;
+        vi data1 = readVector<int>(n);
+        vi data2 = readVector<int>(n);
+        sort(all(data1), greater<int>());
+        sort(all(data2), greater<int>());
+        vi presum1(n + 1, 0), presum2(n + 1, 0);
+        for (int i = 0; i < n; ++i) {
+            presum1[i + 1] = presum1[i] + data1[i];
+            presum2[i + 1] = presum2[i] + data2[i];
+        }
+        int r = 4*n;
+        int l = n;
+        echo(presum1);
+        echo(presum2);
+        if (test(presum1, presum2, n, n)) {
+            cout << "0\n";
+            continue;
+        }
+        while (r - l > 1) {
+            int mid = (r + l) >> 1;
+            bool teste = test(presum1, presum2, n, mid);
+            db(cout << mid << " " << teste << "\n");
+            if (teste) {
+                r = mid;
+            } else {
+                l = mid;
+            }
+        }
+        cout << r - n << "\n";
+    }
 
     return 0;
 }

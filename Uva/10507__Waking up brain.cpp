@@ -1,5 +1,5 @@
-//  template.cpp
-//  Created by David del Val on 05/07/2021
+//  10507__Waking up brain.cpp
+//  Created by David del Val on 03/08/2021
 //
 //
 // https://github.com/Ddelval/Competitive-programming/blob/master/template.cpp
@@ -122,6 +122,62 @@ int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
+
+    int n, m;
+    while (cin >> n >> m) {
+        map<char, int> translate;
+        int index = 0;
+        auto fun = [&translate, &index](char c) {
+            if (translate.count(c)) {
+                return translate[c];
+            } else {
+                return translate[c] = index++;
+            }
+        };
+        string already;
+        cin >> already;
+        vi awake(n, 0);
+        for (auto c : already) {
+            awake[fun(c)] = 1;
+        }
+        vii edges;
+        char c, cc;
+        for (int i = 0; i < m; ++i) {
+            cin >> c >> cc;
+            edges.pb({fun(c), fun(cc)});
+        }
+        int Nawake = 3;
+        int epoch = 0;
+        while (Nawake < n) {
+            vi tmpAw(n, 0);
+            for (auto a : edges) {
+                if (awake[a.fi] && !awake[a.se]) {
+                    tmpAw[a.se]++;
+                }
+                if (awake[a.se] && !awake[a.fi]) {
+                    tmpAw[a.fi]++;
+                }
+            }
+            echo(tmpAw);
+            int tmpAW = 0;
+            for (int i = 0; i < n; ++i) {
+                if (!awake[i] && tmpAw[i] >= 3) {
+                    awake[i] = 1;
+                    tmpAW++;
+                }
+            }
+            if (!tmpAW) {
+                break;
+            }
+            Nawake += tmpAW;
+            epoch++;
+        }
+        if (Nawake < n) {
+            cout << "THIS BRAIN NEVER WAKES UP\n";
+        } else {
+            cout << "WAKE UP IN, " << epoch << ", YEARS\n";
+        }
+    }
 
     return 0;
 }

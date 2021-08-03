@@ -1,5 +1,5 @@
-//  template.cpp
-//  Created by David del Val on 05/07/2021
+//  C.cpp
+//  Created by David del Val on 01/08/2021
 //
 //
 // https://github.com/Ddelval/Competitive-programming/blob/master/template.cpp
@@ -122,6 +122,55 @@ int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
+    int n, m;
+    cin >> n >> m;
+    int a, b;
+    vi connectionsToGreater(n, 0);
+    ll ans = n;
+    for (int i = 0; i < m; ++i) {
+        cin >> a >> b;
+        a--, b--;
+        if (a > b)
+            swap(a, b);
+        // a <b
+        if (!connectionsToGreater[a]) {
+            ans--;
+        }
+        connectionsToGreater[a] += 1;
+    }
+    int q;
+    cin >> q;
+    int c;
+    //cout << connectionsToGreater << endl;
+    for (int i = 0; i < q; ++i) {
+        int a;
+        cin >> a;
+        if (a == 1) {
+            cin >> b >> c;
+            b--, c--;
+            if (b > c) {
+                swap(b, c);
+            }
+            //cout << b << " " << c << endl;
+            if (!connectionsToGreater[b]) {
+                ans--;
+            }
+            connectionsToGreater[b] += 1;
+        } else if (a == 2) {
+            cin >> b >> c;
+            b--, c--;
+            if (b > c) {
+                swap(b, c);
+            }
+            if (connectionsToGreater[b] == 1) {
+                ans++;
+            }
+            connectionsToGreater[b] -= 1;
+
+        } else {
+            cout << ans << "\n";
+        }
+    }
 
     return 0;
 }

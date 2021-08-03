@@ -1,5 +1,5 @@
-//  template.cpp
-//  Created by David del Val on 05/07/2021
+//  1513__Movie collection.cpp
+//  Created by David del Val on 02/08/2021
 //
 //
 // https://github.com/Ddelval/Competitive-programming/blob/master/template.cpp
@@ -117,11 +117,80 @@ int iinf = INT_MAX / 10;
 #else
 // Judge constraints
 #endif
+const int lim = 1e5;
+const int siz = 2 * lim;
+int bit[siz];
+int n, m;
+
+int LSOne(int a) { return a & (-a); }
+void add(int index, int increment) {
+    // 1 based
+    index++;
+    while (index < m + n + 1) {
+        bit[index] += increment;
+        index += LSOne(index);
+    }
+}
+void build() {
+    for (int i = 0; i < m + n + 1; ++i) {
+        bit[i] = 0;
+    }
+    for (int i = 0; i < n; ++i) {
+        add(i, 1);
+    }
+}
+int prefixSize(int index) {
+    index++;
+    int sum = 0;
+    while (index != 0) {
+        sum += bit[index];
+        index -= LSOne(index);
+    }
+    return sum;
+}
 
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
+
+    int t;
+    cin >> t;
+    while (t--) {
+        cin >> n >> m;
+        build();
+        vi currentPosition(n);
+        for (int i = 0; i < n; ++i) {
+            currentPosition[i] = n - i - 1;
+        }
+        /*
+        for (int i = 0; i < m + n + 1; ++i) {
+            cout << bit[i] << " ";
+        }
+        cout << endl;
+            */
+
+        int a;
+        for (int i = 0; i < m; ++i) {
+            cin >> a;
+            a--;
+            if (i) {
+                cout << " ";
+            }
+            cout << n - prefixSize(currentPosition[a]);
+
+            add(currentPosition[a], -1);
+            currentPosition[a] = n + i;
+            add(currentPosition[a], 1);
+            /*
+            for (int i = 0; i < m + n + 1; ++i) {
+                cout << bit[i] << " ";
+            }
+            cout << endl;
+            */
+        }
+        cout << "\n";
+    }
 
     return 0;
 }

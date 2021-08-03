@@ -1,5 +1,5 @@
-//  template.cpp
-//  Created by David del Val on 05/07/2021
+//  12083__Guardian of Decency.cpp
+//  Created by David del Val on 02/08/2021
 //
 //
 // https://github.com/Ddelval/Competitive-programming/blob/master/template.cpp
@@ -117,11 +117,109 @@ int iinf = INT_MAX / 10;
 #else
 // Judge constraints
 #endif
+struct stud {
+    int height, music, sport;
+};
+ostream &operator<<(ostream &o, stud &a) {
+    o << "(" << a.height << " " << a.music << " " << a.sport << ")";
+    return o;
+}
+int get(map<string, int> &ma, string s, int &nextIndex) {
+    if (ma.count(s)) {
+        return ma[s];
+    } else {
+        ma[s] = nextIndex;
+        return nextIndex++;
+    }
+}
 
+// List of vertices in the 2nd component connected to
+// the i-th vertex in the first component
+vector<vi> adyList;
+// Index of the vertex in 1st component connected to the
+// i-th vertex in the second component
+vector<int> match;
+vector<bool> used;
+bool augmentPath(int current) {
+    if (used[current]) {
+        return false;
+    }
+    used[current] = 1;
+    for (int to : adyList[current]) {
+        if (match[to] == -1 || augmentPath(match[to])) {
+            match[to] = current;
+            return true;
+        }
+    }
+    return false;
+}
+int calculateMCBM(int n1, int n2) {
+    match = vi(n2, -1);
+    int res = 0;
+    for (int i = 0; i < n1; ++i) {
+        used.assign(n1, false);
+        res += augmentPath(i);
+    }
+    echo(match);
+    return res;
+}
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
+
+    int t;
+    cin >> t;
+    while (t--) {
+        map<string, int> music;
+        int mCount = 0;
+        map<string, int> sport;
+        int sCount = 0;
+        int n;
+        cin >> n;
+        vector<stud> male;
+        vector<stud> female;
+        male.reserve(n);
+        female.reserve(n);
+
+        int a;
+        string s1, s2, s3;
+
+        for (int i = 0; i < n; ++i) {
+            cin >> a >> s1 >> s2 >> s3;
+            if (s1 == "M") {
+                male.push_back(
+                    stud{a, get(music, s2, mCount), get(sport, s3, sCount)});
+            } else {
+                female.push_back(
+                    stud{a, get(music, s2, mCount), get(sport, s3, sCount)});
+            }
+        }
+        echo(male);
+        echo(female);
+        if (male.size() > female.size()) {
+            swap(male, female);
+        }
+
+        adyList = vector<vi>(n, vi());
+        for (int i = 0; i < male.size(); ++i) {
+            for (int j = 0; j < female.size(); ++j) {
+                if (abs(male[i].height - female[j].height) > 40) {
+                    continue;
+                }
+                if (male[i].music != female[j].music) {
+                    continue;
+                }
+                if (male[i].sport == female[j].sport) {
+                    continue;
+                }
+                adyList[i].pb(j);
+            }
+        }
+        echo(adyList);
+
+        cout << n - calculateMCBM(male.size(), female.size()) << "\n";
+    }
 
     return 0;
 }

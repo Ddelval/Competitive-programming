@@ -1,5 +1,5 @@
-//  template.cpp
-//  Created by David del Val on 05/07/2021
+//  10264__The most potent corner.cpp
+//  Created by David del Val on 03/08/2021
 //
 //
 // https://github.com/Ddelval/Competitive-programming/blob/master/template.cpp
@@ -122,6 +122,30 @@ int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
+
+    int n;
+    while (cin >> n) {
+        vi weights(1 << n);
+        for (auto &a : weights) {
+            cin >> a;
+        }
+        vl value(weights.size());
+        for (int i = 0; i < weights.size(); ++i) {
+            for (int j = 0; j < n; ++j) {
+                int corner = (i ^ (1 << j));
+                value[i] += weights[corner];
+            }
+        }
+        echo(value);
+        ll ans = -iinf;
+        for (int i = 0; i < weights.size(); ++i) {
+            for (int j = 0; j < n; ++j) {
+                int corner = i ^ (1 << j);
+                ans = max(ans, value[i] + value[corner]);
+            }
+        }
+        cout << ans << "\n";
+    }
 
     return 0;
 }

@@ -1,5 +1,5 @@
-//  template.cpp
-//  Created by David del Val on 05/07/2021
+//  D.cpp
+//  Created by David del Val on 01/08/2021
 //
 //
 // https://github.com/Ddelval/Competitive-programming/blob/master/template.cpp
@@ -118,10 +118,79 @@ int iinf = INT_MAX / 10;
 // Judge constraints
 #endif
 
+class SparseTable {
+private:
+    vl logs;
+    vector<vl> table;
+    std::function<ll(ll, ll)> f;
+
+public:
+    SparseTable(vl &data, std::function<ll(ll, ll)> f) : f(f) {
+        int n = data.size();
+        table.pb(data);
+        for (int j = 1; (1ll << j) <= n; ++j) {
+            vl nextRow(n);
+            for (int i = 0; i + (1ll << j) <= n; ++i) {
+                nextRow[i] = f(table.back()[i], table.back()[i + (1ll << (j - 1))]);
+            }
+            table.push_back(std::move(nextRow));
+        }
+
+        logs = vl(n + 1, 0);
+        for (int i = 2; i <= n; ++i) {
+            logs[i] = logs[i / 2] + 1;
+        }
+    }
+
+    ll valueInRange(int left, int right) {
+        ll j = logs[right - left + 1];
+        ll intervalSize = 1ll << j;
+        return f(table[j][left], table[j][right - intervalSize + 1]);
+    }
+};
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
+
+    int t;
+    cin >> t;
+    while (t--) {
+        int n;
+        cin >> n;
+        vl data = readVector<ll>(n);
+        vl difs(n - 1, 0);
+        for (int i = 1; i < n; ++i) {
+            difs[i - 1] = abs(data[i] - data[i - 1]);
+        }
+        SparseTable sp(difs, [](ll a, ll b) { return _gcd(a, b); });
+        n--;
+        db(cout << "difs:" << difs << endl);
+        ll ma = 0;
+        for (int i = 0; i < n; ++i) {
+            ll r = n - 1;
+            if (sp.valueInRange(i, r) != 1) {
+                db(cout << "direct: " << r << endl);
+                ma = max(ma, r - i + 1);
+            } else {
+                ll l = i;
+                while (r - l > 1) {
+                    db(cout << "bin: " << l << " " << r << endl);
+                    ll mid = (l + r) / 2;
+                    if (sp.valueInRange(i, mid) == 1) {
+                        r = mid;
+                    } else {
+                        l = mid;
+                    }
+                }
+                db(cout << "bin_end: " << l << " " << r << endl);
+                if (sp.valueInRange(i, l) != 1) {
+                    ma = max(ma, l - i + 1);
+                }
+            }
+        }
+        cout << ma + 1 << endl;
+    }
 
     return 0;
 }

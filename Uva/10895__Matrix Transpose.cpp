@@ -1,5 +1,5 @@
-//  template.cpp
-//  Created by David del Val on 05/07/2021
+//  10895__Matrix Transpose.cpp
+//  Created by David del Val on 03/08/2021
 //
 //
 // https://github.com/Ddelval/Competitive-programming/blob/master/template.cpp
@@ -122,6 +122,43 @@ int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
+
+    int n, m;
+    while (cin >> n >> m) {
+        map<int, vector<pii>> column;
+        for (int i = 0; i < n; ++i) {
+            int s;
+            cin >> s;
+            vi cols(s);
+            for (int i = 0; i < s; ++i) {
+                cin >> cols[i];
+            }
+            int a;
+            for (int j = 0; j < s; ++j) {
+                cin >> a;
+                column[cols[j]-1].pb({i, a});
+            }
+        }
+        cout << m << " " << n << "\n";
+        for (int i = 0; i < m; ++i) {
+            if (column.count(i) == 0) {
+                cout << "0\n\n";
+            } else {
+                cout << column[i].size();
+                for (auto a : column[i]) {
+                    cout << " " << a.fi+1;
+                }
+                cout << "\n";
+                for (int j = 0; j < column[i].size(); ++j) {
+                    if (j) {
+                        cout << " ";
+                    }
+                    cout << column[i][j].se;
+                }
+                cout << "\n";
+            }
+        }
+    }
 
     return 0;
 }

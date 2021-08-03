@@ -1,5 +1,5 @@
-//  template.cpp
-//  Created by David del Val on 05/07/2021
+//  1554-C.cpp
+//  Created by David del Val on 31/07/2021
 //
 //
 // https://github.com/Ddelval/Competitive-programming/blob/master/template.cpp
@@ -15,10 +15,8 @@ using namespace std;
 
 #ifdef DEBUG
 #define db(x) x
-#define echo(x) cout << #x << ": " << x << endl;
 #else
 #define db(x)
-#define echo(x)
 #endif
 
 typedef long long ll;
@@ -122,6 +120,70 @@ int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
+
+    int t;
+    cin >> t;
+    while (t--) {
+        ll n, m;
+        cin >> n >> m;
+        vector<int> binaryN;
+        vector<int> binaryM;
+        int maxMIndex = 0;
+        for (int i = 0; i < 32; ++i) {
+            if (n & (1ll << i)) {
+                maxMIndex = i;
+                binaryN.pb(1);
+            } else {
+                binaryN.pb(0);
+            }
+            if (m & (1ll << i)) {
+                maxMIndex = i;
+                binaryM.pb(1);
+            } else {
+                binaryM.pb(0);
+            }
+        }
+        db(vi ansvector);
+        int index = 0;
+        bool change = false;
+        ll ans = 0;
+        while (true) {
+            if (change && index > maxMIndex) {
+                break;
+            }
+            if (binaryM[index] == 0 && !change) {
+                if (binaryN[index] == 0) {
+                    ans |= (1ll << index);
+                    db(ansvector.pb(1);)
+                } else {
+                    db(ansvector.pb(0);)
+                }
+                change = true;
+            } else if (change && binaryM[index] == 1 && binaryN[index] == 0) {
+                ans |= (1ll << index);
+                db(ansvector.pb(1);)
+            } else if (binaryM[index] == 0 && binaryN[index] == 1) {
+                db({
+                    for (auto &a : ansvector) {
+                        a = 0;
+                    }
+                    ansvector.pb(0);
+                });
+                ans = 0;
+
+            } else {
+                db(ansvector.pb(0);)
+            }
+            index++;
+        }
+
+        db({
+            cout << binaryN << endl;
+            cout << binaryM << endl;
+            cout << ansvector << endl;
+        });
+        cout << ans << "\n";
+    }
 
     return 0;
 }

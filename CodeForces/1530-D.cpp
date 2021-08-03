@@ -1,5 +1,5 @@
-//  template.cpp
-//  Created by David del Val on 05/07/2021
+//  1530-D.cpp
+//  Created by David del Val on 31/07/2021
 //
 //
 // https://github.com/Ddelval/Competitive-programming/blob/master/template.cpp
@@ -119,9 +119,91 @@ int iinf = INT_MAX / 10;
 #endif
 
 int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(0);
-    cout.tie(0);
+    int t;
+    cin >> t;
+    while (t--) {
+        int n;
+        cin >> n;
+        vi data = readVector<int>(n);
+        set<int> elems;
+        for (auto &a : data) {
+            a--;
+            elems.insert(a);
+        }
+        set<int> notNamed;
+        set<int> pos;
+        for (int i = 0; i < n; ++i) {
+            if (!elems.count(i)) {
+                notNamed.insert(i);
+            }
+            pos.insert(i);
+        }
+        int m = elems.size();
+        vi result(n, -1);
+        if (n - m >= 2) {
+            for (int i = 0; i < n; ++i) {
+                if (elems.count(data[i])) {
+                    result[i] = data[i];
+                    elems.erase(data[i]);
+                    pos.erase(i);
+                }
+            }
+            set<int> critical;
+            for (auto a : pos) {
+                if (notNamed.count(a)) {
+                    critical.insert(a);
+                }
+            }
+            for (int i = n - 1; i >= 0; --i) {
+                if (result[i] == -1) {
+                    int selection = -1;
+                    if (!critical.empty()) {
+                        for (auto a : critical) {
+                            if (a != i) {
+                                selection = a;
+                                break;
+                            }
+                        }
+                    }
+                    if (selection == -1) {
+                        for (auto a : notNamed) {
+                            if (a != i) {
+                                selection = a;
+                                break;
+                            }
+                        }
+                    }
+                    result[i] = selection;
+                    critical.erase(selection);
+                    notNamed.erase(selection);
+                }
+            }
+        } else if (n - m == 1) {
+            int rem = *notNamed.begin();
+            result[rem] = data[rem];
+            elems.erase(result[rem]);
+            for (int i = 0; i < n; ++i) {
+                if (result[i] == -1) {
+                    if (elems.count(data[i])) {
+                        result[i] = data[i];
+                        elems.erase(data[i]);
+                    } else {
+                        result[i] = rem;
+                    }
+                }
+            }
+        } else {
+            result = data;
+        }
+        int matches = 0;
+        for (int i = 0; i < n; ++i) {
+            if (data[i] == result[i]) {
+                matches++;
+            }
+            result[i]++;
+        }
+        cout << matches << "\n" << result << "\n";
+    }
 
     return 0;
 }
