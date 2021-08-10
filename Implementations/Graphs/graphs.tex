@@ -7,7 +7,7 @@ that does not contain negative edges.
 It chooses the best path greedily in each iteration and, therefore, it only works
 on graphs without negative weights. 
 \cppcode[firstline=20]{code/dijkstra.cpp}
-\noindent \textbf{\boldmath Running time: $\mathcal{O}(E+V\log V)$}
+\noindent \textbf{\boldmath Running time: $\mathcal{O}((E+V)\log V)$}
 \\ {\small(V = vertices, E = edges)}
 \subsection*{Remarks}
 \begin{itemize}
@@ -32,7 +32,7 @@ on graphs without negative weights.
 \end{itemize}
 
 \newpage
-\subsection{Dijkstra with cost and distance}
+\subsection{Dijkstra's with cost and distance}
 \label{graph:dijkstra:distances}
 In this problem we are going to define two values for each edge, cost and distance:
 \begin{itemize}
@@ -54,6 +54,7 @@ best possible cost for that distance $d$ since all the nodes in the queue have a
 cost already. Therefore, we can close the node for that particular distance value (line 37).
 
 An example of this algorithm is \texttt{SWERC-19\_20-A}
+
 
 
 \section{Bellman Ford's}

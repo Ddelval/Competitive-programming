@@ -126,12 +126,10 @@ table$[j][i]=f([i,i+2^j])$, where $f(I)$ is the value of $f$ over all the
 elements in $I$.
 
 To construct the table we take advantage of the fact that the intervals of each
-row are the exact union of two intervals of the previous row. Additionally, we 
-have to create a lookup table for logarithms so that the queries can be 
-processed fast enough.
-It is important to notice that if many sparse tables where to be constructed,
-it would be advisable to share the log array among them by populating it with
-all the values that might be needed initially or using a DP recursive approach.
+row are the exact union of two intervals of the previous row. Finally,
+during the look-up process, to obtain the 
+logarithm of each value, we can calculate the most significant bit that is set 
+using \mintinline{cpp}{__builtin_clz()}.
 
 \newpage
 \subsection{Example}
@@ -484,4 +482,148 @@ the elements that are added to get the value of that position.
 
 \newpage
 \cppcode[firstline=20]{code/BIT.cpp}
+
+\section{Segment Trees}
+A Segment Tree is a data structure that allows answering range queries 
+over a range effectively while permitting modifications to
+be performed to the elements in the array. 
+Furthermore, a Segment Tree can answer many different types of queries.
+In fact, we only need that the operation satisfies the following property:
+\begin{center}
+		\itshape
+		The value of a range can be calculated from the values of two
+		disjoint subranges whose union is the entire range.
+\end{center}
+Most common operations such as the maximum, the minimum or the gcd
+all fulfill this property.  For instance, in the case of the sum:
+\[
+		i<k<j \implies \mathrm{sum}(a_i, \dots, a_j) = 
+		\mathrm{sum}(a_i, \dots, a_k)+
+		\mathrm{sum}(a_{k+1}, \dots, a_j)
+\]
+However, sometimes it may be necessary to store additional information in 
+the vertices of the Segment Tree to be able to construct the solution
+from the data from the two subranges.
+The time complexities are the following:
+\begin{itemize}
+		\boldmath
+		\item Build time: $\mathcal{O}(n\log n)$ 
+		\item Query: $\mathcal{O}( \log n)$
+		\item Update $\mathcal{O}( \log n)$
+\end{itemize}
+\subsubsection*{Example problem}
+We are given a string $s$ consisting only of 0s and 1s. We must be able
+to perform the following types of queries:
+\begin{itemize}
+		\setlength{\itemsep}{0pt}
+		\item Calculate the length of the maximum continuous substring of 1s
+				inside a given interval
+		\item Flip all numbers in an interval. That is to say, all 1s turn
+				into 0s and the other way around.
+\end{itemize}
+In this case, we need to use lazy propagation and store the following information
+in each node:
+\begin{minted}{cpp}
+struct node{
+	int prefix1s, sufix1s, prefix0s, sufix1s;
+	int longestInterval0, longestInterval1;
+	int lazyFlip;
+};
+\end{minted}
+Storing the prefix and suffix information allows us to calculate the value of
+intervals that begin in the elements corresponding to the left child and
+end in elements that correspond to the right child. Therefore, we will be able 
+to calculate the answer of each node looking only at their children.
+
+\newpage
+\subsection{Lazy propagation}
+Lazy propagation enables the Segment Tree to perform updates over a range 
+in logarithmic time. However, in order to be able to use this technique we
+need the following property:
+\begin{center}
+\itshape
+Two updates that affect the same node can be merged into a single update 
+\end{center}
+As with the basic property of Segment Trees, this one also holds true for
+the most common operations. In fact, as long as there is only one type of
+update query, it will generally be true.
+However, in scenarios where different updates may be requested, it is critical
+that they can be merged. 
+\subsubsection*{Example}
+Problem \texttt{UVa-11402} boils down to performing the following three
+operations over ranges of a binary string and then counting the number 
+of 1s in any range.  Otherwise, the number of nodes modified by a single
+query would be $\mathcal{O}(n)$, which would ruin the logarithmic time
+complexity.
+\begin{enumerate}
+		\setlength{\itemsep}{0pt}
+		\item Set all positions in the range to 1
+		\item Set all positions in the range to 0
+		\item Flip all positions in the range 
+\end{enumerate}
+In this case, when propagate the lazy value stored in a node to their 
+children, we must \say{merge} it with the lazy value already stored
+in the children. For instance:
+\begin{center}
+\texttt{lazy[node] = 1 \& lazy[child] = 2 $\implies$ 
+lazy[child] = 1} 
+\end{center}
+\subsubsection*{Lazy lazy propagation}
+In some cases, we can avoid the push down operation. Instead
+we can store the lazy values in the nodes that they are
+stored into during the usual update procedure and collect
+the values on the way up during the query process. For instance,
+to implement range updates and point queries, in an initially
+empty array, we might use the following code:
+\cppcode[firstline=28, lastline=51]{code/LazyLazy.cpp}
+However, this technique can only be used in very simple cases
+as we can very easily run into timing issues when the 
+effect of the queries depends on the previous queries.
+
+Nevertheless, when it can be used, it reduces a lot of the overhead
+associated with range queries in the segment tree.
+
+
+\subsection{Range update and query}
+Even though the implementation of a Segment Tree highly depends
+on the nature of the update queries, the following implementation
+should at least serve as a starting point in many situations.
+
+The template parameters have the following meaning:
+\begin{itemize}
+		\item \texttt{T}. Type of the elements that are stored
+				in every node. Note that this could be a structure
+				with many fields as we saw in the first example
+				problem of this section.
+
+		It is also important to note that if a \texttt{struct} is
+		used, an equality operator must be defined.
+		\item \texttt{merge}. This function takes the values
+				of the children of a given node and returns the
+				value of that node.
+
+				\textbf{Note that in this implementation, this same function
+				is used to merge the propagation values.} This will work
+				for simple problems but more complex ones will need a separate
+				function to merge these.
+		\item \texttt{initialize}. This function takes the position of
+				the element and returns the initial value of that element.
+				In most cases, it will simply contain an array look-up. However,
+				it can also initialize all positions to a constant value or to
+				any value that can be calculated from the position.
+		\item \texttt{neutral}. This is a \texttt{constexpr} value that stores
+				an element that will be ignored by the merge function. For instance,
+				if the operation was the sum, this value would be 0 and if the 
+				operation was the minimum, this value could be $+\infty$. 
+
+\end{itemize}
+\cppcode[firstline=20,]{code/SegmentTree.cpp}
+
+
+
+
+
+
+
+
 

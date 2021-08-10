@@ -1,4 +1,4 @@
-//  D.cpp
+//  0515-E.cpp
 //  Created by David del Val on 10/08/2021
 //
 //
@@ -117,24 +117,52 @@ int iinf = INT_MAX / 10;
 #else
 // Judge constraints
 #endif
-int n, m;
 
-const int lim = 6e5;
-pii tree[4 * lim], lazy[4 * lim];
-constexpr pii nil = {0, -1};
-int qr, ql;
-pii qValue;
-int inde;
+const int lim = 1e5 + 10;
+vi edges, heights;
+struct node {
+    ll pre, pos, edges, val;
+    ll redge;
+};
+ostream &operator<<(ostream &o, node &n) {
+    o << "(" << n.pre << " " << n.pos << " " << n.edges << " " << n.val << " "
+      << n.redge << ")";
+    return o;
+}
+constexpr node nil = {-1, -1, -1, -1, -1};
+
+node initialize(int position) {
+    ll h = heights[position];
+    return {h, h, 0, h, edges[position]};
+}
+
+node merge(node nl, node nr) {
+    if (nl.val == -1) {
+        return nr;
+    }
+    if (nr.val == -1) {
+        return nl;
+    }
+
+    ll pre, pos, edges, val, redge;
+    redge = nr.redge;
+    pre = max(nl.pre + nl.redge + nr.edges, nr.pre);
+    pos = max(nl.pos, nl.edges + nl.redge + nr.pos);
+    edges = nl.edges + nr.edges + nl.redge;
+
+    val = max(nl.val, nr.val);
+    val = max(val, nl.pre + nl.redge + nr.pos);
+
+    return {pre, pos, edges, val, redge};
+}
 template <typename T, T (*merge)(T, T), T (*initialize)(int), const T &neutral>
 class SegTree {
-    int n;
+private:
+    int n; // Size
     int ql, qr;
-    T qValue;
     vector<T> tree;
-    vector<T> lazy;
 
     void _build(int current, int l, int r) {
-        lazy[current] = nil;
         if (l == r) {
             tree[current] = initialize(l);
         } else {
@@ -143,17 +171,9 @@ class SegTree {
             _build(current << 1 | 1, mid + 1, r);
             tree[current] = merge(tree[current << 1], tree[current << 1 | 1]);
         }
+        db(cout << l << " " << r << ": " << tree[current] << endl);
     }
-    void push_down(int current) {
-        if (lazy[current] == neutral) {
-            return;
-        }
-        tree[current << 1] = merge(tree[current << 1], lazy[current]);
-        tree[current << 1 | 1] = merge(tree[current << 1 | 1], lazy[current]);
-        lazy[current << 1] = merge(lazy[current << 1], lazy[current]);
-        lazy[current << 1 | 1] = merge(lazy[current << 1 | 1], lazy[current]);
-        lazy[current] = neutral;
-    }
+
     T _query(int current, int l, int r) {
         if (l > qr || r < ql) {
             return neutral;
@@ -161,31 +181,14 @@ class SegTree {
         if (l >= ql && r <= qr) {
             return tree[current];
         }
-        push_down(current);
         int mid = (l + r) >> 1;
         T n1 = _query(current << 1, l, mid);
         T n2 = _query(current << 1 | 1, mid + 1, r);
         return merge(n1, n2);
     }
 
-    void _update(int current, int l, int r) {
-        if (l > qr || r < ql) {
-            return;
-        }
-        if (l >= ql && r <= qr) {
-            tree[current] = merge(tree[current], qValue);
-            lazy[current] = merge(lazy[current], qValue);
-            return;
-        }
-        push_down(current);
-        int mid = (l + r) >> 1;
-        _update(current << 1, l, mid);
-        _update(current << 1 | 1, mid + 1, r);
-        tree[current] = merge(tree[current << 1], tree[current << 1 | 1]);
-    }
-
 public:
-    SegTree(int actualSize) : n(actualSize), tree(4 * n), lazy(4 * n) {
+    SegTree(int actualSize) : n(actualSize), tree(4 * n) {
         _build(1, 0, n - 1);
     }
     T query(int l, int r) {
@@ -193,70 +196,45 @@ public:
         qr = r;
         return _query(1, 0, n - 1);
     }
-    void update(int l, int r, T value) {
-        ql = l;
-        qr = r;
-        qValue = value;
-        _update(1, 0, n - 1);
-    }
 };
-pii merge(pii a, pii b) { return max(a, b); }
-pii initialize(int elem) { return make_pair(0, -1); }
+
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
+    int n, m;
     cin >> n >> m;
-    int cline, l, r;
-    set<int> coords;
-    vector<pair<int, pii>> segments;
-    segments.reserve(m);
-
-    for (int i = 0; i < m; ++i) {
-        cin >> cline >> l >> r;
-        segments.pb({cline - 1, {l, r}});
-        coords.insert(l);
-        coords.insert(r);
-    }
-    unordered_map<int, int> translate;
-    inde = 0;
-    for (auto elem : coords) {
-        translate[elem] = inde++;
-    }
-    vector<vector<pii>> rowSegments(n);
-    for (int i = 0; i < m; ++i) {
-        rowSegments[segments[i].fi].pb(
-            {translate[segments[i].se.fi], translate[segments[i].se.se]});
-    }
-    echo(rowSegments);
-    SegTree<pii, merge, initialize, nil> seg(inde);
-    vi prev(n, -1);
+    edges = vi(2 * n);
+    heights = vi(2 * n);
     for (int i = 0; i < n; ++i) {
-        pii mx = nil;
-        for (auto interval : rowSegments[i]) {
-            mx = max(mx, seg.query(interval.fi, interval.se));
-        }
-        echo(mx);
-        prev[i] = mx.se;
-        mx.fi++;
-        mx.se = i;
-        for (auto interval : rowSegments[i]) {
-            seg.update(interval.fi, interval.se, mx);
-        }
+        cin >> edges[i];
+        edges[n + i] = edges[i];
     }
-    pii fin = seg.query(0, inde - 1);
-    echo(fin);
-    vector<bool> visited(n);
-    int cur = fin.se;
-    while (cur != -1) {
-        visited[cur] = true;
-        cur = prev[cur];
-    }
-    cout << n - fin.fi << "\n";
     for (int i = 0; i < n; ++i) {
-        if (!visited[i]) {
-            cout << i + 1 << " ";
+        cin >> heights[i];
+        heights[i] *= 2;
+        heights[n + i] = heights[i];
+    }
+    SegTree<node, merge, initialize, nil> sTree(2 * n);
+    auto qTree = [&sTree](int l, int r) {
+        if (r < l) {
+            return -1ll;
         }
+        node n = sTree.query(l, r);
+        return n.val;
+    };
+    while (m--) {
+        int a, b;
+        cin >> a >> b;
+        a--, b--;
+        ll res = 0;
+        if (a <= b) {
+            res = max(res, qTree(0, a - 1));
+            res = max(res, qTree(b + 1, n + a - 1));
+        } else {
+            res = max(res, qTree(b + 1, a - 1));
+        }
+        cout << res << "\n";
     }
 
     return 0;

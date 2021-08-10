@@ -142,18 +142,11 @@ public:
             table.push_back(std::move(nextRow));
         }
 
-        /*
-        logs = vl(n + 1, 0);
-        for (int i = 2; i <= n; ++i) {
-            logs[i] = logs[i / 2] + 1;
-        }
-        */
     }
     static int msb_index(int x) {
         return __builtin_clz(1) - __builtin_clz(x);
     }
     ll valueInRange(int left, int right) {
-        //ll j = logs[right - left + 1];
         int j = msb_index(right - left + 1);
         ll intervalSize = 1ll << j;
         return f(table[j][left], table[j][right - intervalSize + 1]);

@@ -163,13 +163,13 @@ in the permutation zero or more times.
 \begin{figure}[h!]
 \centering
 \begin{tikzpicture}
-		\draw (0,0) pic[]{array_rep={A =}{1,2,3,4,5,5,6}};
-		\draw (0,-1.25) pic[]{array_rep={B =}{1,3,2,4,5,5,6}};
+		\draw (0,0) pic[]{array_rep={A =}{1,2,3,4,5,7,6}};
+		\draw (0,-1.25) pic[]{array_rep={B =}{1,3,2,4,5,7,6}};
 \end{tikzpicture}
 
 \end{figure}
 In this case, the most efficient way is to swap positions 1 and 2 
-of permutation B to get permutation A. From these examples, we can 
+of permutation B to get permutation A. From examples like this one, we can 
 deduce the following observations:
 \begin{itemize}
 		\item One swap will fix at most two numbers out of
@@ -178,28 +178,118 @@ deduce the following observations:
 				permutation into the other. Note that
 				we can \say{skip} the swap that corresponds
 				to the last element since, at that point, by
-				the Pigeon Principle, all elements must be in 
+				the Pigeonhole Principle, all elements must be in 
 				the correct position.
 \end{itemize}
 
 To solve the problem, we shall change the representation 
 to a graph where the edge \texttt{a \nolinebreak$\rightarrow$ \nolinebreak b} 
-represents that there exists \texttt{j} such that \texttt{A[j]=a, B[j]=b}.
-When draw these edges, we notice that all edges form cycles (possibly of 
-length 1).
-Furthermore, the cost of fixing all the positions that comprise each
-cycle will be the length of the cycle  minus 1.
+represents that there exists a position \texttt{j} such that 
+\texttt{A[j]=a, B[j]=b}. Since the previous example was extraordinarily 
+simple, we will present a new one to show this process:
 
-Finally, since the graph is made out of cycles,  
-we know that in this graph connectivity and strong connectivity 
-are equivalent and we can ignore the direction of the edges. 
-This reduces the problem to counting the number of connected components
-and the result is:
+\begin{figure}[h!]
+\centering
+\begin{subfigure}[c]{0.4\textwidth}
+\centering
+\begin{tikzpicture}
+		\draw (0,0) pic[]{array_rep={A =}{1,2,3,4,5,6,7}};
+		\draw (0,-1.25) pic[]{array_rep={B =}{2,3,1,4,7,5,6}};
+\end{tikzpicture}
+		
+\end{subfigure}
+\begin{subfigure}[c]{0.4\textwidth}
+\centering
+\begin{tikzpicture}
+	\begin{scope}[every node/.style = {circle, thick, draw},
+		every label/.append style={font = \small}]
+		\node (A) at (0,0) {1};
+		\node (B) at (2,0) {2};
+		\node (C) at (4,0) {3};
+		\node (D) at (6,0) {4};
+		\node (E) at (0,-2) {5};
+		\node (F) at (2,-2) {6};
+		\node (G) at (4,-2) {7};
+	\end{scope}
+	\begin{scope}[>={Stealth[black]},
+			every edge/.style={draw=black, very thick}]
+		\path [->] (A) edge (B);
+		\path [->] (B) edge (C);
+		\path [->] (C) edge[bend right=30] (A);
+		\path [->] (D) edge[loop right, out=150, in=210, looseness=7] (D);
+		\path [->] (E) edge[bend right] (G);
+		\path [->] (F) edge (E);
+		\path [->] (G) edge (F);
+	\end{scope}
+\end{tikzpicture}
+\end{subfigure}
+\end{figure}
+This graph will fulfill the following properties:
+\begin{itemize}
+		\setlength{\itemsep}{2pt}
+		\item All edges are part of a cycle (possibly of length 1). 
+				This is due to the fact that all vertices have an 
+				in-degree and out-degree of 1.
+		\item Since all edges form cycles,  connectivity and
+				strong connectivity are equivalent. In particular, 
+				we can make the edges undirected without altering 
+				the connectivity.
+\end{itemize}
+
+The final piece of the puzzle is noticing that the elements that 
+form a cycle of length $k$ need exactly $k-1$ swaps to be rearranged.
+In order to prove this, we can use induction. 
+
+If $k\le 2$, it is trivial. We can now assume that we have a cycle of
+length $k$. When we swap the first two elements, we can either fix
+one element that was out of place or two. However, if we had fixed
+two, that would mean that those two were interchanged, in which
+case they would form a 2-cycle and they could not be part of any
+larger cycle. Therefore, we can only fix one element in this first
+swap. After this swap, the cycle has length $k-1$ and, by
+the inductive hypothesis, we will need $(k-1)-1$ moves to rearrange
+all the elements. Thus, if we add the swap that we already performed,
+we obtain the expected result of $k-1$ swaps.
+
+To get the final formula, we observe that if there is a big cycle
+that includes all elements, we would need $n-1$ swaps and 
+every cycle that we introduce decreases the number of swaps 
+required by one.
+Therefore:
 \[
 		\text{\# Swaps} = n- \text{\# Components}
 \]
-This can be simply implemented using UFDS:
+To implement this formula we can construct the graph using undirected
+edges and count the components applying UFDS
+
 \cppcode[firstline=55,]{code/perm_inv.cpp}
+\noindent \textbf{\boldmath Running time: $\mathcal{O}(n)$}
+
+\subsection{Converting one permutation into another using adjacent swaps}
+This is a very similar problem; however, now we can only swap elements
+that are next to each other in the array. Furthermore, in this analysis,
+we will reduce the problem to calculating the minimum number of adjacent
+swaps required to sort a permutation. This is equivalent since we can use
+a bijective application to \say{redefine} the order according to how the
+elements are present in the first permutation.
+
+The key observation in this case is the fact that the solution is the 
+number of inversions in the permutation. We can define an inversion as
+a pair of indices $(i,j)$ such that $i<j$ but $A_i > A_j$. We can easily
+notice that (choosing optimally), each adjacent swap will fix exactly one 
+inversion since it will fix the relative order between two elements.
+
+Furthermore, this idea is surprisingly easy to implement since we can 
+use a modified version of Merge Sort that counts the swaps that would
+have been required to place an element in a specific position while
+maintaining a log-linear complexity.
+
+To do so, we can just count at each step how many position we had to move
+the elements of the left half of the array to sort them.
+
+\cppcode[firstline=21,]{code/perm_adj_inv.cpp}
+\noindent \textbf{\boldmath Running time: $\mathcal{O}(n\log(n))$}
+
 
 
 
