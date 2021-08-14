@@ -1135,6 +1135,324 @@ stop when it finds an unsaturated vertex or runs out of vertex to check.
 \noindent \textbf{\boldmath Running time: $\mathcal{O}(EV)$}
 \\ {\small(V = vertices, E = edges)}
 
+\newpage
+\subsection{Assignment problem}
+There are $n$ workers that should complete $n$ jobs. Each 
+assignment (worker, job) has a given cost and each worker can only
+perform one job (and vice versa). The goal is to minimize the total
+cost of performing all jobs.
+
+This problem can be modeled as a bipartite graph where the jobs and
+workers are represented by vertices. In such graph, we can encode the
+assignment of a job to a worker by adding an edge between those two 
+vertices. For example:
+
+\begin{figure}[h!]
+	\centering
+	\begin{subfigure}[c]{0.5\textwidth}
+	\begin{center}
+	\begin{tikzpicture}
+			\node[circle, draw](j1) at (1,1.5){J0};
+			\node[circle, draw](j2) at (1,0){J1};
+			\node[circle, draw](j3) at (1,-1.5){J2};
+			\node[anchor=south] (p1) at (1,2.2){Jobs (T)};
+	
+
+	\begin{scope}[shift={(4,0)}]
+			\node[circle, draw](w1) at (1,1.5){W0};
+			\node[circle, draw](w2) at (1,0){W1};
+			\node[circle, draw](w3) at (1,-1.5){W2};
+			\node[anchor=south] (p1) at (1,2.2){Workers (S)};
+	\end{scope}
+
+	\begin{scope}[>={Stealth[black]},
+			every edge/.style={draw=black}]
+			\path [->] (j1) edge (w3);
+			\path [->] (j2) edge (w1);
+			\path [->] (j3) edge (w2);
+	\end{scope}
+
+	\end{tikzpicture}
+			
+	\end{center}
+	\end{subfigure}
+	\begin{subfigure}[c]{0.4\textwidth}
+	\begin{center}
+			\begin{tabular}{|cccc|}
+					\hline
+					\multicolumn{4}{|c|}{Costs}\\
+					\hline
+					\hline
+					&W0 & W1 & W2 \\
+					\hline
+					\multicolumn{1}{|c|}{J0} & 1 & 3 &5 \\
+					\multicolumn{1}{|c|}{J1} & 1 & 10 & 20 \\
+					\multicolumn{1}{|c|}{J2} & 10 & 3 & 10 \\
+					\hline
+			\end{tabular}
+	\end{center}
+	\end{subfigure}
+	
+\end{figure}
+\subsubsection*{Definitions}
+\begin{itemize}
+		\setlength{\itemsep}{0pt}
+		\item A complete matching $M$ is a set of edges such that all 
+				jobs are paired with exactly one worker.
+		\item A perfect matching $M$  is a complete matching such that 
+				the added cost of all the edges is maximum.
+		\item The set of all nodes that represent jobs is $T$.
+		\item The set of all nodes that represent workers is $S$.
+		\item The cost of adding an edge between two vertices $v$, $w$
+				($v\in S \wedge w\in T$ or $v\in T \wedge w \in S$)
+				is represented as $c(v,w)$.  
+		\item A function $y:(S\cup T)\rightarrow \mathbb{R}$ is a
+				potential if $y(v)+y(w)\le c(v,w)$
+		\item The value of a potential $y$ is: $V_y= \sum_{v\in S \cup T}y(v)$
+		\item An edge $v-w$ is tight with respect to a potential $y$
+				if $c(v,w)=y(v)+y(w)$
+\end{itemize}
+\subsubsection*{Assumptions}
+\begin{itemize}
+		\item All costs in the cost matrix are positive. This is not required in
+				the final implementation but simplifies the proof. Moreover,
+				it is trivial to make the costs positive by adding a large
+				positive value to all of them.
+		\item There is the same number of both workers and jobs. This 
+				simplifies the proof but is not required. If we have less 
+				jobs than workers, we can always add more jobs with cost 0
+				to all workers.
+\end{itemize}
+
+\subsubsection{Analysis of the algorithm}
+The goal of the algorithm is to find a perfect matching. In order to do so, we
+can observe that:
+\begin{center}
+		\itshape
+		The cost $C$ of a perfect matching $M$ is greater or equal to the value of 
+		any potential $y$
+\end{center}
+We can easily prove this statement. Since $M$ pairs each
+job with one worker, we can enumerate identify the worker assigned to 
+the job $v$ as $w(v)$:
+\[
+		V_y = \sum_{u\in S}y(u) + \sum_{v\in T}y(v) = 
+		\sum_{v\in T} y(v)+y(w(v)) \le \sum_{v\in T} c(v,w(v) )= C
+\]
+From that claim, we can deduce that if the cost of a complete matching $M$ 
+equals the value of a potential, $M$ is perfect
+Furthermore, if we analyze the previous inequality, we can observe that in a 
+perfect matching, there must be a potential $y$ such that all edges 
+belonging to the matching $M$ are tight with respect to $y$. Thus:
+\begin{center}
+		\itshape
+		A complete matching $M$ formed by tight edges with respect to some 
+		potential $y$ is a prefect matching
+\end{center}
+Using this insight we can code a constructive algorithm that produces complete
+matchings that only consist of tight edges.
+On a high level, this algorithm performs the following operations:
+\begin{minted}[escapeinside=||, fontsize=\small ]{text}
+for each job i in [0,n):
+	run |$\small{\mathcal{O}(n^2)}$| Dijkstra to calculate the "closest"
+	not matched worker
+
+	update the current matching and potential to obtain a 
+	matching that matches all [0, i] jobs using tight edges
+\end{minted}
+The implementation of this algorithm required the following 
+arrays:
+\begin{itemize}
+		\setlength{\itemsep}{0pt}
+		\item \texttt{matchedJob[i]}: Job matched to the i-th worker
+		\item \texttt{jobPotential[i]}: Value of the potential evaluated
+				in the i-th job. We will see in the implementation that 
+				this is always a negative value (it is only decreased during
+				the algorithm)
+		\item \texttt{workerPotential[i]}: Value of the potential evaluated
+				in the i-th worker. We will see in the implementation that
+				this is always a positive value (it is only increased during
+				the algorithm)
+		\item For each iteration of the outer loop:
+		\begin{itemize}
+				\vspace{-3pt}
+				\setlength{\itemsep}{0pt}
+				\item \texttt{dist[i]}: Minimum distance from the visited
+				\item \texttt{from[i]}: Worker from which we found the current 
+						distance to the i-th worker.
+				\item \texttt{seen[i]}: Whether the i-th worker has been 
+						visited
+		\end{itemize}
+\end{itemize}
+\newpage
+\subsubsection{Pseudocode of the implementation}
+\begin{minted}[escapeinside=||,fontsize=\small]{python}
+int hungarian(costMatrix):
+	matchedJob[*] |$\leftarrow$| -1
+	jobPotential[*] |$\leftarrow$| 0
+	workerPotential[*] |$\leftarrow$| 0
+
+	for maxJob in [0,n):  # outer loop
+		currentWorker = helperNode
+		matchedJob[helperNode] = maxJob
+		dist[*] |$\leftarrow \infty$| 
+		from[*] |$\leftarrow$| -1
+		seen[*] |$\leftarrow$| 0
+		
+		while (currentWorker not matched):  # Dijkstra loop
+			seen[currentWorker] = 1
+			currentJob = matchedJob[currentWorker]
+			delta = |$\infty$|
+
+			for worker in [0,n):
+				if seen[worker]: continue
+				candidateDistance = costMatrix[currentJob][worker]
+				candidateDistance -= jobPotential[currentJob]
+				candidateDistance -= workerPotential[worker]
+				if candidateDistance < dist[worker]:
+					dist[worker] = candidateDistance
+					from[worker] = currentWorker
+				if dist[worker] < delta:
+					delta = dist[worker]
+					nextWorker = worker
+
+			for worker in [0, n):	
+				if seen[worker]:
+					jobPotential[matchedJob[worker]] += delta
+					workerPotential[worker] -= delta
+				else:
+					dist[worker] -= delta
+
+			currentWorker = nextWorker
+		
+		while currentWorker != helperNode:
+			worker = from[currentWorker]
+			matched[currentWorker] = matched[worker]
+			currentWorker = worker
+
+	return workerPotential[helperNode]
+
+\end{minted}
+\newpage
+\subsubsection{Outer loop}
+The outer loop has two invariants that we have to maintain.
+At the beginning of the $k$-th iteration,
+the following properties must hold true:
+\begin{enumerate}
+		\setlength{\itemsep}{0pt}
+		\item We have a matching consisting of $k$ tight edges that is
+				complete with respect to the first $k-1$ jobs.
+		\item The potential function given by arrays \texttt{jobPotential}
+				and \texttt{workerPotential} fulfills the potential property.
+\end{enumerate}
+In each iteration of the outer loop, we have to alter the already formed
+matching to add exactly one more job and one more worker. 
+The job that we have to add is given by the \texttt{maxJob} loop
+counter.
+
+However, deciding which worker to add is more challenging since the optimal
+solution might involve changing some of the previous assignment. 
+This is the problem that this modified Dijkstra aims to solve.
+
+\subsubsection{The cost function for Dijkstra's}
+During the search process, the cost of  an edge that goes from
+$v$ to $w$ will be considered to be $c(v,w)-y(v)-y(w)$. This is the
+increment in the cost of the matching if we add that edge to 
+it. If we analyze it case by case:
+\begin{itemize}
+		\item When there are no edges in the matching that touch either 
+				vertex, the potencial of the vertices will be 0 and the 
+				cost will not be altered.
+		\item When the job was already touched by an edge, the cost of this 
+				edge must be decreased since if we add this edge, we will
+				eliminate the previous paring for the job, which already
+				had a cost. This is the effect of subtracting the potential
+				of the job (which is a positive value).
+
+		\item When the worker was already picked, the cost of this edge
+				must be increased since adding this edge will imply 
+				deleting the previous pairing and adding an additional
+				one that pairs the job that no longer is paired with
+				another worker. Since the potential value of a worker
+				is negative, subtracting it will increase the cost of the
+				edge.
+\end{itemize}
+Using this cost definition enables the algorithm to search for the 
+minimal increase to the cost of the matching.
+
+\newpage
+\subsubsection{Modified $\mathcal{O}(n^2)$ Dijkstra's}
+To start the Dijkstra, we use a helper node that will be matched to the 
+new job. This helper node has two main uses: it simplifies the code
+of the algorithm by making the first iteration more similar to the following
+ones and it's potential value stores the cost of the entire matching.
+
+
+Now the algorithm can start. In each iteration, the algorithm will have a 
+\texttt{currentJob} and a \texttt{currentWorker} value, where the 
+\texttt{currentJob} value is the job matched to the current worker. 
+It should be noted that for all intensive purposes, either node
+can be considered the current node since they are joint by an edge of 
+\say{cost} 0.
+
+After the innermost for loop, the \texttt{dist} array will be updated
+to contain the lowest cost from the explored jobs to each worker. 
+Additionally, the \texttt{from} array might also change to reflect
+the changes in the distance vector. Finally, the \texttt{nextWorker}
+and the \texttt{delta} variables will be updated to the \say{closest}
+worker and the cost of reaching that worker.
+
+Now we have to update the potential values. Since it takes at least
+\texttt{delta} to reach any other worker, we can increase the 
+potential of all visited jobs by \texttt{delta}. However, all
+those nodes are connected to a worker with a tight edge since they
+are already paired. Therefore, in order to maintain the 
+potential property, we have to decrease the potential at the other
+end of those tight edges.
+
+Finally, since we are updating the potentials, we also have to change
+the distances accordingly. Since the potentials of all visited jobs
+have been increased by \texttt{delta}, the minimum distances to all
+workers are decreased by the same amount. This update is the price we have to 
+pay to be able to update the \say{cost} of the edges of the graph in 
+the middle of the search.
+
+To finish the iteration we have to check if the current worker is
+already matched to some job. If it is, we move to the worker and conduct
+at least another iteration. Otherwise, we can stop the algorithm since
+we have obtained the worker that can be matched with a job while increasing
+the cost of the matching by the minimum amount.
+
+If we look back at the invariants of the outer loop, we can see that the second
+invariant already holds true after this process. However, to make the first one
+true, we still have to update the \texttt{matchedJob} array. In order to do so,
+we can simply backtrack from the last worker using the \texttt{from} array.
+\subsubsection{C++ implementation}
+This implementation follows the previous pseudocode but there are some aspects
+that should be kept in mind:
+\begin{itemize}
+		\setlength{\itemsep}{0pt}
+		\item The input matrix must have the following format:
+				\begin{center}
+						\texttt{matrix[i][j] $\equiv$} Cost of having the 
+						i-th job done by the j-th worker
+				\end{center}
+		\item If the objective is the maximum cost, the entries of 
+				the cost matrix should be multiplied by -1.
+		\item The algorithm can handle cases where there are more workers than 
+				jobs to get done
+\end{itemize}
+\cppcode[firstline=20]{code/hungarian.cpp}
+
+\subsection*{Remarks}
+\begin{itemize}
+		\item Sometimes, it might be useful to add workers to represent actions
+				that may occur sequentially.
+\end{itemize}
+
+
+
+
 
 
 

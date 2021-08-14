@@ -7,7 +7,6 @@ using namespace std;
 #define fi first
 #define se second
 #define mp make_pair
-
 typedef long long ll;
 typedef vector<int> vi;
 typedef vector<ll> vl;
@@ -15,8 +14,9 @@ typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
 typedef vector<pii> vii;
 typedef vector<pll> vll;
+ll inf = LLONG_MAX / 10;
+int iinf = INT_MAX / 10;
 
-//
 vector<vector<ll>> adjList;
 vector<vector<ll>> adjMat;
 
