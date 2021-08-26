@@ -395,8 +395,7 @@ Thus, they fulfill the definition of an SCC.
 \noindent \textbf{\boldmath Running time: $\mathcal{O}(V+E)$}
 \\ {\small (V = vertices, E = edges)}
 
-\subsection{Find all cycles in a directed graph with out degree 1}
-If every node in the graph has an outdegree of 1, 
+\subsection{Find all cycles in a directed graph }
 DFS can find all cycles in a directed graph by keeping track of the nodes that 
 are currently in the stack. Those are the nodes that DFS has entered but 
 has not exited yet. When the current node is connected to a node
@@ -417,9 +416,11 @@ void dfs(int cnode) {
     inStack[cnode] = false;
 }
 \end{minted}
-Even though this might seem like a very specific scenario. All graphs that
-are created from functions will fulfill that the outdegree of all vertices 
-is 1. Therefore, we will be able to use this algorithm.
+
+It is important to remember the relationship between cycles and back-edges in 
+directed graphs. This algorithm is using the same notion of a back-edge that 
+was presented in the bridges and articulation points algorithm to
+detect cycles.
 
 
 

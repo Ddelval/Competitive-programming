@@ -41,7 +41,7 @@ vector<int> counting_sort(T const source, int max_dif,
 }
 
 template <typename T> struct SuffixArray {
-    T const s;
+    T  s;
     int n;
     vi sa;
 
