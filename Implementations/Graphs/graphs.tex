@@ -395,6 +395,35 @@ Thus, they fulfill the definition of an SCC.
 \noindent \textbf{\boldmath Running time: $\mathcal{O}(V+E)$}
 \\ {\small (V = vertices, E = edges)}
 
+\subsection{Find all cycles in a directed graph with out degree 1}
+If every node in the graph has an outdegree of 1, 
+DFS can find all cycles in a directed graph by keeping track of the nodes that 
+are currently in the stack. Those are the nodes that DFS has entered but 
+has not exited yet. When the current node is connected to a node
+in the stack, we have found a cycle.
+
+The implementation would look like this:
+\begin{minted}{cpp}
+set<int> presentInLoop;
+void dfs(int cnode) {
+    inStack[cnode] = true;
+    visited[cnode] = true;
+    int ne = nextt[0][cnode];
+    if (inStack[ne]) {
+        presentInLoop.insert(ne);
+    } else if (!visited[ne]) {
+        dfs(ne);
+    }
+    inStack[cnode] = false;
+}
+\end{minted}
+Even though this might seem like a very specific scenario. All graphs that
+are created from functions will fulfill that the outdegree of all vertices 
+is 1. Therefore, we will be able to use this algorithm.
+
+
+
+\newpage
 \section{Kosaraju's}
 Kosaraju's algorithm is a slightly simpler method for finding the SCC of a graph. 
 On the other hand, it is also somewhat slower than Trajan's approach since it will

@@ -1,5 +1,5 @@
-//  0417-G.cpp
-//  Created by David del Val on 13/08/2021
+//  B.cpp
+//  Created by David del Val on 24/08/2021
 //
 //
 // https://github.com/Ddelval/Competitive-programming/blob/master/template.cpp
@@ -118,72 +118,41 @@ int iinf = INT_MAX / 10;
 // Judge constraints
 #endif
 
-template <typename T> vi prefixFun(const T &s, int n) {
-    vi res(n);
-    for (int i = 1; i < n; ++i) {
-        int j = res[i - 1];
-        while (j > 0 && s[i] != s[j]) {
-            j = res[j - 1];
-        }
-        res[i] = j + (s[i] == s[j]);
-    }
-    return res;
-}
-
-template <typename T>
-int kmpSearch(const T &text, int n, const T &pattern, int m,
-              const vi &patternPre) {
-
-    int count = 0;
-    int j = 0;
-    for (int i = 0; i < n; ++i) {
-        while (j > 0 && text[i] != pattern[j]) {
-            j = max(0, patternPre[j] - 1);
-        }
-        j += (text[i] == pattern[j]);
-        if (j == m) {
-            count++;
-            j = patternPre[j - 1];
-        }
-    }
-    return count;
-}
-
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
-    int n, m;
-    cin >> n >> m;
-    vi data1(n - 1);
-    vi data2(m - 1);
-    int prev, a;
-    cin >> prev;
-    for (int i = 0; i < n - 1; ++i) {
-        cin >> a;
-        data1[i] = a - prev;
-        prev = a;
+    int t;
+    cin >> t;
+    while (t--) {
+        int a, b;
+        cin >> a >> b;
+        if (a > b) {
+            swap(a, b);
+        }
+        int mi = b - (a + b + 1) / 2;
+
+        int ma =
+            (a + b + 1) / 2 + (a + b - (a + b + 1) / 2) - (b - (a + b + 1) / 2);
+        set<int> sols;
+        //echo(a + b + 1);
+        //echo(mi);
+        //echo(ma);
+        for (int i = mi; i <= ma; i += 2) {
+            sols.insert(i);
+        }
+        mi = b - (a + b) / 2;
+
+        ma =
+            (a + b + 1) / 2 + (a + b - (a + b + 1) / 2) - (b - (a + b + 1) / 2);
+        //echo(mi);
+        //echo(ma);
+        for (int i = mi; i <= ma; i += 2) {
+            sols.insert(i);
+        }
+        cout << sols.size() << "\n";
+        cout << sols << "\n";
     }
-    cin >> prev;
-    for (int i = 0; i < m - 1; ++i) {
-        cin >> a;
-        data2[i] = a - prev;
-        prev = a;
-    }
-    if (m > n) {
-        cout << "0\n";
-        return 0;
-    }
-    if (m == 1) {
-        cout << n << "\n";
-        return 0;
-    }
-    echo(data1);
-    echo(data2);
-    vi prefun = prefixFun(data2, data2.size());
-    echo(prefun);
-    int res = kmpSearch(data1, data1.size(), data2, data2.size(), prefun);
-    cout << res << "\n";
 
     return 0;
 }

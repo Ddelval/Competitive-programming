@@ -1,0 +1,642 @@
+%! TEX root = ../implementations.tex
+\chapter{Strings}
+\section{Definitions}
+\begin{itemize}
+		\item A proper prefix of a string is a prefix that is not
+				equal to the string itself.
+\end{itemize}
+\section{Prefix function}
+Given a string $s$, we can calculate its prefix function $\pi$ for
+every index in the string. For a given index $i$, $\pi(i)$ is the 
+length of the longest proper prefix of $s$ that is also a suffix of $s[0\dots i]$.
+Formally:
+\[
+		\pi(i)=\max_{k=0\dots i} \big \{k : s[0\dots k-1] = 
+		s[i-(k-1)\dots i]\big \} 
+		\quad i\in\big[0,|s| \big)
+\]
+For example:
+\begin{figure}[h!]
+		\centering
+		\resizebox{100 mm}{!}{\small \subimport{figures/}{prefix_fun.pdf_tex}}
+\end{figure}
+
+\subsection{Remarks}
+\begin{itemize}
+		\item When going from one index to the next, the prefix function can 
+				never increase by more than one.
+		\item It can be used to quickly calculate all the prefixes that are
+				also suffixes of $s[0\dots i]$, not only the longest one.
+
+				Let $k=\pi(i)$. Then $s[0\dots k]$ is a suffix of $s[0\dots i]$
+				and all other prefixes that are also suffixes of $s[0\dots i]$ 
+				must have a strictly shorter length. Therefore, they have to 
+				be also suffixes of $s[0\dots k]$
+
+				Thus, the prefixes that are also suffixes, in descending order
+				of length are:
+				\[
+						s[0\dots \pi(i)-1] \quad
+						s[0\dots \pi(\pi(i)-1)-1] \quad
+						s[0\dots \pi(\pi(\pi(i)-1)-1)-1] \quad
+						\dots
+				\]
+\end{itemize}
+\subsection{Calculation}
+To calculate the prefix function of an index we have t:o
+\begin{enumerate}
+		\item Check if we can extend the prefix of the previous
+				index, which would lead to an optimal solution.
+				To check if we can do this, we only have to check
+				the following condition: \\ \texttt{s[i] == s[$\pi$(i-1)]}
+
+		\item Otherwise, we will check if it is possible to extend one of 
+				the smaller suffixes of the previous index. To do so, we 
+				can iterate and use the procedure described in the 
+				second remark to check all the suffixes.
+
+\end{enumerate}
+The following implementation will work with any container that provides a
+[] operator.
+
+\cppcode[firstline=20, lastline=30]{code/prefix_kmp.cpp}
+\noindent \textbf{\boldmath Running time: $\mathcal{O}(n)$}
+\vspace{10pt}
+
+\noindent
+It is important to note that $j-1$ would be the 
+index where the suffixes that we consider in the \texttt{while} loop end.
+However, changing the variable in this way simplifies the code. 
+If $j$ were to encode the ending of the suffix that is being tested
+to be extended, the code would be: 
+\begin{minted}{cpp}
+		int j = res[i-1]-1;
+		while (j >= 0 && s[i] !=s[j+1]){
+			j = res[j] - 1;
+		}
+		res[i] = j + (s[i] == s[j]);
+\end{minted}
+
+\newpage
+\subsection{KMP}
+The Knuth-Morris-Pratt algorithm searches for a string $s$ in a piece of 
+text $t$. This algorithm has a worse average performance compared to the
+naïve string matching algorithm but its worst-case complexity is linear
+instead of quadratic.
+
+In order to do so, the algorithm uses the prefix function to avoid 
+repeating comparisons when a character has already been matched at
+some point. In particular, when we run into a character that does not
+match, the prefix function will tell us how many of the last 
+characters that we have matched are a prefix, and when we move
+the position of $s$, we do not have to mark those characters 
+as matching again.
+
+For instance, we could start matching the following string $s$ against 
+the text $t$. Until we reach position 11 in the strings, all
+characters will match and KMP will behave exactly as the naïve string 
+matching algorithm. 
+\begin{figure}[h!]
+\centering
+\begin{tikzpicture}
+		\draw (0,0) pic[]{array_rep={t =}{S,E,V,E,N,T,Y, ,S,E,V, ,B,U,T}};
+		\draw (0,-1.5) pic[]{array_rep_inv={s =}{S,E,V,E,N,T,Y, ,S,E,V,E,N}};
+		\draw (0,-2.5) pic[]{array_rep_basic={$\pi_s$ =}{0,0,0,0,0,0,0,0,0,1,2,3,4}};
+		\foreach \x in {0,...,10}{
+				\pgfmathsetmacro{\xx}{\x/2+0.25}
+		\draw[stealth-stealth,draw=Green,thick] (\xx,-0.1) -- (\xx,-0.8);
+		}
+		\draw[stealth-stealth,draw=Red,thick] (5.75,-0.1) -- (5.75,-0.8);
+\end{tikzpicture}
+		
+\end{figure}
+However when we reach this position, KMP uses the prefix function to
+search for the longest prefix that ends at the last matched character. 
+In this case, since the prefix function at $j=10$ is 3, we will shift
+$s$ so that the next character of $s$ that we match is 3.
+\begin{figure}[h!]
+\centering
+\begin{tikzpicture}
+		\draw (0,0) pic[]{array_rep={}{S,E,V,E,N,T,Y, ,S,E,V, ,B,U,T}};
+		\draw (4,-1.5) pic[]{array_rep_inv={}{S,E,V,E,N,T,Y, ,S,E,V,E,N}};
+		\foreach \x in {8,...,10}{
+				\pgfmathsetmacro{\xx}{\x/2+0.25}
+		\draw[stealth-stealth,draw=Green,thick] (\xx,-0.1) -- (\xx,-0.8);
+		}
+\end{tikzpicture}
+\end{figure}
+
+In this case, when we check the index $i=11$ of $t$, we will see that there
+is no match, therefore, we would repeat the process and move $s$ further
+to the right according to the prefix function until it matches of we reach 
+the left end of $s$.
+
+\newpage
+\subsubsection*{Implementation}
+This version of the algorithm counts how many times the pattern is present
+in the text. To execute it, we have to first calculate the prefix
+function and then run the following code:
+\cppcode[firstline=32]{code/prefix_kmp.cpp}
+\noindent \textbf{\boldmath Running time: $\mathcal{O}(|s|+|t|)$}
+\vspace{10pt}
+\subsection{Other applications}
+\begin{itemize}
+		\item Instead of using KMP, it is possible to concatenate $s + \# + t$
+				and calculate the prefix function of this new string. Where
+				the string function is $|s|$, there is a match.
+		\item \textit{Number of occurrences of each prefix}. A prefix can appear
+				as the prefix itself, as a maximum suffix of a substring or as
+				a non-maximum suffix of a substring. The first two cases
+				are rather simple. Regarding the last one, it is enough to 
+				observe that the inclusion relationship (as a suffix) is
+				transitive. In this code ans[i] is the number of times that 
+				the prefix of length i occurs;
+\begin{minted}{cpp}
+vl ans(n);
+    for (int i = n - 1; i >= 0; --i) {
+		ans[pref[i]]++; // Count the maximum suffix here
+        if (i) {
+            ans[pref[i - 1]] += ans[i];  // Add the times that this 
+		}							    // suffix appears to the smaller one
+		ans[i]++; // Count the prefix itself
+    }
+\end{minted}
+Therefore, it can be solved in linear time
+
+		\item  \textit{Number of different substrings in a string}. Add all
+				characters one after another. At the i-th step, we have the
+				string $s_i$. After adding  a character $c$, $t_i=s_i + c$.
+				Now, we reverse the string and calculate the prefix function.
+				Its maximum value is the amount of newly added substrings 
+				that were already present. Therefore, the number of
+				new substrings appearing at the i-th step is:
+				\[
+						|s|+1-\pi_{\text{max}}
+				\]
+				After $n$ steps, the solution is reached. Thus, this algorithm
+				has a quadratic time complexity.
+		\item \textit{Compress a string}. Find a prefix  $t$ of the string $s$
+				such that $s$ can be formed by concatenating $t$ several times.
+
+				Compute the prefix function. Let $k=n-\pi(n-1)$. If $k\,|\,n$, 
+				$k$ is the solution. Otherwise, there is no way to compress it.
+
+\end{itemize}
+
+\newpage
+\section{Suffix Array}
+A suffix array is an array of integers that represent the starting indexes of
+all the suffixes of a given string. As an example, we can calculate the
+suffix array for \texttt{s = "abab"}. 
+\begin{figure}[h!]
+		\centering
+		\begin{subfigure}[]{0.45\textwidth}
+		\begin{center}
+				\textbf{\footnotesize Suffixes sorted by starting index}
+				\vspace{7pt}
+
+				\ttfamily
+		\begin{tabular}{rl}
+				0 & abaab \\
+				1 & baab \\
+				2 & aab \\
+				3 & ab \\
+				4 & b \\
+		\end{tabular}
+				
+		\end{center}
+		\end{subfigure}
+		\begin{subfigure}[]{0.45\textwidth}
+		\begin{center}
+				\textbf{\footnotesize Suffixes sorted lexicographically}
+				\vspace{7pt}
+
+				\ttfamily
+		\begin{tabular}{rl}
+				2 & aab \\
+				3 & ab \\
+				0 & abaab \\
+				4 & b \\
+				1 & baab \\
+		\end{tabular}
+				
+		\end{center}
+		\end{subfigure}
+
+\end{figure}
+
+It clearly follows that the suffix array is \texttt{[2, 3, 0, 4 ,1]}.
+
+\subsection{Construction}
+To construct the suffix array of $s$ we will not sort its suffixes but rather
+its cyclic shifts. However, to make sure that these operations are
+equivalent, we must append a character at the end of $s$ that is strictly
+smaller than all other characters in $s$. It is common to use the symbol
+\$. After appending the \$, we can see how sorting the cyclic shifts 
+of the string is equivalent to sorting the suffixes. The following figure
+illustrates this point with the same example as before.
+
+\begin{figure}[h!]
+		\centering
+		\begin{subfigure}[]{0.45\textwidth}
+		\begin{center}
+				\textbf{\footnotesize Sorted by starting index}
+				\vspace{7pt}
+
+				\ttfamily
+		\begin{tabular}{rll}
+				0 & abaab\$ & abaab\\
+				1 & baab\$a &baab\\
+				2 & aab\$ab & aab\\
+				3 & ab\$aba & ab\\
+				4 & b\$abaa &b\\
+		\end{tabular}
+				
+		\end{center}
+		\end{subfigure}
+		\begin{subfigure}[]{0.45\textwidth}
+		\begin{center}
+				\textbf{\footnotesize Sorted lexicographically}
+				\vspace{7pt}
+
+				\ttfamily
+		\begin{tabular}{rll}
+				2 & aab\$ab &aab \\
+				3 & ab\$aba & ab\\
+				0 & abaab\$ & abaab\\
+				4 & b\$abaa & b\\
+				1 & baab\$a &baab\\
+		\end{tabular}
+				
+		\end{center}
+		\end{subfigure}
+
+\end{figure}
+Now we can focus on sorting cyclic shifts.
+In order to sort the cyclic shifts, we will sort cyclic
+substrings of increasing length. Initially, we will
+sort the cyclic substrings of length 1. In the next
+iteration, we can use that information to sort 
+cyclic substrings of length 2. This algorithm allows
+us to sort the cyclic shifts (cyclic substrings of
+length $n$) after $\lceil \log n \rceil+1$ iterations.
+
+A cyclic substring is perfectly defined by its starting
+index and its length. Note that since it is cyclic,
+when it reaches the end of the string, it will wrap
+to the beginning. Therefore, the cyclic substring of 
+length 4 starting in index 3 of "abcde" would be "deab".
+We can denote $S(i,l)$ the cyclic substring of the
+string $s$ that starts at index $i$ with length $l$
+
+In iteration $k$ we want to sort the cyclic substrings of
+length $2^k$ in $\mathcal{O}(n)$ using the order of 
+the cyclic substrings of length $2^{k-1}$. In order to do so,
+we will take advantage of the fact that each substring that 
+we are considering is comprised of two sub-substrings of
+length $2^{k-1}$. In particular: 
+\[S(i,2^{k}) = S(i,2^{k-1}) + S(i+2^{k-1} \ \mathrm{mod} \ n,2^{k-1})\]
+Therefore, to compare two cyclic substrings of length $2^k$ we only need
+to compare the first half first and, if they are equal, compare the second
+half. In order to do so, we can associate each cyclic substring with
+a pair that contains the order of each of the two halves and sort by that
+pair.
+
+To store the relative order between cyclic substrings in iteration $k$, 
+two arrays are needed:
+\begin{itemize}
+		\item \textbf{p[]}. This array stores a permutation of the cyclic
+				substrings in which they would be sorted. Since there can be
+				repeated elements, this array is not unique.
+
+		\item \textbf{c[]}. This array stores the order of the cyclic 
+				substrings so that two equal substrings have the same value 
+				and a greater substring  has a higher value. Formally, the
+				constraints are:
+				\[
+						S(i,2^k) < S(j,2^k) \implies c[i] < c[j] \qquad
+						S(i,2^k) = S(j,2^k) \implies c[i] = c[j]
+				\]
+				This array is necessary since equal substrings must be 
+				treated equally when the sorting in the next iteration 
+				is performed.
+
+				We will refer to the value $c[i]$ as the class of $S(i,2^k)$.
+\end{itemize}
+For instance, in the string \texttt{s = aabb}, we would have:
+\begin{table}[h!]
+		\centering
+		\ttfamily
+				\def \arraystretch{1.2}
+		\begin{tabular}{rccc}
+				k & Cyclic substrings & p[*] & c[*] \\
+				\hline
+				0 & [a, a, b, a] & [0, 1, 3, 2] & [0, 0, 1, 0] \\
+				1 & [aa, ab, ba, aa] & [0, 3, 1, 2] & [0, 1, 2, 0] \\
+				2 & [aaba, abaa, baaa, aaab] & [3, 0, 1, 2] & [1, 2, 3, 0] \\
+		
+		\end{tabular}
+\end{table}
+
+The last remaining issue is how to sort the cyclic substrings. In the base 
+case $k=0$, each substring is a letter so we can simply use counting sort
+to sort them in linear time.
+However, in the following iterations, we have to sort pair of numbers in 
+linear time. In order to do so, we will split the sorting process in two 
+parts
+\begin{enumerate}
+		\item Sort by the second element of the pair. Since the second elements
+				were already sorted in the previous iteration, we just need
+				to subtract $2^{k-1}$ from the indices in $p$. 
+				To see why this works, we can observe that all pairs have a
+				different second element. Furthermore, we can easily 
+				deduce which pair has the 0. It can only be the pair 
+				corresponding to the cyclic substring that has the smallest
+				cyclic substring of length $2^{k-1}$ as the second half. 
+				Logically, this pair has to be $2^{k-1}$ positions to the 
+				left.
+
+				Using this technique, we can get a permutation array so that
+				the second elements are sorted.
+
+		\item To finish, we have to sort the pairs by the first element using
+				a stable sort algorithm. In particular, counting sort can
+				be implemented to be stable. 
+				It is also important to note that since we are reordering the
+				pairs twice, the permutation arrays would have to be merged.
+				However, we can do so by providing counting sort with the 
+				permutation array from the first step.
+\end{enumerate}
+\subsubsection{Implementation}
+We first have to implement a stable counting sort. Regarding the arguments:
+\begin{itemize}[leftmargin=3cm]
+		\item [\texttt{T:}] Types of the container to be sorted. The only 
+				requirements are that it has a size method and constant
+				time access to any element.
+		\item[\texttt{source:}] Container to sort. Usually a string or 
+				a vector of integers.
+		\item[\texttt{max\_dif:}] The function assumes that all values in 
+				source are between 0 and max\_dif
+		\item[\texttt{previousOrder:}] If this is not the first of several
+				sorting processes applied to the same container, this argument
+				should be the current (before this sorting process)
+				permutation of the container so that the
+				result is a permutation with respect to the initial ordering
+				of the container and not the current one.
+\end{itemize}
+The function returns a permutation of the container so that if the elements
+were placed in that order, they would be sorted.
+\cppcode[firstline=20, lastline = 41]{code/suffix_array.cpp}
+\newpage
+The construction of the suffix array is follows the algorithm explained 
+before:
+\cppcode[firstline=43, lastline = 85]{code/suffix_array.cpp}
+\noindent \textbf{\boldmath Running time: $\mathcal{O}(n \log n)$}
+\newpage
+\subsection{Longest common prefix (LCP)}
+The LCP of two suffixes can be calculated using binary search if we
+stored the \texttt{c} array of each iteration in the construction 
+of the suffix array. Furthermore, it is rather simple to calculate 
+since knowing the classes of the cyclic substrings allows us to 
+compare blocks of size $2^i$ in constant time.
+
+However, this requires $\mathcal{O}(n\log n)$ memory and there is a
+better option. It is possible to calculate the LCP of suffixes that
+are adjacent in the suffix array in linear time. 
+Then, if we need to know the LCP
+of two suffixes that are not adjacent, we can use an RMQ since the
+answer will be the minimum common prefix encountered while going 
+from one suffix to the other in the order of the suffix array.
+Furthermore, the LCP of contiguous elements is very useful in many
+applications.
+
+Therefore, the goal is to build an array \texttt{lcp} where 
+\texttt{lcp[i]} is the length of the LCP between the suffixes starting
+in index \texttt{sa[i]} and \texttt{sa[i+1]}. To do so, we will
+use Kasai's algorithm.
+
+To simplify the notation, in the following paragraphs $s(i)$ will
+denote the suffix that starts on position $i$. Additionally,
+we will also need the inverse of the suffix array ($sa$), we will call
+this function $rank$. This function fulfills that $rank(sa(i))=i$
+
+The algorithm processes the suffixes in increasing order of starting
+index. That is to say, the first suffix to be processed is $s(0)$ 
+(entire string) and, the last, $s(n-1)$. 
+The first iteration of the algorithm is 
+simple enough, we will just calculate $\alpha_0 = rank(0)$ the 
+position of the first suffix in the suffix array and compare 
+$s(0)$ with $s(\alpha_0-1)$. 
+
+However, in the following iterations, we cannot simply compare 
+the entire strings since that would lead to a quadratic solution.
+To avoid it, we will make us of the following:
+
+\begin{equation}
+		lcp(s(i+1)) \ge lcp(s(i)) -1
+		\label{eq:lcp}
+\end{equation}
+\subsubsection*{Proof}
+If $s(i)$ has a lcp of $k_i$, $s(i)$ must share its first
+$k_i$ characters with $s(rank(i)-1)$ (preceding suffix in $sa$).
+Furthermore $s(i+1)$ is the result of deleting the last character
+of $s(i)$. If we delete the last character of $s(rank(i)-1)$ we
+get a suffix that has a lcp of $k_i-1$ with $s(i+1)$. We can 
+denote this suffix as $\beta$. 
+
+As long as $k_i$ was greater than 0, we know that $\beta$ will
+be before $s(i+1)$ in the suffix array since deleting a
+character that is equal in two suffixes cannot change their
+relative order. If they are adjacent, $k_i-1$ will be the answer.
+Otherwise, the answer must be at least $k_i-1$ because the 
+elements in between $\beta$ and $s(i+1)$ cannot  have a lower lcp
+since the lcp of a range is the minimum of the lcp's of contiguous 
+elements.
+
+If $k_i$ was 0, then we cannot extract any information and 
+equation \ref{eq:lcp} provides a useless bound (-1).
+
+\hfill $\square$
+
+What we have proved is that the lcp will decrease by at most 1 in 
+each iteration. However, since it is bounded by $n$, that means
+that it can only increase or decrease $\mathcal{O}(n)$ times. 
+Therefore, in each iteration we can check if the lcp has increased
+or not by comparing the characters without performing too many 
+operations.
+
+\subsubsection{Implementation}
+\cppcode[firstline=87, lastline=106]{code/suffix_array.cpp}
+\noindent \textbf{\boldmath Running time: $\mathcal{O}(n)$}
+
+\subsubsection{Observation}
+It is important to keep in mind than when the LCP
+function increases the previous prefix is preserved.
+For instance, if the LCP function has the following shape:
+\begin{figure}[h!]
+		\centering
+		\resizebox{100 mm}{!}{\small \subimport{figures/}{lcp_ex.pdf_tex}}
+		\label{fig:lcp_ex}
+\end{figure}
+\begin{itemize}
+		\item There is a prefix of lenth 1 shared between suffixes
+				5 and 13
+		\item There is a prefix of lenth 2 shared between suffixes
+				6 and 11
+		\item There is a prefix of lenth 3 shared between suffixes
+				6 and 9 
+\end{itemize}
+
+\subsection{Applications}
+\subsubsection{Search for a pattern}
+In order to search for a patter $p$ in a text $t$ we can start
+by creating the
+suffix array of $t$ in $\mathcal{O}(|t|\log |t|)$. 
+Then, we can observe that $s$ has to be a prefix of a suffix of 
+$t$. Since we have sorted the suffixes, we can binary search
+them against $s$. This search will have a complexity of 
+$\mathcal{O}(|s|\log |t|)$.
+
+Furthermore, we can use a second binary search to look for the last
+occurrence of the string as a prefix in the suffix array.
+
+\subsubsection{Comparing two substrings}
+After precalculating the suffix array of the string, we can compare
+two substrings of equal length in constant time. To do so, we will
+have to store the class array of each iteration of the construction
+of the segment tree.
+
+Those arrays enable us to compare blocks of $2^i$ characters in 
+constant time. Therefore, we can split the substrings of length $l$
+into two blocks of size $2^{\lfloor \log l \rfloor}$ and compare
+those. We can place the blocks so that they overlap but cover 
+the entire string. 
+\begin{figure}[h!]
+		\centering
+		\resizebox{100 mm}{!}{\small \subimport{figures/}{lcp_cmp.pdf_tex}}
+		\label{fig:lcp_cmp}
+\end{figure}
+
+In the previous example, for instance, we would first compare the 
+classes that correspond to the blue blocks and, if those were equal,
+we would compare the classes corresponding to the green ones. Since 
+all blocks have a length of $2^\_$, their classes have been calculated
+during the construction of the suffix array.
+
+\subsubsection{Longest repeated substring}
+Having both the suffix array and the LCP array, obtaining the longest
+repeated substring is trivial.
+This string must be the prefix of (at least) two consecutive suffixes
+in the suffix array. Therefore, its length will be the maximum LCP
+between consecutive suffixes. That is to say, the maximum of the 
+array LCP.
+
+\subsubsection{Longest common substring}
+We will start by concatenating all strings ($\{s_i\}$) separated by some characters
+that are smaller than the ones on the strings. It is important to make sure
+that these separators are different for each string and do not appear anywhere
+else in the string. The next step is to create both the suffix array and the
+LCP array of this new string ($t$). 
+
+The longest common substring will be a prefix of at least two suffixes of $t$. 
+Furthermore, we have to make sure that we are not picking a string that 
+appears twice in the same string. To avoid that scenario, we will make sure that
+the two suffixes that share the prefix start on different initial strings ($s_j$). 
+If we have an array owner that tells us in which initial string does the i-th suffix
+in the suffix array starts, we can write the following code:
+\begin{minted}[tabsize=4]{text}
+ans = 0
+for i in [0, n-1):
+	if (owner[i] != owner[i+1]):
+		ans = max(ans, lcp[i])
+\end{minted}
+
+It is also important to note that if we keep track of the owners of each suffix,
+we can know in how many $s_i$ does a particular pattern appear. This concept is
+used in \texttt{UVA-11107}. In that problem, we are asked to find the longest 
+substring that appears in at least half of the initial chains.
+
+To do so, we can binary search the length of the solution ($l$). Then, we can check
+if there is chain of that length that appears in half of the initial chains in 
+linear time. This can be rewritten as checking that the preffix function is 
+at least $l$ in a range of suffixes that belong to at least $n/2$ chains.
+The following snippet implements this check for a given $l$ (\texttt{target}):
+\begin{minted}{cpp}
+vi test(SuffixArray const &sf, vi const &lcp, vi &beginnings, int target,
+        int minSize) {
+    set<int> presentIn;
+    vi answers;
+    int lans;
+    for (int i = 0; i < lcp.size(); ++i) {
+		// Find the owner of this suffix
+        int c1 = upper_bound(all(beginnings), sf[i]) - beginnings.begin();
+        int c2 = upper_bound(all(beginnings), sf[i + 1]) - beginnings.begin();
+
+        if (lcp[i] >= target) {
+            // Continue the range
+            if (c1 != c2) {
+                db(cout << c1 << " " << c2 << endl);
+                presentIn.insert(c1);
+                presentIn.insert(c2);
+                lans = sf[i];
+            }
+        } else {
+            // Break the range
+            if (presentIn.size() > minSize) {
+                answers.push_back(lans);
+                echo(answers);
+            }
+            presentIn.clear();
+        }
+    }
+    if (presentIn.size() > minSize) {
+        answers.push_back(lans);
+    }
+    return answers;
+}
+\end{minted}
+In that function we used an array beginnings that stores the initial position of
+each chain $s_i$. This array is the simplest way to implement the owner concept since
+it allows us to find the owner of a specific suffix in $\mathcal{O}(\log n)$ where
+$n$ is the number of chains $s_i$.
+
+\subsubsection{Number of different substrings}
+We can count the different substrings in linear time if we have 
+already computed both the suffix array and the LCP array. 
+
+To count the substrings, we will iterate through the suffix array and
+count how many prefixes of each suffix are unique. We only have to 
+observe that all prefixes of suffix $sa(i)$ will be new except for
+the first $lcp(i)$ ones  as these ones already occur in  previous
+suffixes. 
+
+Therefore, the final result is:
+\[
+\sum_{i=0}^{n-1}(n-p[i]) - \sum_{i=0}^{n-2}lcp[i] = \frac{n^2+n}2
+- \sum_{i=0}^{n-2}lcp[i]
+\]
+\subsubsection{Sort cyclic shifts}
+Since the construction algorithm sorts all cyclic shifts
+of the given string, if we do not concatenate the ending
+character \$, we can use it to sort the cyclic shifts 
+of the string
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

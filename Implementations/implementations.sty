@@ -9,6 +9,7 @@
 \RequirePackage[utf8]{inputenc} %Reconoce algunos símbolos
 \RequirePackage{graphicx}
 \RequirePackage{multirow}
+\RequirePackage{enumitem} % Customize itemize
 \RequirePackage{wrapfig}
 \RequirePackage{diagbox} %diagonal cells
 \RequirePackage{dirtytalk}
@@ -104,6 +105,41 @@ breaklines=true
 				\pgfmathsetmacro{\m}{\m+1}
 				}
 		\node[anchor=east] (a) at (-0.2,0.25){\large \texttt{#1}};
+		}
+
+		},
+		pics/array_rep_inv/.style 2 args={
+				code = {
+
+				\pgfmathsetmacro{\m}{0}
+				\pgfplotsforeachungrouped \c in{
+						#2
+				}{
+				\pgfmathtruncatemacro{\om}{\m}
+				\pgfmathsetmacro{\sm}{0.5*\m}
+				\pgfmathsetmacro{\em}{0.5+\sm}
+				\node[draw, fit={(\sm,0)(\em,0.5)}, inner sep = 0 pt, label = center: \c](A){};
+				\node[fit={(\sm,-0.4)(\em,-0.1)}, inner sep = 0 pt, label = center: \scalebox{0.7}{\om}](A){};
+				\pgfmathsetmacro{\m}{\m+1}
+				}
+		\node[anchor=east] (a) at (-0.2,0.25){\large \texttt{#1}};
+		}
+
+		},
+		pics/array_rep_basic/.style 2 args={
+				code = {
+
+				\pgfmathsetmacro{\m}{0}
+				\pgfplotsforeachungrouped \c in{
+						#2
+				}{
+				\pgfmathtruncatemacro{\om}{\m}
+				\pgfmathsetmacro{\sm}{0.5*\m}
+				\pgfmathsetmacro{\em}{0.5+\sm}
+				\node[draw, fit={(\sm,0)(\em,0.5)}, inner sep = 0 pt, label = center: \c](A){};
+				\pgfmathsetmacro{\m}{\m+1}
+				}
+		\node[anchor=east] (a) at (-0.2,0.15){\large \texttt{#1}};
 		}
 
 		}

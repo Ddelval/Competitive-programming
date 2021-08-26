@@ -1,0 +1,83 @@
+%% Creator: Inkscape 1.1 (c4e8f9e, 2021-05-24), www.inkscape.org
+%% PDF/EPS/PS + LaTeX output extension by Johan Engelen, 2010
+%% Accompanies image file 'dibujo.pdf' (pdf, eps, ps)
+%%
+%% To include the image in your LaTeX document, write
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics{<filename>.pdf}
+%% To scale the image, write
+%%   \def\svgwidth{<desired width>}
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics[width=<desired width>]{<filename>.pdf}
+%%
+%% Images with a different path to the parent latex file can
+%% be accessed with the `import' package (which may need to be
+%% installed) using
+%%   \usepackage{import}
+%% in the preamble, and then including the image with
+%%   \import{<path to file>}{<filename>.pdf_tex}
+%% Alternatively, one can specify
+%%   \graphicspath{{<path to file>/}}
+%% 
+%% For more information, please see info/svg-inkscape on CTAN:
+%%   http://tug.ctan.org/tex-archive/info/svg-inkscape
+%%
+\begingroup%
+  \makeatletter%
+  \providecommand\color[2][]{%
+    \errmessage{(Inkscape) Color is used for the text in Inkscape, but the package 'color.sty' is not loaded}%
+    \renewcommand\color[2][]{}%
+  }%
+  \providecommand\transparent[1]{%
+    \errmessage{(Inkscape) Transparency is used (non-zero) for the text in Inkscape, but the package 'transparent.sty' is not loaded}%
+    \renewcommand\transparent[1]{}%
+  }%
+  \providecommand\rotatebox[2]{#2}%
+  \newcommand*\fsize{\dimexpr\f@size pt\relax}%
+  \newcommand*\lineheight[1]{\fontsize{\fsize}{#1\fsize}\selectfont}%
+  \ifx\svgwidth\undefined%
+    \setlength{\unitlength}{254.08667136bp}%
+    \ifx\svgscale\undefined%
+      \relax%
+    \else%
+      \setlength{\unitlength}{\unitlength * \real{\svgscale}}%
+    \fi%
+  \else%
+    \setlength{\unitlength}{\svgwidth}%
+  \fi%
+  \global\let\svgwidth\undefined%
+  \global\let\svgscale\undefined%
+  \makeatother%
+  \begin{picture}(1,0.26295325)%
+    \lineheight{1}%
+    \setlength\tabcolsep{0pt}%
+    \put(0.2123122,0.23412903){\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}a a b a a a b\end{tabular}}}}%
+    \put(0.03821912,0.23395225){\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}$i=0$\end{tabular}}}}%
+    \put(0.40477875,0.2374498){\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}$\pi(0)=0$\end{tabular}}}}%
+    \put(0.21231219,0.16005901){\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}a a b a a a b\end{tabular}}}}%
+    \put(0.03821911,0.15988222){\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}$i=1$\end{tabular}}}}%
+    \put(0.40477876,0.16337978){\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}$\pi(1)=1$\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=1]{dibujo.pdf}}%
+    \put(0.21231219,0.08233629){\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}a a b a a a b\end{tabular}}}}%
+    \put(0.03821911,0.0821595){\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}$i=2$\end{tabular}}}}%
+    \put(0.40477876,0.08565706){\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}$\pi(2)=0$\end{tabular}}}}%
+    \put(0.21231219,0.00826629){\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}a a b a a a b\end{tabular}}}}%
+    \put(0.03821911,0.00808951){\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}$i=3$\end{tabular}}}}%
+    \put(0.40477876,0.01158706){\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}$\pi(3)=1$\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=2]{dibujo.pdf}}%
+    \put(0.73360114,0.23595534){\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}a a b a a a b\end{tabular}}}}%
+    \put(0.55950806,0.23577855){\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}$i=4$\end{tabular}}}}%
+    \put(0.92606771,0.23927611){\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}$\pi(4)=2$\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=3]{dibujo.pdf}}%
+    \put(0.73360114,0.160059){\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}a a b a a a b\end{tabular}}}}%
+    \put(0.55950806,0.15988221){\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}$i=5$\end{tabular}}}}%
+    \put(0.92606771,0.16337977){\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}$\pi(5)=2$\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=4]{dibujo.pdf}}%
+    \put(0.73360114,0.08416259){\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}a a b a a a b\end{tabular}}}}%
+    \put(0.55950806,0.08398581){\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}$i=6$\end{tabular}}}}%
+    \put(0.92606771,0.08748336){\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}$\pi(6)=3$\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=5]{dibujo.pdf}}%
+  \end{picture}%
+\endgroup%

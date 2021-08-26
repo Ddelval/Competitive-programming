@@ -1,0 +1,824 @@
+%! TEX root = ../implementations.tex
+
+\chapter{Range queries}
+
+\section{Types of range queries}
+Depending on the type of function whose value we have to calculate over
+the given range:
+\begin{itemize}
+		\item \textit{Idempotent functions}. These functions fulfill the 
+				following condition $f(f(x))=f(x)$. For instance, the maximum
+				and minimum of a list of values are idempotent. 
+				Furthermore, since the GCD and LCM can be seen as 
+				the \say{maximum} and the \say{minimum} of the exponents in the
+				prime factorization, it is only natural that they fulfill the same 
+				property.
+
+				The most important property of these functions for range queries
+				is that we can evaluate the elements of the range several times 
+				without affecting the result. For instance:
+				\[
+						\min(a_l,\dots ,a_r)= \min \left (
+								\min (a_l, \dots,  a_k), \min (a_{k},\dots, a_r)
+						\right ) \quad l < k <r
+				\]
+				even though the union of the intervals includes $a_k$ twice.
+				This is the property in which sparse tables are based.
+
+
+		\item  \textit{Reversible functions}. Functions that have an inverse
+				also have advantages in range queries. That is because we
+				can easily remove elements from any range to obtain a smaller
+				one. In these cases we can obtain the final range by adding
+				and subtracting ranges that have been precalculated.
+
+				For instance, the addition, subtraction and xor operations have 
+				an inverse (subtraction, addition and xor respectively). 
+
+\end{itemize}
+
+\newpage
+Many problems can be transformed into a range query easily.
+
+\subsection{LCA using RMQ}
+To use this algorithm we need a rooted tree with undirected edges where the 
+nodes are labeled in a particular order. Specifically, nodes at a greater
+depth have to be labeled with a greater value. Furthermore, the algorithm
+could be extended to process a forest (instead of a single tree) but 
+this version cannot process forests.
+
+We can traverse the tree using dfs and store in an array each node that we 
+encounter. If we also keep track of the time at which each node was found
+for the first time, the LCA can be converted into calculating the minimum
+in an array of length $E+V$.
+
+\begin{figure}[h!]
+		\centering
+		\resizebox{70 mm}{!}{\subimport{figures/}{LCA_to_RMQ.pdf_tex}}
+\end{figure}
+After running a DFS in the tree, we would get the following array of 
+values and discovery times:
+\begin{figure}[h!]
+		\centering
+		\begin{subfigure}{0.55\textwidth}
+		\centering
+\begin{tikzpicture}
+		\draw (-6,0) pic[]{array_rep={}{1, 2, 4, 
+				2, 5, 2, 1, 3, 6, 8, 6, 3, 7, 3, 1}};
+\end{tikzpicture}
+		\end{subfigure}
+		\begin{subfigure}{0.4\textwidth}
+		\centering
+		\scalebox{0.9}{
+				\begin{tabular}{c|c||c|c}
+						\footnotesize{ \textbf{Node}} & \footnotesize{\textbf{Time}}&
+						\footnotesize{\textbf{Node}} & \footnotesize{\textbf{Time}}\\
+						\hline \hline
+						1 & 0 &5 & 4\\
+						2 & 1 &6 & 8\\
+						3 & 7 &7 & 12\\
+						4 & 2 &8 & 9\\
+				\end{tabular}
+		}
+		\end{subfigure}
+
+\end{figure}
+
+Now if we want to get the LCA between nodes 5 and 6, we have to obtain the minimum
+value in the range [4, 8]. As we can see, the result is obviously 1.
+
+If we compare this approach to binary lifting, we observe that we have a considerably
+more expensive precalculation phase but, afterwards, answering any queries takes
+constant time instead of logarithmic time. In particular, the complexities for this 
+method are:
+\begin{itemize}
+		\setlength{\itemsep}{1pt}
+		\item Precomputate the values: $\mathcal{O}(E\log(E))$
+		\item Calculate the LCA of a node: $\mathcal{O}(1)$
+		\item Memory usage: $\mathcal{O}(E\log(E))$
+\end{itemize}
+Where $E=\text{edges}$.
+
+\newpage
+
+
+\section{Sparse table}
+The sparse table is a data structure that calculates the value of 
+a function over a range of immutable elements with the following complexity:
+\begin{itemize}
+		\setlength{\itemsep}{2 pt}
+		\item \tbf{$\mathcal O(n\log n)$} to build the data structure
+		\item \tbf{$\mathcal O(1)$} to answer queries on a range. 
+		\item \tbf{$\mathcal O(n\log n)$} memory
+\end{itemize}
+Furthermore, the function must be \textbf{idempotent}. This allows the use of
+overlapped intervals in the calculations. A Sparse Table can be adapted to 
+answer queries with more general functions. However, it would lose the constant
+time query capabilities and would be no more efficient than a segment tree or a BIT.
+
+
+On the other hand, the data structure is rather simple, and its implementation 
+is considerable shorter than any other alternatives. 
+
+The table consists of $\log n$ rows. Each one of them contains the value of the
+function in intervals of length $2^j$ where $j$ is the row index. In particular,
+table$[j][i]=f([i,i+2^j])$, where $f(I)$ is the value of $f$ over all the 
+elements in $I$.
+
+To construct the table we take advantage of the fact that the intervals of each
+row are the exact union of two intervals of the previous row. Finally,
+during the look-up process, to obtain the 
+logarithm of each value, we can calculate the most significant bit that is set 
+using \mintinline{cpp}{__builtin_clz()}.
+
+\newpage
+\subsection{Example}
+One of the best applications of the sparse table is to calculate the maximum of 
+any range in an array of elements. The following illustration displays all the 
+intervals that will be included in the sparse table. To avoid intersections, 
+intervals that belong to the same level of the table may be displayed above 
+or below each other.
+
+In each interval, we can see both the index (top left corner) and the value of
+the maximum in that interval. It can also be seen that all intervals can 
+be calculated using the values obtained in the previous level.
+\begin{figure}[h!]
+		\centering
+
+\begin{tikzpicture}
+		\begin{scope}
+				\foreach \m/\c in{
+						0/1,
+						1/3,
+						2/4,
+						3/8,
+						4/6,
+						5/1,
+						6/4,
+						7/2
+				}{
+				\pgfmathtruncatemacro{\om}{\m}
+				\pgfmathsetmacro{\sm}{1*\m}
+				\pgfmathsetmacro{\em}{1+\sm}
+				\node[fit={(\sm,0.9)(\em,1.1)}, inner sep = 0 pt, label = center: \scalebox{0.7}{\om}](A){};
+				\node[fit={(\sm,0.25)(\em,0.75)}, inner sep = 0 pt, label = center: \c](A){};
+				}
+		\end{scope}
+		\begin{scope}
+				\foreach \i/\c in 
+				{
+						0/1,
+						1/3,
+						2/4,
+						3/8,
+						4/6,
+						5/1,
+						6/4,
+						7/2
+				}
+				{
+				\pgfmathsetmacro{\sm}{0.1+1*\i}
+				\pgfmathsetmacro{\lm}{0.1+1*\i+0.2}
+				\pgfmathsetmacro{\em}{0.8+\sm}
+				\node[fit={(\sm,-0.9)(\lm,-0.5)}, inner sep = 0 pt, ](A){\scalebox{0.5}{\i}};
+				\node[draw, fit={(\sm,-1)(\em,-0.5)}, inner sep = 0 pt, label = center: \c](A){};
+				}
+
+				\foreach \i/\c/\m in 
+				{
+						0/3/0,
+						1/4/1,
+						2/8/0,
+						3/8/1,
+						4/6/0,
+						5/4/1,
+						6/4/0
+				}
+				{
+				\pgfmathsetmacro{\sm}{0.1+1*\i}
+				\pgfmathsetmacro{\lm}{0.1+1*\i+0.2}
+				\pgfmathsetmacro{\em}{1.8+\sm}
+				\pgfmathsetmacro{\sh}{-2.25-\m*0.75}
+				\pgfmathsetmacro{\lh}{0.1+\sh}
+				\pgfmathsetmacro{\eh}{0.5+\sh}
+
+				\node[fit={(\sm,\lh)(\lm,\eh)}, inner sep = 0 pt, ](A){\scalebox{0.5}{\i}};
+				\node[draw, fit={(\sm,\sh)(\em,\eh)}, inner sep = 0 pt, label = center: \c](A){};
+				}
+
+				\foreach \i/\c/\m in 
+				{
+						0/8/0,
+						1/8/1,
+						2/8/2,
+						3/8/3,
+						4/6/0
+				}
+				{
+				\pgfmathsetmacro{\sm}{0.1+1*\i}
+				\pgfmathsetmacro{\lm}{\sm+0.2}
+				\pgfmathsetmacro{\em}{3.6+\sm}
+				\pgfmathsetmacro{\sh}{-4.5-\m*0.75}
+				\pgfmathsetmacro{\lh}{0.1+\sh}
+				\pgfmathsetmacro{\eh}{0.5+\sh}
+
+				\node[fit={(\sm,\lh)(\lm,\eh)}, inner sep = 0 pt, ](A){\scalebox{0.5}{\i}};
+				\node[draw, fit={(\sm,\sh)(\em,\eh)}, inner sep = 0 pt, label = center: \c](A){};
+				}
+
+				\foreach \i/\c/\m in 
+				{
+						0/8/0
+				}
+				{
+				\pgfmathsetmacro{\sm}{0.1+1*\i}
+				\pgfmathsetmacro{\lm}{\sm+0.2}
+				\pgfmathsetmacro{\em}{7.2+\sm}
+				\pgfmathsetmacro{\sh}{-8.25-\m*0.75}
+				\pgfmathsetmacro{\lh}{0.1+\sh}
+				\pgfmathsetmacro{\eh}{0.5+\sh}
+
+				\node[fit={(\sm,\lh)(\lm,\eh)}, inner sep = 0 pt, ](A){\scalebox{0.5}{\i}};
+				\node[draw, fit={(\sm,\sh)(\em,\eh)}, inner sep = 0 pt, label = center: \c](A){};
+				}
+
+				\node[anchor=east] (a) at (-0.5,0.45){\texttt{array:}};
+				\node[anchor=east] (a) at (-0.5,-0.75){\texttt{table[0]:}};
+				\node[anchor=east] (a) at (-0.5,-2.5){\texttt{table[1]:}};
+				\node[anchor=east] (a) at (-0.5,-5.5){\texttt{table[2]:}};
+				\node[anchor=east] (a) at (-0.5,-8){\texttt{table[3]:}};
+
+		\end{scope}
+		\end{tikzpicture}
+\end{figure}
+
+\noindent
+Now, if we want to calculate the maximum between indices 2 and 7 we will:
+\begin{enumerate}
+		\setlength{\itemsep}{2pt}
+		\item Calculate the length of the interval. In this case, $7-2+1=6$
+		\item Calculate the maximum value of $k$  such that $2^k<6$. In this
+				case, $k=2$.
+		\item Pick the interval that starts on 2 with length $2^k=4$ and the
+				interval that starts on $7-2^k+1$ with the same length. 
+				That is to say, intervals 2 and 4 from level 2 of the table.
+
+				As we can see these intervals cover the entire range, albeit 
+				they overlap. However, the overlap does not affect the result
+				of the maximum.
+		\item Take the maximum between the values of the two intervals 
+				selected: $\max(8,6)=8$
+\end{enumerate}
+
+\newpage
+\cppcode[firstline=20]{code/SparseTable.cpp}
+\newpage
+
+\subsection{Sparse Table {\scriptsize(sort of)} with $\mathcal{O}(n)$ memory}
+
+This variant of the sparse table is only capable of answering very
+specific queries. In particular, the operation must meet the following
+constraints:
+\begin{itemize}
+		\setlength{\itemsep}{2pt}
+		\item It is idempotent (as in a normal Sparse Table)
+		\item The result of the operation over a range is an element
+				in that range
+\end{itemize}
+Therefore, this data structure will mostly only be used for querying the
+maximum or the minimum over a range. On the other hand, we obtain a data 
+structure that uses significantly less memory and can be built in
+considerably less time, albeit with slower queries.
+\subsection*{Explanation}
+With that goal in mind, we will group the elements of the array in blocks.
+These blocks should be of size $\log (n)$. However, since $n$ will never
+be larger than $2^{30}$, we can set their size to 30. Now  we will build 
+two data structures:
+\begin{itemize}
+		\setlength{\itemsep}{2pt}
+		\item A Sparse Table where each element is a block of the array. 
+				In order to simplify this task, in the Sparse Table we will
+				store the index of the result of applying the operation to the 
+				range instead of the result itself. 
+
+				Therefore, the elements in the first row of the table will be the 
+				index of the result of applying the operation to each block of the array while
+				the elements in the following layers will represent applying the
+				operation to 2, 4, 8 \dots blocks.
+
+		\item A structure that stores the result for every range of 30 contiguous 
+				elements in the array.
+\end{itemize}
+
+If we have these two data structures we can split the (large) query into three subqueries
+that will most likely overlap. In particular, we will split the range $[l, r]$ into:
+\begin{itemize}
+		\setlength{\itemsep}{0pt}
+		\item A range of size 30 starting at $l$.
+		\item The blocks that are fully contained within the interval.
+		\item A range of size 30 that ends at $r$.
+\end{itemize}
+The middle range will be processed using the Sparse Table of blocks while the other 
+two must be calculated using the new data structure.
+
+\begin{figure}[h!]
+		\centering
+		\resizebox{0.75\textwidth}{!}{\subimport{figures/}{Optimized_Sparse.pdf_tex}}
+\end{figure}
+\newpage
+In order to answer the small queries, we will use a bitmask for every position. That
+is to say, a vector of $n$ integers where each of them is a bitmask for that position.
+Let's look at the bitmask of position $r$. The bit $r-k, \ (k<30)$ will 
+be one iff that element is the result in the range $[r-k, r]$.  
+For instance, at position $6$ of this example array the bitmask would be:
+\begin{figure}[h!]
+\centering
+\begin{tikzpicture}
+		\begin{scope}[]
+				\foreach \m/\c/ \v in{
+						0/1/1,
+						1/4/0,
+						2/2/1,
+						3/6/0,
+						4/7/0,
+						5/4/1,
+						6/5/1
+				}{
+				\pgfmathtruncatemacro{\om}{\m}
+				\pgfmathsetmacro{\sm}{0.5*\m}
+				\pgfmathsetmacro{\em}{0.5+\sm}
+				\node[draw, fit={(\sm,0)(\em,0.5)}, inner sep = 0 pt, label = center: \c](A){};
+				\node[fit={(\sm,0.6)(\em,0.8)}, inner sep = 0 pt, label = center: \scalebox{0.7}{\om}](A){};
+				\node[fit={(\sm,-1)(\em,0)}, inner sep = 0 pt, label = center: \scalebox{0.9}{\v}](A){};
+				}
+		\end{scope}
+		\node[anchor=east] (a) at (-0.5,0.25){\texttt{array:}};
+		\node[anchor=east] (a) at (-0.5,-0.5){\texttt{mask:}};
+\end{tikzpicture}
+\end{figure}
+This bitmask approach is particularly useful because the vector of bitmasks can be built in linear time. 
+If we look at the code below (\texttt{build\_mask()}), the \texttt{while} loop 
+will only be executed at most once for every element while 
+the \texttt{for} loop iterates through all elements exactly once.
+
+\cppcode[firstline=20]{code/Linear_RMQ.cpp}
+
+
+
+
+\newpage
+\section{Fenwick tree (BIT)}
+A Fenwick tree or binary indexed tree (BIT) can be used to calculate the value
+of a \textbf{reversible} function $F$ over a range of values. Given an array of elements
+$A$ of size $N$:
+\begin{itemize}
+		\setlength{\itemsep}{2pt}
+		\item Given a range $[l,r]$, the value $F(a_l,\dots, a_r)$ can be calculated
+				in \tbf{$\mathcal{O}(\log n)$}
+		\item Updating one of the values of the array takes \tbf{$\mathcal{O}(\log n)$}
+		\item Requires the same amout of memory as the array $A$
+\end{itemize}
+To do so, we create a new array \texttt{ft} where each element represents
+the value of the function over a particular range. Let LSOne($i$) be the 
+result of setting to 0 all bits of $i$ except for the least significant one.
+For instance, LSOne$(0110)=0010$. Then, the $i$-th element of \texttt{ft} 
+contains the value $F(a_{i-\text{LSOne}(i)+1},\dots, a_{i})$. 
+
+In most cases, $F$ will be the sum of all elements $F(a_l,\dots, a_r)=\sum_l^r{a_i}$.
+In that case, \text{ft[i]} contains the sum of all the elements from 
+position $i-\text{LSOne}(i)$ (excluded) to position $i$ (included).
+
+
+It is also important to note that this BIT is \textbf{1-indexed interally} to simplify slightly 
+the implementation. However, the interface automatically subtracts one to all index parameters
+given.
+\subsection*{Range Update and Point Query}
+The standard BIT allows point update and range query. Using a difference array, we can 
+transform them into range update and point query. If $B$ is the difference array
+of $A$, the elements of $B$ are defined as:  $b_i=a_i- a_{i-1}$ and $b_1=a_1$.
+Therefore:
+\begin{itemize}
+		\setlength{\itemsep}{2pt}
+		\item $\sum_{1}^i b_j=a_i$, converting the range query into 
+				a point query
+		\item To update the elements in the range $[l,r]$ by $d$, we can add
+				$d$ to the $l$-th element and subtract $d$ from the $r$-th element.
+				In doing so, queries that reach until a point
+				between $l$ and $r$ will be increased by $d$ but queries that reach 
+				further will not be affected.
+				Therefore, we have converted two point updates into a range update.
+
+\end{itemize}
+
+\subsection*{Example}
+For instance, if we use the addition operation, array on the left would be processed
+into the BIT tree displayed on the right. Each box under the BIT tree represents
+the elements that are added to get the value of that position.
+\begin{figure}[h!]
+		\centering
+		\scalebox{0.80}
+		{
+\begin{tikzpicture}
+		\begin{scope}[shift={(-6,0)}]
+				\foreach \m/\c in{
+						0/1,
+						1/3,
+						2/4,
+						3/8,
+						4/6,
+						5/1,
+						6/4,
+						7/2
+				}{
+				\pgfmathtruncatemacro{\om}{\m}
+				\pgfmathsetmacro{\sm}{0.5*\m}
+				\pgfmathsetmacro{\em}{0.5+\sm}
+				\node[draw, fit={(\sm,0)(\em,0.5)}, inner sep = 0 pt, label = center: \c](A){};
+				\node[fit={(\sm,0.6)(\em,0.8)}, inner sep = 0 pt, label = center: \scalebox{0.7}{\om}](A){};
+				}
+		\end{scope}
+		\begin{scope}
+				\foreach \m/\c in{
+						0/1,
+						1/4,
+						2/4,
+						3/16,
+						4/6,
+						5/7,
+						6/4,
+						7/29
+				}{
+				\pgfmathtruncatemacro{\om}{\m+1}
+				\pgfmathsetmacro{\sm}{0.5*\m}
+				\pgfmathsetmacro{\em}{0.5+\sm}
+				\node[draw, fit={(\sm,0)(\em,0.5)}, inner sep = 0 pt, label = center: \c](A){};
+				\node[fit={(\sm,0.6)(\em,0.8)}, inner sep = 0 pt, label = center: \scalebox{0.7}{\om}](A){};
+				}
+				\draw (0, -1) rectangle ++(0.5,0.3);
+				\draw [->] (0.25,-0.7)--(0.25,0);
+				\draw (1, -1) rectangle ++(0.5,0.3);
+				\draw [->] (1.25,-0.7)--(1.25,0);
+				\draw (2, -1) rectangle ++(0.5,0.3);
+				\draw [->] (2.25,-0.7)--(2.25,0);
+				\draw (3, -1) rectangle ++(0.5,0.3);
+				\draw [->] (3.25,-0.7)--(3.25,0);
+
+				\draw (0, -1.7) rectangle ++(1.0,0.3);
+				\draw [->] (0.75,-1.4)--(0.75,0);
+
+				\draw (2, -1.7) rectangle ++(1.0,0.3);
+				\draw [->] (2.75,-1.4)--(2.75,0);
+
+				\draw (0, -2.4) rectangle ++(2.0,0.3);
+				\draw [->] (1.75,-2.1)--(1.75,0);
+
+				\draw (0, -3.1) rectangle ++(4.0,0.3);
+				\draw [->] (3.75,-2.8)--(3.75,0);
+
+		\end{scope}
+\end{tikzpicture}
+}
+\end{figure}
+
+\newpage
+\cppcode[firstline=20]{code/BIT.cpp}
+
+\section{Segment Trees}
+A Segment Tree is a data structure that allows answering range queries 
+over a range effectively while permitting modifications to
+be performed to the elements in the array. 
+Furthermore, a Segment Tree can answer many types of queries.
+In fact, we only need that the operation satisfies the following property:
+\begin{center}
+		\itshape
+		The value of a range can be calculated from the values of two
+		disjoint subranges whose union is the entire range.
+\end{center}
+Most common operations such as the maximum, the minimum or the gcd
+all fulfill this property.  For instance, in the case of the sum:
+\[
+		i<k<j \implies \mathrm{sum}(a_i, \dots, a_j) = 
+		\mathrm{sum}(a_i, \dots, a_k)+
+		\mathrm{sum}(a_{k+1}, \dots, a_j)
+\]
+However, sometimes it may be necessary to store additional information in 
+the vertices of the Segment Tree to be able to construct the solution
+from the data from the two subranges.
+The time complexities are the following:
+\begin{itemize}
+		\boldmath
+		\item Build time: $\mathcal{O}(n\log n)$ 
+		\item Query: $\mathcal{O}( \log n)$
+		\item Update $\mathcal{O}( \log n)$
+\end{itemize}
+\subsubsection*{Example problem}
+We are given a string $s$ consisting only of 0s and 1s. We must be able
+to perform the following types of queries:
+\begin{itemize}
+		\setlength{\itemsep}{0pt}
+		\item Calculate the length of the maximum continuous substring of 1s
+				inside a given interval
+		\item Flip all numbers in an interval. That is to say, all 1s turn
+				into 0s and the other way around.
+\end{itemize}
+In this case, we need to use lazy propagation and store the following information
+in each node:
+\begin{minted}{cpp}
+struct node{
+	int prefix1s, sufix1s, prefix0s, sufix1s;
+	int longestInterval0, longestInterval1;
+	int lazyFlip;
+};
+\end{minted}
+Storing the prefix and suffix information allows us to calculate the value of
+intervals that begin in the elements corresponding to the left child and
+end in elements that correspond to the right child. Therefore, we will be able 
+to calculate the answer of each node looking only at their children.
+
+\newpage
+\subsection{Lazy propagation}
+Lazy propagation enables the Segment Tree to perform updates over a range 
+in logarithmic time. However, in order to be able to use this technique we
+need the following property:
+\begin{center}
+\itshape
+Two updates that affect the same node can be merged into a single update 
+\end{center}
+As with the basic property of Segment Trees, this one also holds true for
+the most common operations. In fact, as long as there is only one type of
+update query, it will generally be true.
+However, in scenarios where different updates may be requested, it is critical
+that they can be merged. 
+\subsubsection*{Example}
+Problem \texttt{UVa-11402} boils down to performing the following three
+operations over ranges of a binary string and then counting the number 
+of 1s in any range.  Otherwise, the number of nodes modified by a single
+query would be $\mathcal{O}(n)$, which would ruin the logarithmic time
+complexity.
+\begin{enumerate}
+		\setlength{\itemsep}{0pt}
+		\item Set all positions in the range to 1
+		\item Set all positions in the range to 0
+		\item Flip all positions in the range 
+\end{enumerate}
+In this case, when propagate the lazy value stored in a node to their 
+children, we must \say{merge} it with the lazy value already stored
+in the children. For instance:
+\begin{center}
+\texttt{lazy[node] = 1 \& lazy[child] = 2 $\implies$ 
+lazy[child] = 1} 
+\end{center}
+\subsubsection*{Lazy lazy propagation}
+In some cases, we can avoid the push down operation. Instead,
+we can store the lazy values in the nodes that they are
+stored into during the usual update procedure and collect
+the values on the way up during the query process. For instance,
+to implement range updates and point queries, in an initially
+empty array, we might use the following code:
+\cppcode[firstline=28, lastline=51]{code/LazyLazy.cpp}
+However, this technique can only be used in very simple cases
+as we can very easily run into timing issues when the 
+effect of the queries depends on the previous queries.
+
+Nevertheless, when it can be used, it reduces a lot of the overhead
+associated with range queries in the segment tree.
+
+
+\subsection{Range update and query}
+Even though the implementation of a Segment Tree highly depends
+on the nature of the update queries, the following implementation
+should at least serve as a starting point in many situations.
+
+The template parameters have the following meaning:
+\begin{itemize}
+		\item \texttt{T}. Type of the elements that are stored
+				in every node. Note that this could be a structure
+				with many fields as we saw in the first example
+				problem of this section.
+
+		It is also important to note that if a \texttt{struct} is
+		used, an equality operator must be defined.
+		\item \texttt{merge}. This function takes the values
+				of the children of a given node and returns the
+				value of that node.
+
+				\textbf{Note that in this implementation, this same function
+				is used to merge the propagation values.} This will work
+				for simple problems, but more complex ones will need a separate
+				function to merge these.
+		\item \texttt{initialize}. This function takes the position of
+				the element and returns the initial value of that element.
+				In most cases, it will simply contain an array look-up. However,
+				it can also initialize all positions to a constant value or to
+				any value that can be calculated from the position.
+		\item \texttt{neutral}. This is a \texttt{constexpr} value that stores
+				an element that will be ignored by the merge function. For instance,
+				if the operation was the sum, this value would be 0 and if the 
+				operation was the minimum, this value could be $+\infty$. 
+\end{itemize}
+\cppcode[firstline=20,]{code/SegmentTree.cpp}
+\newpage
+\subsection{Persistent segment trees}
+In some scenarios it is useful to be able to execute a query or an update on a
+previous state of the segment tree. To implement this feature in our segment
+tree, we could create a new segment tree every time that we execute an update.
+However, if we were to answer $q$ queries with this approach, the complexity 
+be $\mathcal{O}(q \, n\log n)$. However, by using persistent segment trees,
+we can bring the complexity down to $\mathcal{O}(q\log n)$ while having full 
+access to all previous states of the segment tree.
+
+In order to do so, we have to observe that each query will at most modify 
+$\log n$ nodes. Therefore, we can create new versions for those nodes
+while keeping the rest of the nodes. The simplest way to implement this concept
+is with a pointer-based implementation of the segment tree.
+
+\subsubsection{Implementation}
+The following implementation calculates range sums and allows point updates.
+The first element of the implementation is the \texttt{node} structure.
+This represents a single node in the persistent segment tree and can belong
+to different versions of the segment tree. Therefore, we will allocate it
+in the heap and leave it there for all versions to access.
+\cppcode[firstline=20,lastline =27]{code/PersistentSegTree.cpp}
+
+The rest of the implementation can be split into two parts. The first one is
+the \say{private} one, which deals with the nodes itself while the second
+part is the interface that should be used to interact with the segment
+tree. Nevertheless, no members are private since in some scenarios 
+(walking down the tree) we might need to access the internal members.
+
+Regarding the private section, we have three functions:
+\begin{itemize}
+		\item \texttt{build} creates a segment tree initialized to 0
+				and returns a pointer to the root node
+		\item \texttt{\_query} is completely analogous to the normal query
+				function in a segment tree
+		\item \texttt{\_update} performs the same action as the 
+				\say{traditional} update function. However, it returns 
+				a pointer to the new node that was created with the updated
+				value. We can  see in line 63 how the newly created nodes
+				partially point to older nodes in the segment trees (those
+				whose value was not modified by the query) 
+\end{itemize}
+
+\cppcode[firstline=29,lastline =69]{code/PersistentSegTree.cpp}
+\newpage
+Finally, the interface of the persistent segment tree only has two operations,
+it can either query a range or perform an update, which would return a
+new \texttt{PersistentSegTree}.
+In both cases, the functions only set the right internal variables and call the
+private ones. 
+
+It is important to remember the declaration on line 87 of the static variables
+used internally by the segment tree. These must be declared outside the 
+class.
+\cppcode[firstline=73,lastline =89]{code/PersistentSegTree.cpp}
+
+\subsubsection{Example}
+As an example, in problem \texttt{SPOJ-KQUERY}, the creation of the versions 
+of the segment tree is performed as follows:
+\begin{minted}{cpp}
+vector<PersistSegTree> versions;
+versions.push_back(PersistSegTree(n));
+for (int i = 0; i < n; ++i) {
+	int value = getCompressed[originalData[i]];
+	versions.push_back(versions.back().update(value, 1));
+}
+\end{minted}
+And, afterwards, we can query a specific version $i$ of the segment tree 
+between $a$ and $b$ by using:
+\begin{minted}{cpp}
+int ans = versions[i].query(a,b);
+\end{minted}
+\newpage
+\subsubsection{Example}
+Let us consider how the range sum persistent segment tree would behave 
+during some queries.
+In this example, we will start by constructing a persistent segment
+tree over an array \\ \texttt{a = [0, 0, 0, 0, 0, 1]}. This will result on
+the segment tree in black.
+Now, we will perform the following queries:
+\begin{itemize}
+		\item \textit{Add 1 to the first position}. To do so, we have to
+				change all ancestors of the first leaf. This process will
+				lead to the segment tree in blue. The key observation here is
+				the fact that we have only added 4 blue nodes and some of them
+				are connected to black nodes. In doing so, we can reuse nodes 
+				that have not been modified.
+		\item \textit{Add 1 to the second position}. This will result in the
+				segment tree in green, which has nodes connected to both black 
+				and green node. Again, this enables us to change only
+				$\mathcal{O}(\log n)$ nodes in each iteration.
+
+\end{itemize}
+\begin{figure}[h!]
+		\centering
+		\resizebox{90 mm}{!}{\subimport{figures/}{persegtree.pdf_tex}}
+\end{figure}
+As we can see, if we keep track of the roots that are created in each update,
+we can access any version of the segment tree.
+\newpage
+\subsubsection{Number of elements less or equal than $k$ in a range}
+An example of this problem is \texttt{SPOJ-KQUERY}
+In order to solve this problem we will build a histogram of every prefix of
+the array. Given the example array \texttt{a}, the histograms of the different
+prefixes are the rows of the table.
+\begin{figure}[h!]
+		\centering
+		\begin{subfigure}[t]{0.4\textwidth}
+		\begin{center}
+		\begin{tikzpicture}
+				\draw (-6,0) pic[]{array_rep={a =}{5,1,2,5,2,3}};
+		\end{tikzpicture}
+		\end{center}
+		\end{subfigure}
+		\begin{subfigure}[t]{0.55\textwidth}
+		\begin{center}
+				\begin{tabular}{c|ccccc}
+						Length & 1 & 2 & 3 & 4 & 5 \\ \hline
+							 1 & 0 & 0 & 0 & 0 & 1 \\
+							 2 & 1 & 0 & 0 & 0 & 1 \\
+							 3 & 1 & 1 & 0 & 0 & 1 \\
+							 4 & 1 & 1 & 0 & 0 & 2 \\
+							 5 & 1 & 2 & 0 & 0 & 2 \\
+							 6 & 1 & 2 & 1 & 0 & 2 \\
+				\end{tabular}
+		\end{center}
+		\end{subfigure}
+\end{figure}
+Now, we can build a persistent segment tree for those histograms. The first
+version of the segment tree will contain the histogram of the empty
+prefix, the second version will contain the histogram of the prefix of length
+one\ldots. Since each histogram only differs from the previous one in one value,
+the persistent segment tree will only have $n+1$ version. To create these 
+versions, we could execute:
+\begin{minted}{cpp}
+vector<PersistSegTree> versions;
+versions.push_back(PersistSegTree(n)); // Empty histogram
+for (int i = 0; i < n; ++i){
+	versions.push_back(versions.back().update(a[i], 1));
+}
+\end{minted}
+
+Now, if we are given a range $[l,r]$ (1-indexed) and asked to return the number
+of elements
+less or equal to $k$ in that range, we can calculate it in the following way:
+\begin{minted}{cpp}
+int ans = versions[l].query(0,k) - versions[r-1].query(0,k);
+\end{minted}
+\subsubsection{Find the $k$-th smallest element in a range (Slow)}
+Create a segment tree of size $n$ and iterate through the elements in the 
+array sorted by value. At each iteration, set the positions corresponding 
+to that element to 1. 
+
+Then, when asked a query in a range we just have to know which is the first
+version that has at least $k$ positions set to 1 in that range. 
+This can easily be accomplished with a binary search over the segment trees. 
+However, this binary search introduces another log factor in the complexity,
+which gives the solution an $\mathcal{O}(q\log^2n)$ time complexity to answer
+$q$ queries.
+\newpage
+\subsubsection{Find the $k$-th smallest element in a range (Fast)}
+Now we will solve the same problem but with a time complexity of 
+$\mathcal{O}(q\log n)$. To do so, we will use a similar approach as in 
+the first application of the persistent segment tree and build a histogram 
+for every prefix. 
+When we get a query for the range $[l,r]$, we can walk down the segment tree
+. In each node, we will check whether
+the answer is in the left or the right child. There are two options:
+\begin{itemize}
+		\item The sum of the left child is greater or equal to the target value.
+				In this case, the answer is one of the indices of the left
+				child since we are looking for the first index whose sum is
+				at least $k$.
+		\item The sum of the left child is less than the target value. Then 
+				the solution is one of the indices of the right child.
+				However, before continuing the search, we have to update the 
+				target value and subtract from it the sum of the left child.
+				This is because once we descend to the right subtree, the nodes
+				that we will encounter only contain the sum up to the end of
+				the right subtree.
+\end{itemize}
+Finally, we have to take into account that we do not have a specific segment
+tree for the range $[l,r]$ but it is easy to see that the values in this 
+segment tree would be the difference between the two segment trees in the 
+edges of the range. Therefore, to calculate the answer:
+\cppcode[firstline=90 ,lastline=103]{code/PersistentSegTree.cpp}
+\begin{minted}{cpp}
+// In main():
+int res = findKth(histograms[l-1].head, histograms[r].head, 0, size - 1, k);
+\end{minted}
+An example of this problem is \texttt{SPOJ-MKTHNUM}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
