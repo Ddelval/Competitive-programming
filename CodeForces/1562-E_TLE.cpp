@@ -210,32 +210,62 @@ template <typename T> struct SuffixArray {
     }
 };
 
-template <typename T> class SparseTable {
-private:
-    vector<vector<T>> table;
-    std::function<T(T, T)> f;
+SuffixArray<string> sf;
+int msb_index(int x) { return __builtin_clz(1) - __builtin_clz(x); }
+bool cmp_less(pii a, pii b) {
+    // cout << a << " " << b << endl;
+    if (a.se == -1) {
+        return false;
+    }
+    if (b.se == -1) {
+        return true;
+    }
+    int lenToCmp = min(a.se, b.se);
+    int j = msb_index(lenToCmp);
+    lenToCmp -= (1 << j);
 
-public:
-    SparseTable(vector<T> &data, std::function<T(T, T)> f) : f(f) {
-        int n = data.size();
-        table.pb(data);
-        for (int j = 1; (1ll << j) <= n; ++j) {
-            vector<T> nextRow(n);
-            for (int i = 0; i + (1ll << j) <= n; ++i) {
-                int otherIndex = i + (1ll << (j - 1));
-                nextRow[i] = f(table.back()[i], table.back()[otherIndex]);
-            }
-            table.push_back(std::move(nextRow));
+    int cla11 = sf.classes[j][a.fi];
+    int cla21 = sf.classes[j][b.fi];
+    if (cla11 != cla21) {
+        return cla11 < cla21;
+    }
+    int cla12 = sf.classes[j][a.fi + lenToCmp];
+    int cla22 = sf.classes[j][b.fi + lenToCmp];
+    if (cla12 != cla22) {
+        return cla12 < cla22;
+    }
+    return a.se < b.se;
+}
+
+int lis(vector<pii> const &ve) {
+    int n = ve.size();
+
+    vector<pii> d(n + 1, {-1, -1});
+
+    d[0] = ve[0];
+    int max_index = 0;
+    for (int i = 1; i < n; ++i) {
+        // cout << "iter " << i << " " << ve[i] << " | " << d << endl;
+        int j =
+            upper_bound(d.begin(), d.begin() + max(n, max_index + 1), ve[i], cmp_less) -
+            d.begin();
+        if (j == max_index) {
+            max_index++;
+        }
+        if (j == 0 && cmp_less(ve[i], d[j])) {
+            d[j] = ve[i];
+        } else if (j && cmp_less(d[j - 1], ve[i]) && cmp_less(ve[i], d[j])) {
+            d[j] = ve[i];
         }
     }
-    static int msb_index(int x) { return __builtin_clz(1) - __builtin_clz(x); }
-
-    T valueInRange(int left, int right) {
-        int j = msb_index(right - left + 1);
-        ll intervalSize = 1ll << j;
-        return f(table[j][left], table[j][right - intervalSize + 1]);
+    int ans = 0;
+    for (int i = 0; i <= n; ++i) {
+        if (d[i] != pii{-1, -1}) {
+            ans = i;
+        }
     }
-};
+    return ans;
+}
 
 int main() {
     ios::sync_with_stdio(false);
@@ -248,40 +278,15 @@ int main() {
         cin >> n;
         string s;
         cin >> s;
-        auto sf = SuffixArray<string>(s + '$');
-        vi posInSf(n, 0);
+        sf = SuffixArray<string>(s + '$');
+        // cout << sf.classes << endl;
+        vector<pii> pairs;
         for (int i = 0; i < n; ++i) {
-            posInSf[sf[i + 1]] = i + 1;
-        }
-        vi lcp = sf.computeLCP();
-        echo(lcp);
-        SparseTable<int> rmq(lcp, [](int a, int b) { return min(a, b); });
-        auto getMaxLCP = [&](int i1, int i2) {
-            i1 = posInSf[i1];
-            i2 = posInSf[i2];
-            return rmq.valueInRange(min(i1, i2), max(i1, i2) - 1);
-        };
-        echo(sf.sa);
-        echo(posInSf);
-        vi dp(n);
-        int ma = 0;
-        for (int i = 0; i < n; ++i) {
-            dp[i] = n - i;
-            for (int j = 0; j < i; ++j) {
-                int lcp = getMaxLCP(i, j);
-                if (lcp >= n - i) {
-                    continue;
-                }
-                // cout << s.substr(i, n - i) << " " << s.substr(j, n - j) << "
-                // "
-                //<< lcp << endl;
-                if (s[i + lcp] > s[j + lcp]) {
-                    dp[i] = max(dp[i], dp[j] + n - (i + lcp));
-                }
+            for (int j = 1; j <= n - i; ++j) {
+                pairs.pb({i, j});
             }
-            ma = max(ma, dp[i]);
         }
-        cout << ma << "\n";
+        cout << lis(pairs) + 1 << endl;
     }
 
     return 0;

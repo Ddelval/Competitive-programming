@@ -1,5 +1,5 @@
-//  1538-G.cpp
-//  Created by David del Val on 26/08/2021
+//  1538-E.cpp
+//  Created by David del Val on 27/08/2021
 //
 //
 // https://github.com/Ddelval/Competitive-programming/blob/master/template.cpp
@@ -118,50 +118,82 @@ int iinf = INT_MAX / 10;
 // Judge constraints
 #endif
 
-ll x, y, a, b;
-bool possible(ll z) {
-    echo(z);
-    ll w1 = floor((x - a * z) / (double)(b - a));
-    ll w2 = ceil((b * z - y) / (double)(b - a));
-    echo(w1);
-    echo(w2);
-    w1 = min(w1, z);
-    w2 = max(w2, 0ll);
-    if (w2 <= w1) {
-        return true;
-    } else {
-        return false;
+ll countApear(string const &s) {
+    ll index = 0;
+    ll res = 0;
+    while (index = s.find("haha", index), index != string::npos) {
+        res++;
+        index++;
+        if (index == s.length()) {
+            break;
+        }
     }
+    return res;
 }
+struct node {
+    string ending; // Only length 3
+    string begining;
+    node *left = nullptr, *right = nullptr;
+    ll ocur = 0;
+    node() {}
+    node(node *l, node *r) : left(l), right(r) {
+        if (r->ending.length() < 3) {
+            string c1 = l->ending + r->ending;
+            int l = min(3, (int)c1.length());
+            ending = c1.substr((int)c1.length() - l, l);
+        } else {
+            ending = r->ending;
+        }
+        if (l->begining.length() < 3) {
+            string c1 = l->begining + r->begining;
+            int l = min(3, (int)c1.length());
+            begining = c1.substr(0, l);
+        } else {
+            begining = l->begining;
+        }
+        string c = l->ending + r->begining;
+        ocur = countApear(c) + l->ocur + r->ocur;
+    }
+    node(string s) {
+        int len = min((int)s.length(), 3);
+        begining = s.substr(0, len);
+        ending = s.substr(int(s.length()) - len, len);
+        ocur = countApear(s);
+        echo(ocur);
+    }
+};
 
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
+
     int t;
     cin >> t;
     while (t--) {
-        cin >> x >> y >> a >> b;
-        if (b < a) {
-            swap(a, b);
-            swap(x, y);
-        }
-        if (b == a) {
-            cout << min(x, y) / a << "\n";
-            continue;
-        }
-        ll l = 0;
-        ll r = x + y;
-        while (r - l > 1) {
-            ll mid = (l + r) / 2;
-            if (possible(mid)) {
-                l = mid;
+        int n;
+        cin >> n;
+        vector<node> nodes(2 * n);
+        map<string, node *> variables;
+        for (int i = 0; i < n; ++i) {
+            string as;
+            string op;
+            echo(i);
+            cin >> as >> op;
+            if (op == ":=") {
+                string val;
+                cin >> val;
+                nodes.push_back(node(val));
+                variables[as] = &nodes.back();
             } else {
-                r = mid;
+                string c1, o, c2;
+                cin >> c1 >> o >> c2;
+
+                nodes.push_back(node(variables[c1], variables[c2]));
+                variables[as] = &nodes.back();
             }
         }
-        cout << l << "\n";
+        cout << nodes.back().ocur << "\n";
     }
-
     return 0;
 }
