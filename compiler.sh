@@ -2,16 +2,17 @@
 
 makefile="
 
-DEBUG_FLAGS=-Wall -fsanitize=address -g -DDEBUG -DLOCAL
+DEBUG_FLAGS=-Wall -fsanitize=address -g -DDEBUG -DLOCAL -Wshadow
 SPEED_FLAGS=-O2
+COMPILER=g++-11
 a_db.out: $2
-	g++-10  $^  \$(DEBUG_FLAGS) -o a_db.out
+	\$(COMPILER)  $^  \$(DEBUG_FLAGS) -o a_db.out
 
 a_f.out: $2
-	g++-10  $^  \$(SPEED_FLAGS) -o a_f.out
+	\$(COMPILER)  $^  \$(SPEED_FLAGS) -o a_f.out
 
 a.out: $2
-	g++-10 $^ 
+	\$(COMPILER) $^ 
 "
 
 if [[ $# -ne 2 ]]; then
