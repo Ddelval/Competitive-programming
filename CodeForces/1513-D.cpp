@@ -1,5 +1,5 @@
 //  1513-D.cpp
-//  Created by David del Val on 06/09/2021
+//  Created by David del Val on 08/09/2021
 //
 //
 // https://github.com/Ddelval/Competitive-programming/blob/master/template.cpp
@@ -117,65 +117,71 @@ int iinf = INT_MAX / 10;
 #else
 // Judge constraints
 #endif
-template <typename T> class SparseTable {
-private:
-    vector<vector<T>> table;
-    std::function<T(T, T)> f;
 
-public:
-    SparseTable(vector<T> &data, std::function<T(T, T)> f) : f(f) {
-        int n = data.size();
-        table.pb(data);
-        for (int j = 1; (1ll << j) <= n; ++j) {
-            vector<T> nextRow(n);
-            for (int i = 0; i + (1ll << j) <= n; ++i) {
-                int otherIndex = i + (1ll << (j - 1));
-                nextRow[i] = f(table.back()[i], table.back()[otherIndex]);
-            }
-            table.push_back(std::move(nextRow));
-        }
-    }
-    static int msb_index(int x) { return __builtin_clz(1) - __builtin_clz(x); }
-
-    T valueInRange(int left, int right) {
-        int j = msb_index(right - left + 1);
-        ll intervalSize = 1ll << j;
-        return f(table[j][left], table[j][right - intervalSize + 1]);
-    }
-};
-SparseTable<int> gcds, mins;
-int n, p;
-// Two extremes of the interval (included)
-pii rangeForward(int pos) {
-    if (gcds.valueInRange(pos, n - 1) == mins.valueInRange(pos, n - 1)) {
-        return pii(pos, n - 1);
-    }
-    int r = n - 1;
-    int l = pos;
-    while(r-l>1){
-        int mid;
-        if()
-    }
-}
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
-
     int t;
     cin >> t;
     while (t--) {
+        ll n, p;
         cin >> n >> p;
-        vi data = readVector<int>(n);
-        gcds = SparseTable<int>(data, [](int a, int b) { return _gcd(a, b); });
-        mins = SparseTable<int>(data, [](int a, int b) { return min(a, b); });
-
-        ll cost = 0;
-        priority_queue<pii, vector<pii>, greater<pii>> elems;
-        set<int> remaining;
-        for (int i = 1; i < n; ++i) {
-            remaining.insert(i);
+        vii elems(n);
+        vi data(n);
+        for (int i = 0; i < n; ++i) {
+            cin >> data[i];
+            elems[i] = {data[i], i};
         }
+        sort(all(elems));
+        vi taken(n, 0);
+        int connected = 0;
+        ll cost = 0;
+        echo(elems);
+        for (auto ele : elems) {
+            if (taken[ele.se]) {
+                continue;
+            }
+            if (ele.fi >= p) {
+                break;
+            }
+            int pos = ele.se - 1;
+            echo(ele);
+            while (pos >= 0) {
+                echo(data[pos]);
+                if (_gcd(data[pos], ele.fi) != ele.fi) {
+                    break;
+                }
+                echo(pos);
+                connected++;
+                cost += ele.fi;
+                if (taken[pos]) {
+                    break;
+                }
+                taken[pos] = true;
+                pos--;
+            }
+            pos = ele.se + 1;
+            db({ cout << "Second" << endl; });
+            while (pos < n) {
+                echo(data[pos]);
+                if (_gcd(data[pos], ele.fi) != ele.fi) {
+                    break;
+                }
+                echo(pos);
+                connected++;
+                cost += ele.fi;
+                if (taken[pos]) {
+                    break;
+                }
+                taken[pos] = true;
+                pos++;
+            }
+            taken[ele.se] = true;
+        }
+        echo(connected);
+        cost += (n - 1 - connected) * p;
+        cout << cost << "\n";
     }
 
     return 0;
