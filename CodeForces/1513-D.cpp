@@ -143,20 +143,7 @@ public:
         return f(table[j][left], table[j][right - intervalSize + 1]);
     }
 };
-SparseTable<int> gcds, mins;
-int n, p;
-// Two extremes of the interval (included)
-pii rangeForward(int pos) {
-    if (gcds.valueInRange(pos, n - 1) == mins.valueInRange(pos, n - 1)) {
-        return pii(pos, n - 1);
-    }
-    int r = n - 1;
-    int l = pos;
-    while(r-l>1){
-        int mid;
-        if()
-    }
-}
+
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);

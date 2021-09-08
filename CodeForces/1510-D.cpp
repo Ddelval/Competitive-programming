@@ -23,7 +23,7 @@ using namespace std;
 
 typedef long long ll;
 typedef vector<int> vi;
-typedef vector<double> vl;
+typedef vector<ll> vl;
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
 typedef vector<pii> vii;
@@ -118,59 +118,61 @@ int iinf = INT_MAX / 10;
 // Judge constraints
 #endif
 
+set<int> lookup[10][10];
+const int lim = 1e5;
+ll dp[lim][10];
+
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
     int n, d;
     cin >> n >> d;
-    vl opts(10, 0);
-    map<int, map<int, pii>> prev;
-    vi lastModified(10, -1);
-    vi data = readVector<int>(n);
+    vl data = readVector(n);
+    int lDigit = 1;
+    for (auto a : data) {
+        lDigit *= a;
+        lDigit %= 10;
+    }
 
-    for (int i = 0; i < n; ++i) {
-        int last = data[i] % 10;
-        vl opts2 = opts;
-        vi lmod = lastModified;
-
+    for (int i = 0; i < 10; ++i) {
         for (int j = 0; j < 10; ++j) {
-            int ne = (last * j) % 10; 
-            echo(ne);
-            echo(last);
-            double newVal = opts[j] * data[i];
-            echo(newVal);
-            if (opts2[ne] < newVal) {
-                opts2[ne] = newVal;
-                lastModified[ne] = i;
-                prev[i][ne] = {lmod[j], j};
+            int resDigit = (i * j) % 10;
+            lookup[resDigit][i].insert(j);
+            lookup[resDigit][j].insert(i);
+        }
+    }
+
+    for (int i = 0; i < lim; ++i) {
+        for (int j = 0; j < 10; ++j) {
+            dp[i][j] = inf;
+        }
+    }
+    map<pii, pii> previous;
+
+    pii last = {-1, -1};
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < 10; ++j) {
+            for (int next : lookup[j][data[i]]) {
+                if (dp[i][j] != inf) {
+                    if (dp[i][next] > dp[i][j] * data[i]) {
+                        dp[i][next] = dp[i][j] * data[i];
+                        previous[{i, next}] = {i, j};
+                    }
+                }
             }
         }
-        if (opts2[last] < data[i]) {
-            opts2[last] = data[i];
-            lastModified[last] = i;
-            prev[i][last] = {-1, -1};
+        if (dp[i][d] != inf) {
+            last = {i, d};
+            break;
         }
-
-        swap(opts, opts2);
-        echo(opts);
-        echo(lastModified);
     }
-
-    int lastIndex = lastModified[d];
-    int currentCol = d;
-    vi ans;
-    while (lastIndex != -1) {
-        echo(lastIndex);
-        ans.pb(data[lastIndex]);
-        pii previous = prev[lastIndex][currentCol];
-        lastIndex = previous.fi;
-        currentCol = previous.se;
-    }
-    if (ans.size() == 0) {
+    if (last == pii{-1, -1}) {
         cout << "-1\n";
     } else {
-        cout << ans.size() << "\n" << ans << "\n";
+        
+
     }
+
     return 0;
 }
