@@ -2,7 +2,7 @@
 
 makefile="
 
-DEBUG_FLAGS=-Wall -fsanitize=address -g -DDEBUG -DLOCAL -Wshadow
+DEBUG_FLAGS=-Wall -fsanitize=address -fsanitize=undefined -g -DDEBUG -DLOCAL -Wshadow
 SPEED_FLAGS=-O2
 COMPILER=g++-11
 a_db.out: $2
