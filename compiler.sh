@@ -1,9 +1,9 @@
 #!/bin/bash
-
+# Change stack size: -Wl,-stack_size -Wl,100000000
 makefile="
 
-DEBUG_FLAGS=-Wall -fsanitize=address -fsanitize=undefined -g -DDEBUG -DLOCAL -Wshadow
-SPEED_FLAGS=-O2
+DEBUG_FLAGS=-Wall  -fsanitize=address -fsanitize=undefined -g -DDEBUG -DLOCAL -Wshadow -Wnarrowing -std=c++17
+SPEED_FLAGS=-O2 
 COMPILER=g++-11
 a_db.out: $2
 	\$(COMPILER)  '$^'  \$(DEBUG_FLAGS) -o a_db.out

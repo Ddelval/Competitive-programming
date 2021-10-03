@@ -25,6 +25,186 @@ ll inverse(ll num) {
 \end{minted}
 \noindent \textbf{\boldmath Running time: $\mathcal{O}(\log(\mathrm{mod}))$}
 
+\subsection{Iterative extended euclidean algorithm}
+Given two integers $a$, $b$, this algorithm calculates their $\gcd$ and two 
+coefficients $x, y$ such that:
+\begin{equation}
+		a\cdot x + b\cdot y = g
+\label{eq:gdcex}
+\end{equation}
+\cppcode[firstline=45,lastline=58]{code/Diophantine_eq.cpp}
+\noindent \textbf{\boldmath Running time: $\mathcal{O}(\log(\mathrm{\min(n,m)}))$}
+\newpage
+\subsubsection*{Explanation}
+The correctness of the calculation of the gcd follows from the correctness of the 
+traditional implementation since, in each iteration, line 55 is equivalent to: 
+\begin{alignat*}{2}
+		a &\leftarrow b\\
+		b &\leftarrow a \text{ mod } b
+\end{alignat*}
+and we know that $\gcd(a, b) = \gcd(b, \gcd(a,b))$.
+
+The correctness of the calculated coefficients $x,y$ is slightly more complex. 
+To understand it, we have to introduce the following loop invariant
+\begin{equation}
+		x \cdot a + y\cdot b = a_1 \quad
+		x_1 \cdot a + y_1\cdot b = b_1
+\label{eq:gdcProof}
+\end{equation}
+Before the loop starts, these two equations are trivial since: 
+\[
+(x,y)=(1,0) \quad  (x_1,y_1)=(0,1) \quad  (a_1,b_1)=(a,b)
+\]
+Now, we must prove that the invariant holds from one iteration to the
+next. To do so, we can denote the values of the variable $x$ in the next
+iteration as $x'$. Therefore, we can assume that (\ref{eq:gdcProof}) holds
+true and we also know the values that the variables take in the next iteration:
+\vspace{-20pt}
+
+\begin{multicols}{2}
+
+\begin{minipage}{0.4\textwidth}
+\begin{alignat*}{2}
+		x' &\leftarrow x_1 \\
+		y' &\leftarrow y_1 \\
+		x_1' &\leftarrow x-q\cdot x_1 \\
+		y_1' &\leftarrow y-q\cdot y_1 \\
+\end{alignat*}
+\end{minipage}
+\begin{minipage}{0.4\textwidth}
+\begin{alignat*}{2}
+		a' &\leftarrow a\\
+		b' &\leftarrow b\\
+		a_1' &\leftarrow b_1 \\
+		b_1' &\leftarrow a_1 -q \cdot b_1
+\end{alignat*}
+\end{minipage}
+\end{multicols}
+\noindent
+Now we can easily prove the corresponding equations:
+\begin{alignat*}{2}
+		x' \cdot a' + y' \cdot b' = a_1' &\iff
+		x_1 \cdot a + y_1 \cdot b = b_1  \iff (\ref{eq:gdcProof})
+		\\
+		\\
+		x_1' \cdot a' + y_1' \cdot b' = b_1' 
+		&\iff
+		(x-q\cdot x_1) \cdot a + (y-q\cdot y_1) \cdot b = a_1 -q\cdot b_1 \iff
+  		\\ &\iff
+		x \cdot a + y \cdot b - q( x_1 \cdot a + y_1 \cdot b )= a_1 - q \cdot b_1
+		\\ &\stackrel{\ref{eq:gdcProof}}{\iff}
+		a_1 - q(b_1)= a_1 - q \cdot b_1
+\end{alignat*}
+\hfill $\square$
+\newpage
+\subsection{Linear Diophantine Equations}
+A Linear Diophantine Equation is an equation of the general form:
+\[
+		a \cdot x + b \cdot y  = c
+\]
+where $a,b,c\in \mathbb{Z}$ are given constants  
+and $x,y\in \mathbb{Z}$ are the unknowns.
+\subsubsection{Algorithm}
+If one of the constants is 0, finding the solutions is trivial. Therefore,
+in the following, we will assume that they are not 0. Furthermore, we have
+to keep in mind that:
+\begin{center}
+		\itshape
+		The solution has at least one solution $\iff$ $c \,| \,\gcd(a,b)$
+\end{center}
+Then, we can use
+the result of the Extended Euclidean Algorithm to obtain a solution:
+\[
+		(\ref{eq:gdcex}) \implies a \cdot x_g + b\cdot y_g = g \implies 
+		a \cdot x_g \cdot \frac{c}{g}+ b\cdot y_g\cdot \frac{c}{g}= g 
+		\cdot \frac{c}{g}
+\]
+Therefore, one solution is:
+\[
+		x_0 = x_g \cdot \frac{c}{g} \qquad
+		y_0 = y_g \cdot \frac{c}{g} 
+\]
+
+However, that is not the only solution. It can be proven that the set of
+pairs $(x,y)$ that satisfy the equations is:
+\[
+		\left \{ \left( x_0 + k \cdot \frac{b}{g}, 
+		y_0 - k \cdot \frac{a}{g}\right): k\in \mathbb{Z} \right \}
+\]
+
+One interesting problem that we will be able to solve is finding the 
+values of $k$ for which the values of $a$ and $b$ are in certain 
+ranges. This is a relatively simple task since we can first find the 
+range of $k$ that yields a valid $x$ value and then find the range
+of $k$ that yields a valid $y$ value. The intersection will be the
+answer.
+
+Furthermore, since the functions that return the values of $x$ and 
+$y$ for a given $k$
+are linear, the range of $k$ that leads to values in an interval is
+very easy to calculate: 
+\[
+		k \longrightarrow x_0 + k \cdot \frac{b}{g} \qquad
+		k \longrightarrow y_0 + k \cdot\frac{a}{g}
+\]
+Note that we have to be careful when an endpoint of an interval 
+has the value \texttt{inf} to avoid precision and overflow 
+issues.
+
+\newpage
+\cppcode[firstline = 20, lastline = 42]{code/Diophantine_eq.cpp}
+
+
+\subsubsection{Final implementation}
+To solve the Linear Diophantine Equations, we will use a class to
+that stores the three coefficients as well as the base solution.
+Then, we can query the class for the solutions of the equation in 
+a given range using the method \texttt{findRangeOfK}
+
+\cppcode[firstline = 60, lastline = 91]{code/Diophantine_eq.cpp}
+\noindent \textbf{\boldmath Running time: $\mathcal{O}(\log(\mathrm{\min(n,m)}))$}
+
+For instance, if we want to get the solutions that are positive
+in both variables, we can write:
+\begin{minted}{cpp}
+DioEq e1(a, b, d);
+pll rangeK = e1.findRangeOfK({0, inf}, {0, inf});
+\end{minted}
+
+\subsubsection{Remarks}
+\begin{itemize}
+		\item Diophantine Linear Equations with three variables are
+				simple to solve. For instance, to solve
+				\[
+						a\cdot x + b\cdot y + c\cdot z = d
+				\]
+				we can first solve 
+				\[
+						a \cdot x_1 + b\cdot x_2 = \gcd(a,b)
+				\]
+				and then solve 
+				\[
+						\gcd(a,b) \cdot x_2 + c \cdot y_2 = d
+				\]
+				And the final answers will be:
+				\[
+						x = x_1 \cdot x_2 \quad
+						y = y_1 \cdot x_2 \quad
+						z = y_2
+				\]
+				This process works because the linear combination of $a$ and 
+				$b$ can only result in numbers that are multiples of their
+				gcd. 
+
+				However, we cannot reuse the way to calculate the number of
+				solutions (with given ranges for $x$ and $y$)
+
+\end{itemize}
+
+
+
+
+
 \section{Catalan numbers}
 We define the nth Catalan number as:
 \[
