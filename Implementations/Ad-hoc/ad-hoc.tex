@@ -2,4 +2,50 @@
 \chapter{Ad-hoc}
 The algorithms in this chapter do not fall into 
 standard categories, so they ended up here. 
+\section{Minimum coverage of segment}
+Given a set of segments. This algorithm aims to pick the
+smallest subset that maximizes the length of the union of
+its elements.
+Formally, given some segments $S=\{(a_i,b_i): i\in I\}$,
+we seek $J\subset I$ such that $\bigcup_J (a_i,b_i)= \bigcup_I (a_i,b_i)$ and 
+$|J|$ is minimal.
+
+The first step in the algorithm is to sort the segments in decreasing order by
+their left limit. Among the segments with the same right limit, the longest
+ones must placed before in the vector to simplify the next steps.
+
+This algorithm works in a greedy fashion. The first segment of the array after
+the sorting has been performed must be in $J$ since it is the longest one that
+includes the left limit of the union of all segments. Therefore it is at least
+as good as any other option that includes the left limit of the union. From this
+point onwards, the current segment will be the last selected segment, which
+initially is the first segment of the array.
+
+The main loop of the algorithm iterates through the pairs and checks whether
+or not the $i$-th pair intersects the current one. If it does, we can keep 
+iterating. Otherwise, we have to check if there is a way to cover the gap
+between the current segment and the $i$-th one. That will be possible iff
+we have run into a segment whose left border lies inside the current segment
+but its right border expands past the current segment's right border. 
+It is important to note that even if this new segment does not cover the 
+entire gap between the current and the $i$-th, it still must be picked since
+it increases the coverage of the union of picked segments.
+
+This process is performed in the \mintinline{cpp}{while} loop (which will run
+at most twice in each iteration of the outer loop). In the first iteration
+it adds the best candidate to cross the gap between the current and the $i$-th
+segment. In the second iteration, it checks if there is still no intersection
+between the picked segment (the one that has just been selected) and the $i$-th
+one. If there is no intersection, it is also necessary to pick the $i$-th
+segment (which happens on the second iteration of the \mintinline{cpp}{while}
+loop).
+
+Finally, if there is a segment that extends past the end of the last 
+selected segment, it must also be selected and added to the set (line 54)
+
+
+\newpage
+\cppcode[firstline=20]{code/pair_cover.cpp}
+\noindent \textbf{\boldmath Running time: $\mathcal{O}\big(N \log N)\big)$}
+\\ {\small (N = number of pairs)}
 
