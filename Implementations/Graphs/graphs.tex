@@ -764,8 +764,8 @@ void addEdgeBi(int orig, int dest, ll flow) {
 \end{minted}
 \newpage
 \cppcode[firstline=20,lastline=63]{code/edmonds-karp.cpp}
-\noindent \textbf{\boldmath Running time: $\mathcal{O}(VE^2)$}
-\\ {\small (V = vertices, E = edges)}
+\noindent \textbf{\boldmath Running time: $\mathcal{O}(\min(VE^2,Ef_{max}))$}
+\\ {\small (V = vertices, E = edges, $f_{max}$ = maximum flow)}
 \subsubsection{Remarks}
 \begin{itemize}
 	\item If we have multiple sources $s_1,\dots, s_n$ and multiple sinks 
